@@ -1,0 +1,150 @@
+/* Custom styling for the tooltip */
+.tooltip-inner {
+    background-color: #333;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.button-container a {
+    margin-right: 10px;
+}
+
+.fa-trash,
+.fa-pen-to-square,
+.Assign-button {
+    font-size: 20px;
+}
+
+.star-rating-label {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.star-rating {
+    font-size: 22px;
+    color: gold;
+
+    cursor: pointer;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.star-rating:hover {
+    color: #ffD700;
+    transform: scale(1.3);
+
+}
+
+.star-rating-pre {
+    font-size: 18px;
+    color: gold;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+}
+
+.technician_border {
+    margin-left: 10px;
+}
+
+.fa-comment {
+
+    font-size: 20px;
+}
+
+.rate-technician {
+    font-size: 24px;
+}
+
+h3 {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: bold;
+}
+
+@media only screen and (min-width: 360px) and (max-width: 768px) {
+    .technician_border {
+        margin-left: -10px
+    }
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+table th {
+    text-align: center;
+    color: black;
+    white-space: nowrap;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+thead {
+    background-color: white;
+}
+
+thead th:first-child {
+    font-weight: bold;
+}
+
+table td {
+    text-align: center;
+    color: black;
+    white-space: nowrap;
+    border-right: 1px solid #ccc;
+}
+
+.table td,
+.table th {
+    padding: 0px;
+    vertical-align: middle;
+    text-align: center;
+
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+#example th {
+    text-align: center;
+    color: black;
+    white-space: nowrap;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    vertical-align: middle;
+}
+
+thead {
+    background-color: white;
+}
+
+/* thead th:first-child {
+    font-weight: bold;
+} */
+
+/* table td {
+    text-align: center;
+    color: black;
+    white-space: nowrap;
+    border-right: 1px solid #ccc;
+    vertical-align: middle;
+} */
+
+/* .table>:not(:last-child)>:last-child>* {
+    border-bottom-color: #ccc;
+} */
+thead tr {
+    height: 40px; /* Adjust this value as needed */
+    line-height: 40px;
+}
+

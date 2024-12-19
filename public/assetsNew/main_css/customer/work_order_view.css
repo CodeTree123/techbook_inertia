@@ -1,0 +1,136 @@
+.container {
+    border: 1px solid black;
+    padding: 100px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 950px;
+}
+
+.header-table {
+    font-size: 35px;
+}
+
+.table-bordered {
+    border: black;
+}
+
+table th {
+    font-size: 22px;
+}
+
+section {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h3,
+h4,
+h5 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+.contact-info {
+    margin-top: 20px;
+}
+
+.required-tools {
+    margin-top: 20px;
+}
+
+.bg-warning {
+    background-color: #ffc107;
+    padding: 5px;
+    margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+    section {
+        padding: 10px;
+    }
+}
+
+.scope-of-work {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+h3 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+ol {
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+.work-description {
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: none;
+    border-bottom: 1px solid #000;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.form-signature {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-container {
+    display: flex;
+    /* Use flexbox */
+    justify-content: space-between;
+}
+
+.form-section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-input {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+span {
+    content: "\002B";
+    color: black;
+    font-weight: bold;
+}
+
+.others-section {
+    margin-left: -24px;
+}

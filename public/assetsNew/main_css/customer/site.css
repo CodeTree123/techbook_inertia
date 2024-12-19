@@ -1,0 +1,43 @@
+    #example th {
+        text-align: center;
+        color: black;
+        white-space: nowrap;
+        border: 1px solid #CCC;
+    }
+
+    #example td {
+        text-align: center;
+        color: black;
+        white-space: nowrap;
+    }
+
+    a {
+        color: black;
+    }
+
+    .table-bordered tr {
+        border-left: 1px solid #000;
+        /* Adjust the color and thickness as needed */
+        border-right: 1px solid #000;
+        /* Adjust the color and thickness as needed */
+    }
+
+    /* --------------------------------------------- */
+    thead {
+        background-color: white;
+    }
+
+    thead th {
+        padding: 10px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+
+    thead th:first-child {
+        font-weight: bold;
+    }
+
+    thead th:hover {
+        cursor: pointer;
+    }

@@ -1,0 +1,60 @@
+    #example {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #example th,
+    #example td {
+        border: 1px solid #CCC;
+        padding: 8px;
+        text-align: center;
+    }
+
+    #example thead {
+        background-color: #f2f2f2;
+    }
+
+    #example1 {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #example1 th,
+    #example1 td {
+        border: 1px solid #CCC;
+        padding: 8px;
+        text-align: center;
+    }
+
+    #example1 thead {
+        background-color: #f2f2f2;
+    }
+
+    .form-control {
+        border: 1px solid black;
+    }
+  
+    h6 {
+        color: black;
+    }
+  
+    label {
+        display: block;
+    }
+  
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        margin-top: -12px;
+    }
+  
+    .select2-container--default .select2-selection--single {
+        padding: 18px;
+        border: 1px solid black;
+    }
+  
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 6px;
+    }
+
+    .modal-lg{
+        width: 1200px;
+    }

@@ -1,0 +1,25 @@
+    .skill-option {
+        font-size: 15px;
+        background: white;
+        color: black;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 2px;
+        margin: 5px;
+
+    }
+
+    .skill-option:hover {
+        transition: box-shadow 0.2s, background-color 0.3s;
+        background-color: #1a1c4c;
+        color: white;
+    }
+
+    .form-control {
+        border: 1px solid black;
+    }
+
+    h6 {
+        color: black;
+    }

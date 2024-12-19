@@ -1,0 +1,184 @@
+input,
+select,
+textarea {
+    border: 0;
+    border-bottom: 1px solid #DEE2E6 !important;
+    outline: 0;
+}
+
+.total-bg {
+    background-color: rgba(248, 249, 250, 1);
+    min-height: calc(100vh - 90px);
+    padding-top: 75px;
+}
+
+.or-div {
+    position: relative;
+}
+
+.text-divider {
+    margin: 2em 0;
+    line-height: 0;
+    text-align: center;
+}
+
+.text-divider span {
+    background-color: #fff;
+    padding: 1em;
+}
+
+.text-divider:before {
+    content: " ";
+    display: block;
+    border-top: 1px solid #e3e3e3;
+    border-bottom: 1px solid #f7f7f7;
+}
+
+.stage {
+    border: 1px solid #AFE1AF;
+    font-weight: 700;
+}
+
+.stage-primary {
+    background-color: #AFE1AF;
+    border: #AFE1AF;
+}
+
+.tab {
+    border: 1px solid #9BCFF5;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.tab-primary {
+    background-color: #9BCFF5;
+}
+
+.tab:hover {
+    background-color: #9BCFF5;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.tab-active {
+    display: block;
+}
+
+.save-btn {
+    display: none;
+    background-color: #1FE1AF;
+}
+
+.cancel-btn {
+    display: none;
+}
+
+.nrml-inp {
+    display: none;
+}
+
+.nrml-inp {
+    border: none;
+    border-bottom: 1px solid black;
+    outline: 0 !important;
+}
+
+.contact-add {
+    display: none;
+}
+
+.tech-add {
+    display: none;
+}
+
+.shipment-add {
+    display: none;
+}
+
+.tech-part-add {
+    display: none;
+}
+
+.closeout-note-add {
+    display: none;
+}
+
+.schedule-add {
+    display: none;
+}
+
+#moreTechCont {
+    display: none;
+}
+
+.file-preview {
+    display: inline-block;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+    width: 120px;
+    position: relative;
+    /* To position the delete button */
+}
+
+.preview-img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 5px;
+}
+
+.preview-pdf,
+.preview-file {
+    font-size: 50px;
+    color: gray;
+    margin-bottom: 5px;
+}
+
+.file-name {
+    font-size: 14px;
+    color: #333;
+    margin-top: 5px;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: red;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    color: darkred;
+}
+
+.invisible {
+    display: none;
+}
+
+.bg-secondary {
+    border: 1px solid #6c757d !important;
+}
+
+.select2-container {
+    display: none;
+}
+
+.select2-selection {
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid #aaa !important;
+}
+
+.jodit-container {
+    display: none;
+}
