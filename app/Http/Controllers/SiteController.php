@@ -139,6 +139,7 @@ class SiteController extends Controller
 
         return $pdf->download($fileName);
     }
+    
     public function pdfWorkOrderUserView($id)
     {
         $pageTitle = "View Pdf";

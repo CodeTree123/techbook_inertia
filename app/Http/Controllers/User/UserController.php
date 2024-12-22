@@ -167,60 +167,7 @@ class UserController extends Controller
         // Return the view with the required data
         return view('user.workOrder.wo_view', compact('pageTitle', 'wo', 'customers', 'employees', 'customerSites'));
     }
-
-    public function userInertiaLayout($id)
-    {
-        $wo = WorkOrder::with([
-            'customer',
-            'technician.engineers',
-            'employee',
-            'site' => function ($query) {
-                $query->select(
-                    'id',
-                    'location',
-                    'address_1',
-                    'city',
-                    'state',
-                    'zipcode',
-                    'time_zone',
-                    DB::raw('ST_AsText(co_ordinates) as co_ordinates')
-                );
-            },
-            'contacts',
-            'docsForTech',
-            'checkInOut.engineer',
-            'timeLogs',
-            'tasks',
-            'shipments',
-            'techProvidedParts',
-            'schedules',
-            'assignedTech.engineer',
-            'techRemoveReasons.technician',
-            'otherExpenses'
-        ])->find($id);
     
-        // Check if technician data exists
-        if ($wo && $wo->technician) {
-            // Check if the address_data and rate are already decoded (i.e., not strings)
-            if (is_string($wo->technician->address_data)) {
-                $wo->technician->address_data = json_decode($wo->technician->address_data, true);
-            }
-            
-            if (is_string($wo->technician->rate)) {
-                $wo->technician->rate = json_decode($wo->technician->rate, true);
-            }
-    
-            // Handle co_ordinates or leave as is if not needed
-            $wo->technician->co_ordinates = null; // Set or process as needed
-        }
-
-    
-        return Inertia::render('user/workOrder/WoView', [
-            'wo' => $wo,
-        ]);
-    }
-    
-
 
     public function userViewPdf()
     {
@@ -2076,6 +2023,63 @@ class UserController extends Controller
 
 
     // New functions
+
+    public function allWoList(Request $request)
+    {
+        return Inertia::render('user/workOrder/AllWorkOrder', []);
+    }
+
+    public function userInertiaLayout($id)
+    {
+        $wo = WorkOrder::with([
+            'customer',
+            'technician.engineers',
+            'employee',
+            'site' => function ($query) {
+                $query->select(
+                    'id',
+                    'location',
+                    'address_1',
+                    'city',
+                    'state',
+                    'zipcode',
+                    'time_zone',
+                    DB::raw('ST_AsText(co_ordinates) as co_ordinates')
+                );
+            },
+            'contacts',
+            'docsForTech',
+            'checkInOut.engineer',
+            'timeLogs',
+            'tasks',
+            'shipments',
+            'techProvidedParts',
+            'schedules',
+            'assignedTech.engineer',
+            'techRemoveReasons.technician',
+            'otherExpenses'
+        ])->find($id);
+    
+        // Check if technician data exists
+        if ($wo && $wo->technician) {
+            // Check if the address_data and rate are already decoded (i.e., not strings)
+            if (is_string($wo->technician->address_data)) {
+                $wo->technician->address_data = json_decode($wo->technician->address_data, true);
+            }
+            
+            if (is_string($wo->technician->rate)) {
+                $wo->technician->rate = json_decode($wo->technician->rate, true);
+            }
+    
+            // Handle co_ordinates or leave as is if not needed
+            $wo->technician->co_ordinates = null; // Set or process as needed
+        }
+
+    
+        return Inertia::render('user/workOrder/WoView', [
+            'wo' => $wo,
+        ]);
+    }
 
     // Overview
 

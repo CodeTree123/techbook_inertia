@@ -15,6 +15,7 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\CustomerSite;
 use App\Models\Technician;
+use App\Models\WorkOrder;
 
 class UserController extends Controller
 {
@@ -313,7 +314,10 @@ class UserController extends Controller
 
         $technicians = Technician::select('id', 'company_name', 'address_data', 'email', 'phone', 'rate', 'tech_type')
             ->when($search, function ($query, $search) {
-                $query->where('company_name', 'like', "%{$search}%");
+                $query->where('company_name', 'like', "%{$search}%")
+                    ->orWhere('technician_id', 'like', "%{$search}%")
+                    ->orWhere('address_data->zip_code', 'like', "%{$search}%")
+                    ->orWhere('address_data->address', 'like', "%{$search}%");
             })
             ->orderBy('company_name', 'asc')
             ->paginate(10); // Paginate the results
@@ -330,6 +334,42 @@ class UserController extends Controller
             'message' => 'Technicians fetched successfully',
         ]);
     }
+
+    public function allWoList(Request $request)
+    {
+        
+        $search = $request->query('search', '');
+        $stage = $request->query('stage', '');
+        $w_orders = WorkOrder::select('id', 'order_id', 'created_at', 'slug', 'ftech_id', 'stage', 'status','site_id')
+            ->with(['customer:id,company_name', 'technician:id,company_name','site:id,site_id,zipcode'])
+            ->when($search, function ($query, $search) {
+                $query->where('order_id', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($query) use ($search) {
+                        $query->where('company_name', 'like', "%{$search}%")
+                            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(address, '$.address')) LIKE ?", ["%{$search}%"])
+                            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(address, '$.zip_code')) LIKE ?", ["%{$search}%"]);
+                    })
+                    ->orWhereHas('technician', function ($query) use ($search) {
+                        $query->where('company_name', 'like', "%{$search}%")
+                            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(address_data, '$.address')) LIKE ?", ["%{$search}%"])
+                            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(address_data, '$.zip_code')) LIKE ?", ["%{$search}%"]);
+                    })
+                    ->orWhereHas('site', function ($query) use ($search) {
+                        $query->where('site_id', 'like', "%{$search}%")
+                        ->orWhere('address_1', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")
+                            ->orWhere('zipcode', 'like', "%{$search}%");
+                    });
+            })
+            ->when($stage && $stage != 0, function ($query) use ($stage) {
+                $query->where('stage', $stage);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(50);  // Pagination still works here for both search results and all records
+    
+        return response()->json([
+            'w_orders' => $w_orders
+        ]);
+    }    
 
 
 }
