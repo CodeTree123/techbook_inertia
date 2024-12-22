@@ -55,7 +55,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::get('work/order/onsite', 'Onsite')->name('work.order.onsite');
                 Route::get('work/order/view/pdf/user/dashboard', 'userViewPdf')->name('work.order.view.pdf');
                 Route::get('work/order/view/layout/user/dashboard/{id}', 'userViewLayout')->name('work.order.view.layout');
-                Route::get('work/order/view/layout/user/dashboard/inertia/{id}', 'userInertiaLayout')->name('work.order.view.inertia');
+                
                 //status
                 Route::get('work/order/view/pdf/pending', 'statusPending')->name('work.order.view.pending');
                 Route::get('work/order/view/pdf/contacted', 'statusContacted')->name('work.order.view.contacted');
@@ -150,6 +150,9 @@ Route::middleware('auth')->name('user.')->group(function () {
 
 
                 // New routes
+                Route::get('work/order/view/pdf/user/inertia/dashboard', 'allWoList')->name('work.order.list.inertia');
+                Route::get('work/order/view/layout/user/dashboard/inertia/{id}', 'userInertiaLayout')->name('work.order.view.inertia');
+
                 Route::post('make-hold/{id}', 'makeHold')->name('wo.hold');
                 Route::post('make-cancel/{id}', 'makeCancel')->name('wo.cancel');
                 Route::post('next-status/{id}', 'nextStatus')->name('wo.nextStatus');

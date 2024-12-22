@@ -105,7 +105,7 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                         <hr className="w-50" />
                         {
                             !editable ?
-                                <p className="">${details.travel_cost}</p> :
+                                <p className="">${details.travel_cost || 0.00}</p> :
                                 <input name="travel" type="text" className="text-end" style={{ width: 100 }} defaultValue={data.travel_cost} onChange={(e) => setData({ travel_cost: e.target.value })} />
                         }
 

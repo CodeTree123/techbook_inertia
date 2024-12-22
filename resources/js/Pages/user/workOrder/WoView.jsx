@@ -11,6 +11,56 @@ export default function WoView({ wo }) {
   console.log(wo);
 
 
+  const [atRisk, setAtRisk] = useState(true);
+  const [latestAtRiskScheduleId, setLatestAtRiskScheduleId] = useState(null);
+
+  const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+  });
+
+  useEffect(() => {
+    let latestRiskId = null; // To track the latest at-risk schedule ID
+
+    const isValidSchedule = wo?.schedules?.every((schedule) => {
+      const scheduleDate = new Date(schedule.on_site_by);
+      const scheduleTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`);
+      const now = new Date();
+
+      const hasCheckInOutBeforeTime = wo?.check_in_out?.some((checkInOut) => {
+        const checkInDate = new Date(checkInOut.date);
+        const checkInTime = new Date(`${checkInOut.date}T${checkInOut.check_in}`);
+        return (
+          checkInDate.toDateString() === scheduleDate.toDateString() &&
+          checkInTime <= scheduleTime
+        );
+      });
+
+      const isPastSchedule = scheduleTime <= now;
+
+      const isValid = hasCheckInOutBeforeTime || !isPastSchedule;
+
+      if (!isValid) {
+        latestRiskId = schedule.id;
+      }
+
+      return isValid;
+    });
+    if(latestRiskId){
+      setAtRisk(isValidSchedule);
+    }
+    
+    setLatestAtRiskScheduleId(latestRiskId);
+  }, [wo?.schedules, wo?.check_in_out]);
+
+  useEffect(() => {
+    if (atRisk) {
+      post(route('user.wo.goAtRisk', wo.id), {
+        onSuccess: () => {
+        }
+      });
+    }
+  }, [wo.id]);
+
+
   const getStage = () => {
     if (wo?.stage === 7) {
       return <span className="fw-bold">Cancelled</span>;
@@ -81,54 +131,6 @@ export default function WoView({ wo }) {
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
-
-  const [atRisk, setAtRisk] = useState(true);
-  const [latestAtRiskScheduleId, setLatestAtRiskScheduleId] = useState(null);
-
-  const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
-  });
-
-  useEffect(() => {
-    if (atRisk) {
-      post(route('user.wo.goAtRisk', wo.id), {
-        onSuccess: () => {
-        }
-      });
-    }
-  }, [wo.id]);
-
-  useEffect(() => {
-    let latestRiskId = null; // To track the latest at-risk schedule ID
-
-    const isValidSchedule = wo?.schedules?.every((schedule) => {
-      const scheduleDate = new Date(schedule.on_site_by);
-      const scheduleTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`);
-      const now = new Date();
-
-      const hasCheckInOutBeforeTime = wo?.check_in_out?.some((checkInOut) => {
-        const checkInDate = new Date(checkInOut.date);
-        const checkInTime = new Date(`${checkInOut.date}T${checkInOut.check_in}`);
-        return (
-          checkInDate.toDateString() === scheduleDate.toDateString() &&
-          checkInTime <= scheduleTime
-        );
-      });
-
-      const isPastSchedule = scheduleTime <= now;
-
-      const isValid = hasCheckInOutBeforeTime || !isPastSchedule;
-
-      if (!isValid) {
-        latestRiskId = schedule.id; // Update with the latest at-risk schedule ID
-      }
-
-      return isValid;
-    });
-
-    setAtRisk(isValidSchedule);
-    setLatestAtRiskScheduleId(latestRiskId); // Update the state with the latest at-risk schedule ID
-  }, [wo?.schedules, wo?.check_in_out]);
-
 
   return (
 
@@ -712,7 +714,7 @@ export default function WoView({ wo }) {
           </div>
 
           {
-            !atRisk &&
+            wo.status == 4 &&
             <Reschedule id={latestAtRiskScheduleId} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} />
           }
 
