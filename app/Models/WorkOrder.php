@@ -95,6 +95,11 @@ class WorkOrder extends Model
     {
         return $this->hasMany(AssignedEngineer::class, 'wo_id');
     }
+
+    public function otherExpenses()
+    {
+        return $this->hasMany(OtherExpense::class, 'wo_id');
+    }
     //scope
     //status 
     public function scopePendingTicket($query)

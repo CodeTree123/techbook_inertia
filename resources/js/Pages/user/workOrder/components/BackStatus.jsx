@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React from 'react'
 import { Button } from 'react-bootstrap';
 
-const BackStatus = ({id, onSuccessMessage}) => {
+const BackStatus = ({id, onSuccessMessage, status}) => {
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
     });
 
@@ -18,7 +18,7 @@ const BackStatus = ({id, onSuccessMessage}) => {
     };
     return (
         <form onSubmit={submit}>
-            <Button variant='outline-secondary' type="submit">
+            <Button variant='outline-secondary' type="submit" disabled={status == 1}>
                 Revert
             </Button>
         </form>

@@ -1,3 +1,4 @@
+import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
 const PaySheet = ({ id, details, onSuccessMessage }) => {
@@ -5,13 +6,47 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
     const totalHours = details?.check_in_out.reduce((sum, item) => {
         const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
         return sum + hours;
-      }, 0);
+    }, 0);
     const techPartsTotal = details?.tech_provided_parts?.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0) || 0;
 
-    const totalCost = (rate * totalHours) + techPartsTotal;
+    const otherExpensesTotal = details?.other_expenses?.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0) || 0;
+
+    const totalCost = (rate * totalHours) + techPartsTotal + parseFloat(details.travel_cost) + otherExpensesTotal;
 
     const [editable, setEditable] = useState(false);
-    
+
+    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+        travel_cost: details.travel_cost || 0.00,
+        description: '',
+        price: '',
+        quantity: 1,
+    });
+
+    const updatePaysheet = (e) => {
+        e.preventDefault();
+        post(route('user.wo.updateTravel', id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                onSuccessMessage('Pay Sheet Updated');
+                setEditable(false);
+            }
+        });
+    }
+
+    // Expense
+
+    const [addExpense, setAddExpense] = useState(false)
+
+    const updateExpense = (e) => {
+        e.preventDefault();
+        post(route('user.wo.addExpenses', id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                onSuccessMessage('Other Expense Added');
+                setAddExpense(false);
+            }
+        });
+    }
 
     return (
         <div className="card bg-white shadow-lg border-0 mb-4 action-cards">
@@ -26,7 +61,7 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                     }
                     {
                         editable &&
-                        <button type='submit' className="btn btn-success fw-bold">
+                        <button onClick={(e) => updatePaysheet(e)} type='submit' className="btn btn-success fw-bold">
                             Save
                         </button>
                     }
@@ -70,8 +105,8 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                         <hr className="w-50" />
                         {
                             !editable ?
-                                <p className="">$0.00</p> :
-                                <input name="travel" type="text" className="text-end" style={{ width: 100 }} defaultValue={0.00} />
+                                <p className="">${details.travel_cost}</p> :
+                                <input name="travel" type="text" className="text-end" style={{ width: 100 }} defaultValue={data.travel_cost} onChange={(e) => setData({ travel_cost: e.target.value })} />
                         }
 
 
@@ -88,12 +123,50 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                             </div>
                         ))
                     }
+                    <div className="d-flex mt-2 justify-content-between" style={{ fontSize: 20, fontWeight: '400 !important' }}>
+                        <p>Others</p>
+                    </div>
+                    {
+                        details?.other_expenses?.map((part) => (
+                            <div className="d-flex mt-2 justify-content-between ps-5" style={{ fontSize: 20, fontWeight: '400 !important' }}>
+                                <p>{part.description} (${part.price}) x {part.quantity}</p>
+                                <hr className="w-auto" />
+                                <p>${part.amount}</p>
+                            </div>
+                        ))
+                    }
                 </form>
-                <button className="btn btn-outline-dark my-3">+ Add Items</button>
+                {
+                    addExpense &&
+                    <div className='row'>
+                        <div className='col-4'>
+                            <input type="text" className='border-bottom w-100' placeholder='Item Description' onChange={(e)=>setData({...data,description: e.target.value})}/>
+                        </div>
+                        <div className='col-4'>
+                            <input type="text" className='border-bottom w-100' placeholder='Item Price' onChange={(e)=>setData({...data,price: e.target.value})}/>
+                        </div>
+                        <div className='col-4'>
+                            <input type="text" className='border-bottom w-100' placeholder='Item Quantity' onChange={(e)=>setData({...data,quantity: e.target.value})}/>
+                        </div>
+                        <div className='col-12 d-flex mt-2 gap-2 justify-content-end'>
+                            <button onClick={(e)=>updateExpense(e)} className='btn-success btn'>
+                                Save
+                            </button>
+                            <button onClick={()=>setAddExpense(false)} className='btn-danger btn'>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                }
+                {
+                    !addExpense &&
+                    <button className="btn btn-outline-dark my-3" onClick={() => setAddExpense(true)}>+ Add Items</button>
+                }
+
                 <div className="d-flex mt-2 justify-content-between" style={{ fontSize: 20 }}>
                     <p className="fw-bold">Total Pay</p>
                     <p id="totalPay" className="fw-bold">
-                        ${totalCost}
+                        ${totalCost.toFixed(2)}
                     </p>
                 </div>
             </div>

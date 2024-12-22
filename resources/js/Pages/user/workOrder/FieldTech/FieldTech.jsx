@@ -9,19 +9,28 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
     const [technicians, setTechnicians] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const handleSearch = (e) => {
+        setSearch(e.target.value);
+        setCurrentPage(1)
+    }
+
     useEffect(() => {
         if (search.trim() === '') {
-            setTechnicians([]); // Clear the list if search is empty
+            setTechnicians([]);
             return;
         }
 
         const delayDebounceFn = setTimeout(() => {
             setLoading(true);
-            fetch(`/api/all-techs?search=${encodeURIComponent(search)}`)
+            fetch(`/api/all-techs?search=${encodeURIComponent(search)}&page=${currentPage}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
                         setTechnicians(data.data || []);
+                        setTotalPages(data.pagination.last_page);
                     }
                 })
                 .catch((error) => {
@@ -33,7 +42,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
         }, 500);
 
         return () => clearTimeout(delayDebounceFn); // Cleanup on re-renders
-    }, [search]);
+    }, [search, currentPage]);
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         send_email: false
@@ -55,8 +64,6 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
     // google api
     const [responseData, setResponseData] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
-
-    console.log(details.site.city + ',' + details.site.state + ',' + details.site.zipcode);
 
 
     const closestTech = async (destination) => {
@@ -88,9 +95,6 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
         }
     };
 
-    console.log(responseData);
-    
-
     // Modal
 
     const [showModal, setShowModal] = useState(false);
@@ -110,7 +114,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
     const totalhours = details?.check_in_out.reduce((sum, item) => {
         const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
         return sum + hours;
-      }, 0);
+    }, 0);
 
 
     return (
@@ -119,7 +123,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
                 !details?.ftech_id ?
                     <>
                         <div className='row justify-content-end'>
-                            <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => setSearch(e.target.value)} />
+                            <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
                                 <button className='btn w-100 d-flex align-items-center justify-content-center gap-1' style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode)}>
                                     <i className="fa-brands fa-google" style={{ fontSize: 16 }} aria-hidden="true" />
@@ -207,6 +211,26 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
                                             <div className='position-absolute top-0 end-0 badge text-bg-warning'>{tech.tech_type}</div>
                                         </div>
                                     ))}
+                                    <div className="pagination justify-content-end align-items-center gap-1">
+                                        <button
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                            className='btn btn-outline-primary'
+                                        >
+                                            Previous
+                                        </button>
+                                        <span>
+                                            Page {currentPage} of {totalPages}
+                                        </span>
+                                        <button
+                                            disabled={currentPage === totalPages}
+                                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                            className='btn btn-outline-primary'
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+
                                 </ul>
                             )}
                             <Modal show={showModal} onHide={handleCloseModal}>
@@ -227,7 +251,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <button onClick={() => setShowModal(false)} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={(e) => assignTech(e, selectedTechnician.id)} type="button" className="btn btn-dark">Add Task</button>
+                                    <button onClick={(e) => assignTech(e, selectedTechnician.id)} type="button" className="btn btn-dark">Assign</button>
                                 </Modal.Footer>
                             </Modal>
 
@@ -309,7 +333,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
                         </div>
                     </> :
                     <>
-                        <TechData id={id} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech}/>
+                        <TechData id={id} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} />
                     </>
             }
         </div>

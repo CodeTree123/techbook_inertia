@@ -5,11 +5,15 @@
     .side-img {
         margin-top: 225px;
     }
+    .total-bg {
+            min-height: calc(90vh - 90px);
+
+        }
 </style>
 
 <body class="vh-100" style="background-color: #00008b;">
     <section>
-        <div class="container py-5 h-100">
+        <div class="container py-5 h-100 total-bg">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-md-6"> <!-- Adjusted column width to col-md-6 for half width on medium screens -->
                     <div class="card o-hidden border-0 shadow-lg" style="border-radius: 1rem;">

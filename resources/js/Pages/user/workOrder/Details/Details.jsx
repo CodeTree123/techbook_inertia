@@ -16,7 +16,7 @@ import Task from './components/Task'
 import TimeLog from './components/TimeLog'
 import Deliverable from './components/Deliverable'
 
-const Details = ({id, details, onSuccessMessage}) => {
+const Details = ({id, details, onSuccessMessage, onErrorMessage}) => {
     return (
         <div>
             <div className="mb-4">

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import "../../../../css/wo.css"
 import AddHold from './components/AddHold';
 import MakeCancel from './components/MakeCancel';
 import NextStatus from './components/NextStatus';
 import BackStatus from './components/BackStatus';
 import WorkOrderTab from './components/WorkOrderTab';
+import Reschedule from './components/Reschedule';
 export default function WoView({ wo }) {
   console.log(wo);
 
@@ -53,10 +54,24 @@ export default function WoView({ wo }) {
   });
 
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSuccessMessage = (data) => {
     setSuccessMessage(data);
   };
+
+  const handleErrorMessage = (data) => {
+    setErrorMessage(data);
+  };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage('');
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
 
   useEffect(() => {
     if (successMessage) {
@@ -66,6 +81,55 @@ export default function WoView({ wo }) {
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
+
+  const [atRisk, setAtRisk] = useState(true);
+  const [latestAtRiskScheduleId, setLatestAtRiskScheduleId] = useState(null);
+
+  const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+  });
+
+  useEffect(() => {
+    if (atRisk) {
+      post(route('user.wo.goAtRisk', wo.id), {
+        onSuccess: () => {
+        }
+      });
+    }
+  }, [wo.id]);
+
+  useEffect(() => {
+    let latestRiskId = null; // To track the latest at-risk schedule ID
+
+    const isValidSchedule = wo?.schedules?.every((schedule) => {
+      const scheduleDate = new Date(schedule.on_site_by);
+      const scheduleTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`);
+      const now = new Date();
+
+      const hasCheckInOutBeforeTime = wo?.check_in_out?.some((checkInOut) => {
+        const checkInDate = new Date(checkInOut.date);
+        const checkInTime = new Date(`${checkInOut.date}T${checkInOut.check_in}`);
+        return (
+          checkInDate.toDateString() === scheduleDate.toDateString() &&
+          checkInTime <= scheduleTime
+        );
+      });
+
+      const isPastSchedule = scheduleTime <= now;
+
+      const isValid = hasCheckInOutBeforeTime || !isPastSchedule;
+
+      if (!isValid) {
+        latestRiskId = schedule.id; // Update with the latest at-risk schedule ID
+      }
+
+      return isValid;
+    });
+
+    setAtRisk(isValidSchedule);
+    setLatestAtRiskScheduleId(latestRiskId); // Update the state with the latest at-risk schedule ID
+  }, [wo?.schedules, wo?.check_in_out]);
+
+
   return (
 
     <>
@@ -643,21 +707,35 @@ export default function WoView({ wo }) {
             <a href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/24`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
               <i className="fa fa-eye" aria-hidden="true" />
             </a>
-            <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} />
-            <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} />
+            <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} />
+            <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} />
           </div>
 
+          {
+            !atRisk &&
+            <Reschedule id={latestAtRiskScheduleId} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} />
+          }
+
+
+
           <div className='col-12 px-3 py-4'>
-            <WorkOrderTab id={wo.id} details={wo} onSuccessMessage={handleSuccessMessage} />
+            <WorkOrderTab id={wo.id} details={wo} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} />
           </div>
         </div>
       </div>
       {successMessage && (
-        <div role="alert" className="alert alert-success position-fixed" style={{ bottom: '50px', right: '50px', height: 'max-content' }}>
-
+        <div className="alert alert-success alert-dismissible fade show position-fixed" style={{ bottom: '50px', right: '50px', height: 'max-content' }} role="alert">
           <span>{successMessage}</span>
-        </div>
+          <button type="button" className="btn-close" onClick={() => setSuccessMessage(null)} />
+        </div >
       )}
+      {errorMessage && (
+        <div className="alert alert-danger alert-dismissible fade show position-fixed" style={{ bottom: '50px', right: '50px', height: 'max-content' }} role="alert">
+          <span>{errorMessage}</span>
+          <button type="button" className="btn-close" onClick={() => setErrorMessage(null)} />
+        </div >
+      )
+      }
     </>
 
 

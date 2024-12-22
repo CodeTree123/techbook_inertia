@@ -163,6 +163,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('create-schedule-time/{id}', 'createSchedule')->name('wo.createSchedule');
                 Route::post('update-schedule-time/{id}', 'updateSchedule')->name('wo.updateSchedule');
                 Route::delete('delete-schedule-time/{id}', 'deleteSchedule')->name('wo.deleteSchedule');
+                Route::post('go-at-risk/{id}', 'goAtRisk')->name('wo.goAtRisk');
                 Route::post('reschedule-time/{id}', 'reSchedule')->name('wo.reSchedule');
 
                 Route::post('create-wo-contact/{id}', 'createContact')->name('wo.createContact');
@@ -211,6 +212,10 @@ Route::middleware('auth')->name('user.')->group(function () {
 
                 Route::post('assign-tech/{id}/{techId}','assignTechToWo')->name('wo.assignTechToWo');
                 Route::post('remove-tech/{id}/{techId}','removeTech')->name('wo.removeTech');
+
+                Route::post('update-travel/{id}','updateTravel')->name('wo.updateTravel');
+
+                Route::post('add-expense/{id}','addExpenses')->name('wo.addExpenses');
             });
             //Profile setting
             Route::controller('ProfileController')->group(function () {

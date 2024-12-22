@@ -157,7 +157,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                     {(provided) => (
                         <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow-lg border-0 mb-4">
                             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-                                <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks</h3>
+                                <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for '+details?.technician?.company_name}</h3>
                                 <TaskModal id={id} details={details} onSuccessMessage={onSuccessMessage} />
 
                             </div>
@@ -341,9 +341,9 @@ const Task = ({ id, details, onSuccessMessage }) => {
                     )}
                 </Droppable>
 
-
                 {
                     details?.assigned_tech?.map((tech) => (
+                        details?.technician?.tech_type == 'company' &&
                         <Droppable droppableId={tech.tech_id.toString()} key={tech.tech_id}>
                             {(provided) => (
                                 <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow-lg border-0 mb-4">
@@ -364,7 +364,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                             type="checkbox"
                                                             value="1"
                                                             id={`checkin-${tech.tech_id}`}
-                                                            disabled={details.status <= 6}
+                                                            disabled={details.stage != 3 && (!details.ftech_id && details.status == 3)}
                                                             checked={
                                                                 details.check_in_out
                                                                     ?.find((check_in_out) => check_in_out.tech_id === tech.tech_id && check_in_out.check_in && !check_in_out.check_out)
@@ -603,7 +603,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                             type="checkbox"
                                                             value=""
                                                             id={`checkout-${tech.tech_id}`}
-                                                            disabled={details.status <= 7}
+                                                            disabled={details.stage != 3}
                                                             checked={
                                                                 !!details.check_in_out
                                                                     ?.find((checkInOut) => checkInOut.tech_id === tech.tech_id && checkInOut.check_out)

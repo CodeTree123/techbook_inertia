@@ -54,6 +54,7 @@ use Geodesy\Unit\Mile;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use App\Models\TechDeletionReason;
+use App\Models\OtherExpense;
 
 class UserController extends Controller
 {
@@ -101,7 +102,6 @@ class UserController extends Controller
         ])->find($id);
 
         $pageTitle = $wo->order_id . " | TechBook";
-        // Load additional data for the view
         $customers = Customer::all();
         $employees = Employee::all();
         $customerSites = CustomerSite::all();
@@ -121,7 +121,6 @@ class UserController extends Controller
                     // Combine the date and time for the current schedule
                     $scheduleDateTime = Carbon::parse($schedule->on_site_by)
                         ->setTimeFrom(Carbon::parse($schedule->scheduled_time));
-
 
                     if ($scheduleDateTime->lte($currentDateTime)) {
                         $checkInOut = $wo->checkInOut
@@ -196,7 +195,8 @@ class UserController extends Controller
             'techProvidedParts',
             'schedules',
             'assignedTech.engineer',
-            'techRemoveReasons.technician'
+            'techRemoveReasons.technician',
+            'otherExpenses'
         ])->find($id);
     
         // Check if technician data exists
@@ -2116,62 +2116,47 @@ class UserController extends Controller
         } else {
             $notify[] = ['success', 'Status Updated'];
         }
-        switch ($wo->status) {
-            case Status::PENDING:
-                $wo->status = Status::CONTACTED;
-                $wo->stage += 1;
-                break;
 
-            case Status::CONTACTED: // Status 2
-                $wo->status = Status::CONFIRM;
-                $wo->stage += 1;
-                break;
-
-            case Status::CONFIRM: // Status 3
-                $wo->status = Status::EN_ROUTE;
-
-                break;
-
-            case Status::AT_RISK: // Status 4
-            case Status::DELAYED: // Status 5
-            case Status::ON_HOLD: // Status 6
-                $wo->status = Status::EN_ROUTE; // Skip all to EN_ROUTE
-                break;
-
-            case Status::EN_ROUTE: // Status 7
-                $wo->status = Status::CHECKED_IN; // Move to CHECKED_IN
-                break;
-
-            case Status::CHECKED_IN: // Status 8
-                $wo->status = Status::CHECKED_OUT; // Move to CHECKED_OUT
-                break;
-
-            case Status::CHECKED_OUT:
-                $wo->status = Status::NEEDS_APPROVAL;
-                $wo->stage += 1;
-                break;
-
-            case Status::NEEDS_APPROVAL:
-                $wo->status = Status::APPROVED;
-                $wo->stage += 1;
-                break;
-
-            case Status::APPROVED: // Status 12
-                $wo->status = Status::INVOICED; // Move to INVOICED
-                break;
-
-            case Status::INVOICED: // Status 13
-                $wo->status = Status::PAID; // Move to PAST_DUE
-                break;
-
-            case Status::PAST_DUE: // Status 14
-                $wo->status = Status::PAID; // Move to PAID
-                break;
-
-            default:
-                $notify[] = ['warning', 'Work Order is already complete or invalid status'];
-                return back()->withNotify($notify);
-        }
+        if ($wo->status == Status::PENDING) {
+            $wo->status = null;
+            $wo->stage += 1;
+        } elseif ($wo->stage == 2 && $wo->status == null) {
+            $wo->status = Status::CONTACTED;
+        } elseif ($wo->status == Status::CONTACTED) {
+            $wo->status = null;
+            $wo->stage += 1;
+        } elseif ($wo->stage == 3 && $wo->status == null) {
+            $wo->status = Status::CONFIRM;
+        } elseif ($wo->status == Status::CONFIRM) { // Status 3
+            $wo->status = Status::EN_ROUTE;
+        } elseif ($wo->status == Status::AT_RISK || $wo->status == Status::DELAYED || $wo->status == Status::ON_HOLD) { // Status 4, 5, 6
+            $wo->status = Status::EN_ROUTE; // Skip all to EN_ROUTE
+        } elseif ($wo->status == Status::EN_ROUTE) { // Status 7
+            $wo->status = Status::CHECKED_IN; // Move to CHECKED_IN
+        } elseif ($wo->status == Status::CHECKED_IN) { // Status 8
+            $wo->status = Status::CHECKED_OUT; // Move to CHECKED_OUT
+        } elseif ($wo->status == Status::CHECKED_OUT) {
+            $wo->status = null;
+            $wo->stage += 1;
+        } elseif($wo->stage == 4 && $wo->status == null) {
+            $wo->status = Status::NEEDS_APPROVAL;
+        } elseif ($wo->status == Status::NEEDS_APPROVAL) {
+            $wo->status = null;
+            $wo->stage += 1;
+        } elseif($wo->stage == 5 && $wo->status == null) {
+            $wo->status = Status::APPROVED;
+        } elseif ($wo->status == Status::APPROVED) { // Status 12
+            $wo->status = Status::INVOICED; // Move to INVOICED
+        } elseif ($wo->status == Status::INVOICED) { // Status 13
+            $wo->status = Status::PAID; // Move to PAID
+        } elseif ($wo->status == Status::PAST_DUE) { // Status 14
+            $wo->status = Status::PAID; // Move to PAID
+        } else {
+            $notify[] = ['warning', 'Work Order is already complete or invalid status'];
+            return back()->withNotify($notify);
+        }        
+        
+        
         try {
             if ($wo->status == Status::INVOICED) {
                 DB::table('past_due_check')->insert([
@@ -2199,59 +2184,45 @@ class UserController extends Controller
             return back()->withNotify($notify);
         }
 
-        switch ($wo->status) {
-            case Status::PAID: // Status 15
-                $wo->status = Status::INVOICED; // Move back to PAST_DUE
-                break;
-
-            case Status::PAST_DUE: // Status 14
-                $wo->status = Status::INVOICED; // Move back to INVOICED
-                break;
-
-            case Status::INVOICED: // Status 13
-                $wo->status = Status::APPROVED; // Move back to APPROVED
-                break;
-
-            case Status::APPROVED: // Status 12
-                $wo->status = Status::NEEDS_APPROVAL; // Move back to NEEDS_APPROVAL
-                $wo->stage -= 1; // Decrement stage
-                break;
-
-            case Status::NEEDS_APPROVAL: // Status 10
-                $wo->status = Status::CHECKED_OUT; // Move back to CHECKED_OUT
-                $wo->stage -= 1; // Decrement stage
-                break;
-
-            case Status::CHECKED_OUT: // Status 9
-                $wo->status = Status::CHECKED_IN; // Move back to CHECKED_IN
-                break;
-
-            case Status::CHECKED_IN: // Status 8
-                $wo->status = Status::EN_ROUTE; // Move back to EN_ROUTE
-                break;
-
-            case Status::EN_ROUTE: // Status 7
-                $wo->status = Status::CONFIRM; // Move back to CONFIRM
-                break;
-
-            case Status::CONFIRM: // Status 3
-                $wo->status = Status::CONTACTED; // Move back to CONTACTED
-                $wo->stage -= 1; // Decrement stage
-                break;
-
-            case Status::CONTACTED: // Status 2
-                $wo->status = Status::PENDING; // Move back to PENDING
-                $wo->stage -= 1; // Decrement stage
-                break;
-
-            case Status::PENDING: // Status 1
-                $notify[] = ['warning', 'Cannot move back from the initial status'];
-                return back()->withNotify($notify);
-
-            default:
-                $notify[] = ['warning', 'Invalid status'];
-                return back()->withNotify($notify);
-        }
+        if ($wo->status == Status::PAID) {
+            $wo->status = Status::INVOICED;
+        } elseif ($wo->status == Status::PAST_DUE) {
+            $wo->status = Status::INVOICED;
+        } elseif ($wo->status == Status::INVOICED) {
+            $wo->status = Status::APPROVED;
+        } elseif ($wo->status == Status::APPROVED) {
+            $wo->status = null;
+        } elseif($wo->stage == 5 && $wo->status == null) {
+            $wo->stage -= 1;
+            $wo->status = Status::NEEDS_APPROVAL;
+        } elseif ($wo->status == Status::NEEDS_APPROVAL) {
+            $wo->status = null;
+        } elseif($wo->stage == 4 && $wo->status == null) {
+            $wo->stage -= 1;
+            $wo->status = Status::CHECKED_OUT;
+        } elseif ($wo->status == Status::CHECKED_OUT) {
+            $wo->status = Status::CHECKED_IN;
+        } elseif ($wo->status == Status::CHECKED_IN) {
+            $wo->status = Status::EN_ROUTE;
+        } elseif ($wo->status == Status::EN_ROUTE) {
+            $wo->status = Status::CONFIRM;
+        } elseif ($wo->status == Status::CONFIRM) {
+            $wo->status = null;
+        } elseif($wo->stage == 3 && $wo->status == null) {
+            $wo->stage -= 1;
+            $wo->status = Status::CONTACTED;
+        } elseif ($wo->status == Status::CONTACTED) {
+            $wo->status = null;
+        } elseif($wo->stage == 2 && $wo->status == null) {
+            $wo->stage -= 1;
+            $wo->status = Status::PENDING;
+        } elseif ($wo->status == Status::PENDING) {
+            $notify[] = ['warning', 'Cannot move back from the initial status'];
+            return back()->withNotify($notify);
+        } else {
+            $notify[] = ['warning', 'Invalid status'];
+            return back()->withNotify($notify);
+        }        
 
         $wo->save();
 
@@ -2641,38 +2612,35 @@ class UserController extends Controller
         return back()->withNotify($notify);
     }
 
+    public function goAtRisk($id)
+    {
+        $wo = WorkOrder::find($id);
+
+        $wo->stage = Status::STAGE_DISPATCH;
+        $wo->status = Status::AT_RISK;
+        $wo->save();
+    }
+
     public function reSchedule(Request $request, $id)
     {
-        $rules = [
-            'on_site_by' => 'required',
-            'scheduled_time' => 'required',
-        ];
+        try {
+            $schdule = WorkOrderSchedule::find($id);
 
-        $messages = [
-            'on_site_by.required' => 'Schedule date is required',
-            'scheduled_time.required' => 'Schedule time is required',
-        ];
+            $schdule->on_site_by = $request['on_site_by'] ?? $schdule->on_site_by;
+            $schdule->scheduled_time = $request['scheduled_time'] ?? $schdule->scheduled_time;
+            $schdule->h_operation = $request['h_operation'] ?? $schdule->h_operation;
+            $schdule->schedule_note = $request['schedule_note'] ?? $schdule->schedule_note;
+            $schdule->save();
 
-        $validated = $request->validate($rules, $messages);
+            $wo = WorkOrder::find($schdule->wo_id);
+            $wo->stage == Status::STAGE_DISPATCH;
+            $wo->status = null;
+            $wo->save();
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+        
 
-        $wo = WorkOrder::find($id);
-        $wo->on_site_by = Carbon::parse($validated['on_site_by'])->format('m-d-y') ?? $wo->on_site_by;
-        $wo->scheduled_time = $validated['scheduled_time'] ?? $wo->scheduled_time;
-        $wo->h_operation = $request['h_operation'] ?? $wo->h_operation;
-        $wo->status = Status::DELAYED;
-        $wo->save();
-
-        $time_log = new WorkOrderTimeLog();
-
-        $time_log->wo_id = $wo->id;
-        $time_log->type = 'schedule';
-        $time_log->text = 'Work Order Rescheduled to';
-        $time_log->log_date = Carbon::createFromFormat('m-d-y', $wo->on_site_by)->format('Y-m-d');
-        $time_log->log_time = $wo->scheduled_time;
-        $time_log->save();
-
-        $notify[] = ['success', 'Schedule time is Updated Successfully'];
-        return back()->withNotify($notify);
     }
 
     public function updatePaySheet(Request $request, $id)
@@ -3076,10 +3044,10 @@ class UserController extends Controller
     {
         $eng = Engineer::find($id);
 
-        $eng->name = $request->eng_name;
-        $eng->role = $request->role;
-        $eng->phone = $request->phone;
-        $eng->email = $request->email;
+        $eng->name = $request->name ?? $eng->name;
+        $eng->role = $request->role ?? $eng->role;
+        $eng->phone = $request->phone ?? $eng->phone;
+        $eng->email = $request->email ?? $eng->email;
 
         $eng->save();
 
@@ -3099,6 +3067,17 @@ class UserController extends Controller
         }
 
         return back()->withNotify($notify);
+    }
+
+    // Update Travel Cost
+
+    public function updateTravel(Request $request ,$id)
+    {
+        $wo = WorkOrder::find($id);
+
+        $wo->travel_cost = $request->travel_cost ?? $wo->travel_cost;
+
+        $wo->save();
     }
 
     // Field Tech
@@ -3155,5 +3134,17 @@ class UserController extends Controller
             DB::rollBack();
             Log::alert($e);
         }
+    }
+
+    public function addExpenses(Request $request, $id)
+    {
+        $otherExpense = new OtherExpense();
+        $otherExpense->wo_id = $id;
+        $otherExpense->description = $request->description;
+        $otherExpense->price = $request->price;
+        $otherExpense->quantity = $request->quantity ?? 1;
+        $otherExpense->amount = $request->price * ($request->quantity ?? 1);
+
+        $otherExpense->save();
     }
 }

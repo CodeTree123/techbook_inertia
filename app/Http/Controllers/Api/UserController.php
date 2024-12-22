@@ -311,18 +311,25 @@ class UserController extends Controller
     {
         $search = $request->query('search', '');
 
-        $sites = Technician::select('id', 'company_name','address_data', 'email', 'phone', 'rate', 'tech_type')
+        $technicians = Technician::select('id', 'company_name', 'address_data', 'email', 'phone', 'rate', 'tech_type')
             ->when($search, function ($query, $search) {
                 $query->where('company_name', 'like', "%{$search}%");
             })
             ->orderBy('company_name', 'asc')
-            ->paginate(10); // Limit results to avoid overloading data
+            ->paginate(10); // Paginate the results
 
         return response()->json([
             'success' => true,
-            'data' => $sites->items(), // Extract only items for the dropdown
-            'message' => 'Technicians fetched successfully'
+            'data' => $technicians->items(), // The current page's items
+            'pagination' => [
+                'current_page' => $technicians->currentPage(),
+                'last_page' => $technicians->lastPage(),
+                'per_page' => $technicians->perPage(),
+                'total' => $technicians->total(),
+            ],
+            'message' => 'Technicians fetched successfully',
         ]);
     }
+
 
 }
