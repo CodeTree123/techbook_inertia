@@ -678,4 +678,24 @@
        .note-editor.fullscreen {
            background-color: white !important;
        }
+
+       .stage {
+            border: 1px solid #AFE1AF !important;
+            font-weight: 700;
+        }
+
+        .stage-primary {
+            background-color: #AFE1AF !important;
+            border: #AFE1AF;
+        }
+
+        .tab {
+            border: 1px solid #9BCFF5;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .tab-primary {
+            background-color: #9BCFF5 !important;
+        }
    </style>
