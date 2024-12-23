@@ -364,7 +364,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                             type="checkbox"
                                                             value="1"
                                                             id={`checkin-${tech.tech_id}`}
-                                                            disabled={details.stage != 3 && (!details.ftech_id && details.status == 3)}
+                                                            disabled={details.stage != 3 || !details.ftech_id}
                                                             checked={
                                                                 details.check_in_out
                                                                     ?.find((check_in_out) => check_in_out.tech_id === tech.tech_id && check_in_out.check_in && !check_in_out.check_out)
@@ -603,7 +603,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                             type="checkbox"
                                                             value=""
                                                             id={`checkout-${tech.tech_id}`}
-                                                            disabled={details.stage != 3}
+                                                            disabled={details.stage != 3 || !details.ftech_id}
                                                             checked={
                                                                 !!details.check_in_out
                                                                     ?.find((checkInOut) => checkInOut.tech_id === tech.tech_id && checkInOut.check_out)

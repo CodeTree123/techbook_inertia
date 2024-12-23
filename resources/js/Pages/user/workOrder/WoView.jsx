@@ -12,6 +12,15 @@ export default function WoView({ wo }) {
   console.log(wo);
 
   const [atRisk, setAtRisk] = useState(true);
+  useEffect(() => {
+    if (!atRisk) {
+      post(route('user.wo.goAtRisk', wo.id), {
+        onSuccess: () => {
+        }
+      });
+    }
+  }, [wo.id]);
+  
   const [latestAtRiskScheduleId, setLatestAtRiskScheduleId] = useState(null);
 
   const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -52,14 +61,7 @@ export default function WoView({ wo }) {
     setLatestAtRiskScheduleId(latestRiskId);
   }, [wo?.schedules, wo?.check_in_out]);
 
-  useEffect(() => {
-    if (!atRisk) {
-      post(route('user.wo.goAtRisk', wo.id), {
-        onSuccess: () => {
-        }
-      });
-    }
-  }, [wo.id]);
+  
 
 
   const getStage = () => {
