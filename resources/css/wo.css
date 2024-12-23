@@ -9,7 +9,7 @@ textarea {
 .total-bg {
     background-color: rgba(248, 249, 250, 1);
     min-height: calc(100vh - 90px);
-    padding-top: 75px;
+    padding-top: 125px;
 }
 
 .or-div {

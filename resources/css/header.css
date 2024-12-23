@@ -1,0 +1,56 @@
+.shadow-circle {
+    border-radius: 12px;
+    /* box-shadow: 0px 0px 10px rgba(102, 160, 202, 0.5); */
+}
+
+.shadow-circle:hover {
+    box-shadow: 0px 0px 15px rgba(102, 160, 202, 0.7);
+}
+
+.dropdown-menu.show {
+    display: block;
+    padding-right: 70px;
+    /* padding-bottom: 40px; */
+    padding-left: 10px;
+}
+
+@media screen and (max-width: 767px) {
+    .logo img {
+        max-width: 100px;
+        margin-left: -200px;
+        margin-top: 30px;
+
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .border-none-vertical {
+        display: none;
+
+    }
+
+    #cssmenu .submenu-button.submenu-opened {
+        background: #7EC8E3;
+    }
+
+    #cssmenu ul ul li a {
+        color: black;
+        background: #7EC8E3;
+    }
+
+    #cssmenu .submenu-button {
+        border: none;
+    }
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (min-width: 1920px) {
+    .navbar-container {
+        display: flex;
+        justify-content: center;
+    }
+}

@@ -36,7 +36,6 @@
             display: block !important
         }
     </style>
-    @include('user.include.header')
     @inertia
     @include('user.include.footer')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
