@@ -1,7 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
 import React from 'react'
 import '../../../../css/header.css'
-const Header = () => {
+import CreateSiteModal from './Site/CreateSiteModal';
+import SearchSiteModal from './Site/SearchSiteModal';
+const Header = ({onSuccessMessage, onErrorMessage}) => {
     const { user } = usePage().props;
     return (
         <header className="fixed-top">
@@ -75,8 +77,8 @@ const Header = () => {
                                         <li>
                                             <a href="#">Site</a>
                                             <ul>
-                                                <li><a href="#">New</a></li>
-                                                <li><a href="#">Search</a></li>
+                                                <CreateSiteModal onSuccessMessage={onSuccessMessage}/>
+                                                <SearchSiteModal onSuccessMessage={onSuccessMessage}/>
                                                 <li><a href="#">Import</a></li>
                                             </ul>
                                         </li>

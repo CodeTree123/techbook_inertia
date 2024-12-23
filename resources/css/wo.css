@@ -35,12 +35,12 @@ textarea {
 }
 
 .stage {
-    border: 1px solid #AFE1AF;
+    border: 1px solid #AFE1AF !important;
     font-weight: 700;
 }
 
 .stage-primary {
-    background-color: #AFE1AF;
+    background-color: #AFE1AF !important;
     border: #AFE1AF;
 }
 
@@ -51,7 +51,7 @@ textarea {
 }
 
 .tab-primary {
-    background-color: #9BCFF5;
+    background-color: #9BCFF5 !important;
 }
 
 .tab:hover {

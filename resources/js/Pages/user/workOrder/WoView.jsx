@@ -7,7 +7,6 @@ import NextStatus from './components/NextStatus';
 import BackStatus from './components/BackStatus';
 import WorkOrderTab from './components/WorkOrderTab';
 import Reschedule from './components/Reschedule';
-import Header from '../components/Header';
 import MainLayout from '../layout/MainLayout';
 export default function WoView({ wo }) {
   console.log(wo);

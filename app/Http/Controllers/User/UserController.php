@@ -995,16 +995,15 @@ class UserController extends Controller
             'site_id.regex' => 'The site ID must be between 4 and 12 alphanumeric characters.',
             'site_id.unique' => 'The site ID has already been taken.',
         ]);
-
-
+    
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()->withErrors($validator)->onlyInput('site_id'); 
         }
-
+    
         //generating site id
         $customerId = Customer::findOrFail($request->customer_id)->customer_id;
         $id = $customerId . "-" . $request->site_id;
-
+    
         try {
             $site = new CustomerSite();
             $site->customer_id = $request->customer_id;
@@ -1018,14 +1017,15 @@ class UserController extends Controller
             $site->zipcode = $request->zipcode;
             $site->time_zone = $request->time_zone;
             $site->save();
+    
+            return redirect()->route('sites.index')->with('success', 'Site added successfully'); 
         } catch (QueryException $e) {
             $errorCode = $e->errorInfo[1];
             if ($errorCode == 1062) {
-                return response()->json(['errors' => ['site_id' => 'A site with this Id already exists.']], 422);
+                return redirect()->back()->withErrors(['site_id' => 'A site with this Id already exists.'])->onlyInput('site_id'); 
             }
-            return response()->json(['errors' => ['database' => 'An unexpected database error occurred.']], 500);
+            return redirect()->back()->withErrors(['database' => 'An unexpected database error occurred.'])->onlyInput('site_id'); 
         }
-        return response()->json(['message' => 'Site added successfully'], 200);
     }
 
     public function getSite(Request $request)

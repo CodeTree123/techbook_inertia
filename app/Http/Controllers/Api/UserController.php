@@ -369,7 +369,20 @@ class UserController extends Controller
         return response()->json([
             'w_orders' => $w_orders
         ]);
-    }    
+    } 
+    
+    public function singleSite($id)
+    {
+        $site = CustomerSite::find($id)
+    ->select('id', 'address_1', 'city', 'state', 'zipcode', 'time_zone', 'customer_id')
+    ->with('customer:id,company_name')
+    ->first(); 
 
+        return response()->json([
+            'success' => true,
+            'data' => $site,
+            'message' => 'Sites fetched successfully'
+        ]);
+    }
 
 }
