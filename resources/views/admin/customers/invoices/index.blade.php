@@ -335,24 +335,25 @@
 
                         </address>
                         <address>
-                            <span>Tax ID: 92-0586580</span>
+                            <span>Tax ID: 92-0586580 Yorkville, IL 60560</span>
                         </address>
-                        <p>Yorkville, IL 60560</p>
                     </div>
                     <div class="col-md-3 text-right">
                         <table class="table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                             <tr>
                                 <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span class="tax">Customer ID</span></span></td>
-                                <td style="padding: 10px; text-align: right;"><span style="color: #008000;">{{@$invoice->customer->customer_id}}</span></td>
+                                <td style="padding: 10px; text-align: right;"><span style="color: #000000;">{{@$invoice->customer->customer_id}}</span></td>
                             </tr>
                             <tr>
                                 <td style="padding: 10px; text-align: left;"><span class="tax" style="font-weight: bold;">Date</span></td>
-                                <td style="padding: 10px; text-align: right;"><span style="color: #ff6600;">{{$invoice->open_date}}</span></td>
+                                <td style="padding: 10px; text-align: right;"><span style="color: #000000;"><?php
+                                                                                                            echo date('m/d/Y'); // Outputs: 2024-12-24
+                                                                                                            ?></span></td>
                             </tr>
                             <tr>
                                 <td style="padding: 10px; text-align: left;"><span class="tax" style=" font-weight: bold;">Site Number</span></td>
                                 <td style="padding: 10px; text-align: right;">
-                                    <span style="color: #800080;">
+                                    <span style="color: #000000;">
                                         {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] : '' }}
                                     </span>
                                 </td>
@@ -364,15 +365,15 @@
                 <div class="row align-items-start">
                     <div class="col-md-3">
                         <h6 class="tax">Bill To:</h6>
-                        <span>{{@$invoice->customer->company_name}}<br> {{@$invoice->customer->address->address}},<br> {{@$invoice->customer->address->city}}, {{@$invoice->customer->address->state}}-{{@$invoice->customer->address->zip_code}}<br> {{@$invoice->customer->address->country}}</span>
+                        <span>{{@$invoice->customer->company_name}}<br> {{@$invoice->customer->address->address}}<br> {{@$invoice->customer->address->city}}, {{@$invoice->customer->address->state}} {{@$invoice->customer->address->zip_code}}</span>
                     </div>
                     <div class="col-md-6 text-center">
-                       
+
                     </div>
                     <div class="col-md-3 text-left">
                         <div class="margin-shop text-start" style="padding-left: 10px;">
                             <h6 class="tax">Ship To:</h6>
-                            <span>{{@$invoice->site->location}}<br>{{@$invoice->site->address_1}}<br> {{@$invoice->site->city}}, {{@$invoice->site->state}}-{{@$invoice->site->zipcode}} </span>
+                            <span>{{@$invoice->site->location}}<br>{{@$invoice->site->address_1}}<br> {{@$invoice->site->city}}, {{@$invoice->site->state}} {{@$invoice->site->zipcode}} </span>
                         </div>
                     </div>
                 </div>
