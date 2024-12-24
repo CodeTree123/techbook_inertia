@@ -89,7 +89,7 @@
     <div class="header-main shadow bg-white">
         <div class=" d-flex align-items-center ">
             <div class="logo">
-                <a href="{{ route('user.home') }}"><img src="{{asset('landingPage/images/t_logo.png')}}"></a>
+                <a href="{{ route('user.home') }}"><img src="{{asset('landingPage/images/tb_logo.jpeg')}}"></a>
             </div>
 
             <div class="border-none-vertical" style=" margin-left:50px; border-left: 4px solid #F2F2F2;"></div>
