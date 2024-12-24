@@ -112,10 +112,10 @@ class ForgotPasswordController extends Controller
         $request->validate(['code' => 'required']);
         $notify[] = ['success', 'You can change your password.'];
         $code = str_replace(' ', '', $request->code);
-        // $admin = AdminPasswordReset::where('token', $request->code)->first();
-        // if(!$admin){
-        //     $notify[] = ['success', 'did not match code'];
-        // }
+        $admin = AdminPasswordReset::where('token', $request->code)->first();
+        if(!$admin){
+            $notify[] = ['success', 'did not match code'];
+        }
         return to_route('admin.password.reset.form', $code)->withNotify($notify);
     }
 }

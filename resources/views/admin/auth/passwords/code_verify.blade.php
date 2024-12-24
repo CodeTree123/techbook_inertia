@@ -42,35 +42,4 @@
 
 @endsection
 
-@push('style')
-    <link rel="stylesheet" href="{{ asset('assets/admin/css/verification_code.css') }}">
-@endpush
 
-@push('script')
-    <script>
-        (function($){
-            'use strict';
-            $('[name=code]').on('input', function () {
-
-                $(this).val(function(i, val){
-                    if (val.length >= 6) {
-                        $('form').find('button[type=submit]').html('<i class="las la-spinner fa-spin"></i>');
-                        $('form').find('button[type=submit]').removeClass('disabled');
-                        $('form')[0].submit();
-                    }else{
-                        $('form').find('button[type=submit]').addClass('disabled');
-                    }
-                    if(val.length > 6){
-                        return val.substring(0, val.length - 1);
-                    }
-                    return val;
-                });
-
-                for (let index = $(this).val().length; index >= 0 ; index--) {
-                    $($('.boxes span')[index]).html('');
-                }
-            });
-
-        })(jQuery)
-    </script>
-@endpush

@@ -331,13 +331,10 @@
                     </div>
                     <div class="col-md-6 text-center">
                         <address>
-                            <span>1905 Marketview Dr. #226</span>
-
-                        </address>
-                        <address>
-                            <span>Tax ID: 92-0586580 Yorkville, IL 60560</span>
+                            <span>1905 Marketview Dr. #226 <br>Yorkville, IL 60560</span>
                         </address>
                     </div>
+
                     <div class="col-md-3 text-right">
                         <table class="table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                             <tr>
@@ -368,7 +365,9 @@
                         <span>{{@$invoice->customer->company_name}}<br> {{@$invoice->customer->address->address}}<br> {{@$invoice->customer->address->city}}, {{@$invoice->customer->address->state}} {{@$invoice->customer->address->zip_code}}</span>
                     </div>
                     <div class="col-md-6 text-center">
-
+                        <address>
+                            <span>Tax ID: 92-0586580 </span>
+                        </address>
                     </div>
                     <div class="col-md-3 text-left">
                         <div class="margin-shop text-start" style="padding-left: 10px;">
