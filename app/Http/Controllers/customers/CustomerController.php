@@ -121,7 +121,7 @@ class CustomerController extends Controller
     public function siteList()
     {
         if (request()->ajax()) {
-            $query = CustomerSite::with('customer:id,company_name,s_rate,e_rate');
+            $query = CustomerSite::with('customer:id,company_name,s_rate_f,e_rate_f');
 
             return DataTables::of($query)
                 ->addIndexColumn()
