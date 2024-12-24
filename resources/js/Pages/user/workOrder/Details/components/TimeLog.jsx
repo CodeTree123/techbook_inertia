@@ -43,7 +43,13 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
             }
         });
     };
-    
+
+    const formatDateToISO = (date) => {
+        const [month, day, year] = date.split('/');
+        const fullYear = `20${year}`; // Ensure the year is in full format (e.g., 2024 instead of 24)
+        return `${fullYear}-${month}-${day}`;
+      };
+
     return (
         <div className="card bg-white shadow-lg border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
@@ -164,7 +170,7 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
                                 )}
                                 {
                                     editingRow == index &&
-                                    <input type="time" defaultValue={check.check_in} className="mb-2" name="check_in" onChange={(e)=>setData({...data,check_in: e.target.value})} />
+                                    <input type="time" defaultValue={check.check_in} className="mb-2" name="check_in" onChange={(e) => setData({ ...data, check_in: e.target.value })} />
                                 }
 
                                 <p>
@@ -174,10 +180,10 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
                                     editingRow == index &&
                                     <input
                                         type="date"
-                                        defaultValue={new Date(check.date).toISOString().split("T")[0]}
+                                        defaultValue={formatDateToISO(check.date)}
                                         className="mb-2"
                                         name="date"
-                                        onChange={(e)=>setData({...data,date: e.target.value})}
+                                        onChange={(e) => setData({ ...data, date: e.target.value })}
                                     />
                                 }
                             </div>
@@ -203,35 +209,56 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
                                 )}
                                 {
                                     editingRow == index &&
-                                    <input type="time" defaultValue={check.check_out || ""} className="" name="check_out" onChange={(e)=>setData({...data,check_out: e.target.value})} />
+                                    <input type="time" defaultValue={check.check_out || ""} className="" name="check_out" onChange={(e) => setData({ ...data, check_out: e.target.value })} />
                                 }
                             </div>
                             <div className="col-12 border-top pt-2 d-flex gap-2">
                                 by{" "}
-                                {check.engineer?.avatar ? (
-                                    <img
-                                        src={`${window.location.protocol}//${window.location.host}/${check.engineer.avatar}`}
-                                        style={{
-                                            width: "30px",
-                                            height: "30px",
-                                            borderRadius: "50%",
-                                            objectFit: "cover",
-                                        }}
-                                        alt=""
-                                    />
-                                ) : (
-                                    <div
-                                        className="bg-primary d-flex justify-content-center align-items-center text-white"
-                                        style={{
-                                            width: "30px",
-                                            height: "30px",
-                                            borderRadius: "50%",
-                                        }}
-                                    >
-                                        {check.engineer?.name.charAt(0)}
-                                    </div>
-                                )}
-                                {check.engineer?.name}
+                                {
+                                    check?.tech_id != null ?
+                                        <div className='d-flex align-items-center gap-2'>
+                                            {check.engineer?.avatar ? (
+                                                <img
+                                                    src={`${window.location.protocol}//${window.location.host}/${check.engineer.avatar}`}
+                                                    style={{
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        borderRadius: "50%",
+                                                        objectFit: "cover",
+                                                    }}
+                                                    alt=""
+                                                />
+                                            ) : (
+                                                <div
+                                                    className="bg-primary d-flex justify-content-center align-items-center text-white"
+                                                    style={{
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        borderRadius: "50%",
+                                                    }}
+                                                >
+                                                    {check.engineer?.name.charAt(0)}
+                                                </div>
+                                            )}
+                                            {check.engineer?.name}
+                                        </div> :
+                                        <div className='d-flex align-items-center gap-2'>
+                                            {details.ftech_id && (
+                                                <div
+                                                    className="bg-primary d-flex justify-content-center align-items-center text-white"
+                                                    style={{
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        borderRadius: "50%",
+                                                    }}
+                                                >
+                                                    {details?.technician?.company_name.charAt(0)}
+                                                </div>
+                                            )}
+                                            {details?.technician?.company_name}
+                                        </div>
+                                }
+
                             </div>
                         </form>
                     );

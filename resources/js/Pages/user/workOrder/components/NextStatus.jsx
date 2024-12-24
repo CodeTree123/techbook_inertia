@@ -10,7 +10,7 @@ const NextStatus = ({id, onSuccessMessage, onErrorMessage, status, is_ftech}) =>
     const submit = (e) => {
         e.preventDefault();
 
-        if(is_ftech == null && status == 3){
+        if(is_ftech == null && status == 2){
             onErrorMessage('Assign a technician first!');
         }else{
             post(route('user.wo.nextStatus', id), {

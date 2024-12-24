@@ -11,55 +11,60 @@ import MainLayout from '../layout/MainLayout';
 export default function WoView({ wo }) {
   console.log(wo);
 
-  const [atRisk, setAtRisk] = useState(true);
+  const [atRisk, setAtRisk] = useState(false);
   const [latestAtRiskScheduleId, setLatestAtRiskScheduleId] = useState(null);
 
   const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
   });
 
   useEffect(() => {
-    let latestRiskId = null; // To track the latest at-risk schedule ID
-
-    const isValidSchedule = wo?.schedules?.every((schedule) => {
-      const scheduleDate = new Date(schedule.on_site_by);
-      const scheduleTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`);
-      const now = new Date();
-
-      const hasCheckInOutBeforeTime = wo?.check_in_out?.some((checkInOut) => {
-        const checkInDate = new Date(checkInOut.date);
-        const checkInTime = new Date(`${checkInOut.date}T${checkInOut.check_in}`);
-        return (
-          checkInDate.toDateString() === scheduleDate.toDateString() &&
-          checkInTime <= scheduleTime
-        );
-      });
-
-      const isPastSchedule = scheduleTime <= now;
-
-      const isValid = hasCheckInOutBeforeTime || !isPastSchedule;
-
-      if (!isValid) {
-        latestRiskId = schedule.id;
-      }
-
-      return isValid;
-    });
-
-    if (latestRiskId) {
-      setAtRisk(isValidSchedule);
-    }
-
-    setLatestAtRiskScheduleId(latestRiskId);
-  }, [wo?.schedules, wo?.check_in_out]);
-
-  useEffect(() => {
-    if (!atRisk) {
+    if (atRisk) {
       post(route('user.wo.goAtRisk', wo.id), {
         onSuccess: () => {
         }
       });
+    }else{
+      post(route('user.wo.goAtEase', wo.id), {
+        onSuccess: () => {
+        }
+      });
     }
-  }, [wo.id]);
+  }, [wo.id, atRisk]);
+
+  useEffect(() => {
+    let latestRiskId = null;
+  
+    const isValidSchedule = wo?.schedules?.every((schedule) => {
+      const scheduleDate = new Date(schedule.on_site_by);
+      const scheduleDateTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`); 
+      console.log(scheduleDateTime);
+      
+      const now = new Date();
+      console.log(now);
+      // If schedule is in the future, it's valid
+      if (scheduleDateTime > now) { 
+        return true; 
+      }
+  
+      // If schedule is in the past, check for valid check-in
+      const hasCheckInOutBeforeTime = wo?.check_in_out?.some((checkInOut) => {
+        const checkInDateTime = new Date(`${checkInOut.date}T${checkInOut.check_in}`);
+        return checkInDateTime <= scheduleDateTime; 
+      });
+  
+      if (!hasCheckInOutBeforeTime) {
+        latestRiskId = schedule.id;
+      }
+  
+      return hasCheckInOutBeforeTime; 
+    });
+  
+    setAtRisk(!isValidSchedule);
+    setLatestAtRiskScheduleId(latestRiskId);
+  }, [wo?.schedules, wo?.check_in_out]);
+  
+  
+  
 
 
   const getStage = () => {

@@ -8,13 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class TechDeletionReason extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'wo_id',
-        'tech_id',
-        'reason',
-    ];
-    public function technician()
+    protected $guarded = [];
+
+    public function deletionTechnician()
     {
-        return $this->belongsTo(Technician::class, 'tech_id');
+        return $this->hasOne(Technician::class, 'tech_id');
     }
 }

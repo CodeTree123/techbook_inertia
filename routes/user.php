@@ -167,6 +167,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('update-schedule-time/{id}', 'updateSchedule')->name('wo.updateSchedule');
                 Route::delete('delete-schedule-time/{id}', 'deleteSchedule')->name('wo.deleteSchedule');
                 Route::post('go-at-risk/{id}', 'goAtRisk')->name('wo.goAtRisk');
+                Route::post('go-at-ease/{id}', 'goAtEase')->name('wo.goAtEase');
                 Route::post('reschedule-time/{id}', 'reSchedule')->name('wo.reSchedule');
 
                 Route::post('create-wo-contact/{id}', 'createContact')->name('wo.createContact');
@@ -177,8 +178,8 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('upload-doc-technician/{id}', 'uploadDocForTech')->name('wo.uploadDocForTech');
                 Route::delete('delete-doc-technician/{id}', 'deleteDocForTech')->name('wo.deleteDocForTech');
 
-                Route::post('checkin/{id}/{tech_id}', 'makeCheckin')->name('wo.checkin');
-                Route::post('checkout/{id}/{tech_id}', 'makeCheckout')->name('wo.checkout');
+                Route::post('checkin/{id}/{tech_id?}', 'makeCheckin')->name('wo.checkin');
+                Route::post('checkout/{id}/{tech_id?}', 'makeCheckout')->name('wo.checkout');
 
                 Route::post('updatePaysheet/{id}', 'updatePaySheet')->name('wo.updatePaySheet');
 
