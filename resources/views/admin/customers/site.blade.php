@@ -215,12 +215,12 @@
                     },
 
                     {
-                        data: 'customer.s_rate',
-                        name: 'customer.s_rate'
+                        data: 'customer.s_rate_f',
+                        name: 'customer.s_rate_f'
                     },
                     {
-                        data: 'customer.e_rate',
-                        name: 'customer.e_rate'
+                        data: 'customer.e_rate_f',
+                        name: 'customer.e_rate_f'
                     },
                     {
                         data: 'address_1',
