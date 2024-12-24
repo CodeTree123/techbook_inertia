@@ -105,6 +105,13 @@ const Task = ({ id, details, onSuccessMessage }) => {
         document.getElementById(`checkinForm-${techId}`).submit();
     };
 
+    const handleAddDefaultReasonClick = () => {
+        const textarea = document.getElementById(`reason`);
+        if (textarea) {
+            textarea.style.display = textarea.style.display === 'none' || textarea.style.display === '' ? 'block' : 'none';
+        }
+    };
+
     const handleAddReasonClick = (techId) => {
         const textarea = document.getElementById(`reason-${techId}`);
         if (textarea) {
@@ -157,11 +164,71 @@ const Task = ({ id, details, onSuccessMessage }) => {
                     {(provided) => (
                         <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow-lg border-0 mb-4">
                             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-                                <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for '+details?.technician?.company_name}</h3>
+                                <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for ' + details?.technician?.company_name}</h3>
                                 <TaskModal id={id} details={details} onSuccessMessage={onSuccessMessage} />
 
                             </div>
                             <div className="card-body bg-white">
+                                {
+                                    details?.technician?.tech_type == 'individual' &&
+                                    <div className="form-check px-4 py-3 mb-4 d-flex justify-content-between" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }}>
+                                        <div className="w-100">
+                                            <form className="row">
+
+                                                <label className="form-check-label col-10">
+                                                    <input
+                                                        onChange={(e) => makeCheckin(e, null)}
+                                                        className="form-check-input ms-0 me-2"
+                                                        type="checkbox"
+                                                        value="1"
+                                                        disabled={details.stage !== 3 || !details.ftech_id}
+                                                        checked={
+                                                            details.check_in_out?.some((check_in_out) => check_in_out.check_in && !check_in_out.check_out) || false
+                                                        }
+                                                    />
+                                                    <div>
+                                                        {(() => {
+                                                            const lastCheckInOut = details?.check_in_out?.slice(-1)[0];
+
+                                                            if (lastCheckInOut?.check_in && !lastCheckInOut?.check_out) {
+                                                                return 'Checked in';
+                                                            } else if (lastCheckInOut?.check_out) {
+                                                                return 'Check in again';
+                                                            } else {
+                                                                return 'Check in';
+                                                            }
+                                                        })()}
+
+                                                        <p className="mb-0 nrml-txt" style={{ fontWeight: 300, fontSize: '12px', color: '#808080' }}>
+                                                            Check in at {currentTime} {timezone}
+                                                        </p>
+                                                    </div>
+                                                </label>
+
+                                                {details.check_in_out?.length > 0 &&
+                                                    (details.check_in_out[details.check_in_out.length - 1].check_out ||
+                                                        !details.check_in_out[details.check_in_out.length - 1].check_in) && (
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-dark col-2 addReasonButton"
+                                                            onClick={() => handleAddDefaultReasonClick()}
+                                                        >
+                                                            + Add reason
+                                                        </button>
+                                                    )}
+
+                                                <textarea
+                                                    id='reason'
+                                                    name="reason"
+                                                    className="col-12 mt-3 reasonTextarea"
+                                                    placeholder="Enter Reason"
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => setData({ checkin_note: e.target.value })}
+                                                />
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
 
                                 {
                                     provided.placeholder &&
@@ -336,6 +403,49 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                     ))
                                 }
 
+                                {
+                                    details?.technician?.tech_type == 'individual' &&
+                                    <div
+                                        className="form-check px-4 py-3 mb-4 d-flex justify-content-between"
+                                        style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }}
+                                    >
+                                        <div className="w-100">
+                                            <form
+                                                className="row"
+                                            >
+
+                                                <label className="form-check-label col-10">
+                                                    <input
+                                                        onChange={(e) => makeCheckout(e, null)}
+                                                        className="form-check-input ms-0 me-2"
+                                                        type="checkbox"
+                                                        value=""
+                                                        disabled={details.stage != 3}
+                                                        checked={!!details.check_in_out?.slice(-1)[0]?.check_out}
+                                                    />
+                                                    <div>
+                                                        {(() => {
+                                                            const lastCheckInOut = details?.check_in_out?.slice(-1)[0];
+
+                                                            if (lastCheckInOut?.check_out) {
+                                                                return 'Checked out';
+                                                            } else {
+                                                                return 'Check out';
+                                                            }
+                                                        })()}
+
+                                                        <p
+                                                            className="mb-0 nrml-txt"
+                                                            style={{ fontWeight: 300, fontSize: '12px', color: '#808080' }}
+                                                        >
+                                                            Check out at {currentTime} {timezone}
+                                                        </p>
+                                                    </div>
+                                                </label>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     )}
@@ -364,24 +474,40 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                             type="checkbox"
                                                             value="1"
                                                             id={`checkin-${tech.tech_id}`}
-                                                            disabled={details.stage != 3 && (!details.ftech_id && details.status == 3)}
+                                                            disabled={details.stage != 3 || !details.ftech_id}
                                                             checked={
-                                                                details.check_in_out
-                                                                    ?.find((check_in_out) => check_in_out.tech_id === tech.tech_id && check_in_out.check_in && !check_in_out.check_out)
-                                                                    ? true
-                                                                    : false
+                                                                details.check_in_out?.some(
+                                                                    (checkInOut) =>
+                                                                        checkInOut.tech_id === tech.tech_id &&
+                                                                        checkInOut.check_in &&
+                                                                        !checkInOut.check_out
+                                                                )
                                                             }
+
                                                         />
                                                         <div>
-                                                            {details.check_in_out?.find((checkInOut) => checkInOut.tech_id === tech.tech_id) ? (
-                                                                details.check_in_out.find((checkInOut) => checkInOut.tech_id === tech.tech_id)?.check_out ? (
+                                                            {details.check_in_out?.length > 0 ? (
+                                                                details.check_in_out
+                                                                    .slice()
+                                                                    .reverse()
+                                                                    .find((checkInOut) => checkInOut.tech_id === tech.tech_id)?.check_in &&
+                                                                    !details.check_in_out
+                                                                        .slice()
+                                                                        .reverse()
+                                                                        .find((checkInOut) => checkInOut.tech_id === tech.tech_id)?.check_out ? (
+                                                                    'Checked in'
+                                                                ) : details.check_in_out
+                                                                    .slice()
+                                                                    .reverse()
+                                                                    .find((checkInOut) => checkInOut.tech_id === tech.tech_id)?.check_out ? (
                                                                     'Check in again'
                                                                 ) : (
-                                                                    'Checked in'
+                                                                    'Check in'
                                                                 )
                                                             ) : (
                                                                 'Check in'
                                                             )}
+
 
                                                             <p className="mb-0 nrml-txt" style={{ fontWeight: 300, fontSize: '12px', color: '#808080' }}>
                                                                 Check in at {currentTime} {timezone}
@@ -408,7 +534,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                         className="col-12 mt-3 reasonTextarea"
                                                         placeholder="Enter Reason"
                                                         style={{ display: 'none' }}
-                                                        onChange={(e)=>setData({checkin_note: e.target.value})}
+                                                        onChange={(e) => setData({ checkin_note: e.target.value })}
                                                     />
                                                 </form>
                                             </div>
@@ -592,31 +718,36 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                             <div className="w-100">
                                                 <form
                                                     id={`checkoutForm-${tech.tech_id}`}
-                                                    onSubmit={(e)=>makeCheckout(e,tech.tech_id)}
+                                                    onSubmit={(e) => makeCheckout(e, tech.tech_id)}
                                                     className="row"
                                                 >
 
                                                     <label className="form-check-label col-10" htmlFor={`checkout-${tech.tech_id}`}>
                                                         <input
-                                                            onChange={(e)=>makeCheckout(e,tech.tech_id)}
+                                                            onChange={(e) => makeCheckout(e, tech.tech_id)}
                                                             className="form-check-input ms-0 me-2"
                                                             type="checkbox"
                                                             value=""
                                                             id={`checkout-${tech.tech_id}`}
                                                             disabled={details.stage != 3}
                                                             checked={
-                                                                !!details.check_in_out
-                                                                    ?.find((checkInOut) => checkInOut.tech_id === tech.tech_id && checkInOut.check_out)
+                                                                details.check_in_out
+                                                                    .filter((checkInOut) => checkInOut.tech_id === tech.tech_id)
+                                                                    .slice(-1)[0]?.check_out
                                                             }
+
+
                                                         />
                                                         <div>
-                                                            {details.check_in_out?.find(
-                                                                (checkInOut) => checkInOut.tech_id === tech.tech_id && checkInOut.check_out
-                                                            ) ? (
-                                                                'Checked out'
+                                                            {details.check_in_out?.length > 0 &&
+                                                                details.check_in_out
+                                                                    .filter((checkInOut) => checkInOut.tech_id === tech.tech_id)
+                                                                    .slice(-1)[0]?.check_out ? (
+                                                                "Checked out"
                                                             ) : (
-                                                                'Check out'
+                                                                "Check out"
                                                             )}
+
                                                             <p
                                                                 className="mb-0 nrml-txt"
                                                                 style={{ fontWeight: 300, fontSize: '12px', color: '#808080' }}

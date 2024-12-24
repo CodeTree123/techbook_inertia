@@ -2056,7 +2056,7 @@ class UserController extends Controller
             'techProvidedParts',
             'schedules',
             'assignedTech.engineer',
-            'techRemoveReasons.technician',
+            'techRemoveReasons',
             'otherExpenses'
         ])->find($id);
     
@@ -2489,7 +2489,7 @@ class UserController extends Controller
         }
     }
 
-    public function makeCheckin(Request $request, $id, $techId)
+    public function makeCheckin(Request $request, $id, $techId = null)
     {
         $checkInOuts = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)->get();
         $wo = WorkOrder::find($id);
@@ -2548,7 +2548,7 @@ class UserController extends Controller
     }
 
 
-    public function makeCheckout(Request $request, $id, $techId)
+    public function makeCheckout(Request $request, $id, $techId = null)
     {
         $checkInOut = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)
             ->orderBy('id', 'desc')
@@ -2560,8 +2560,8 @@ class UserController extends Controller
             return back()->withNotify($notify);
         }
 
-        $wo->status = 9;
-        $wo->save();
+        // $wo->status = 9;
+        // $wo->save();
 
         if (!$checkInOut) {
             $notify[] = ['error', 'Technician is not checked in yet'];
@@ -2622,6 +2622,14 @@ class UserController extends Controller
 
         $wo->stage = Status::STAGE_DISPATCH;
         $wo->status = Status::AT_RISK;
+        $wo->save();
+    }
+
+    public function goAtEase($id)
+    {
+        $wo = WorkOrder::find($id);
+
+        $wo->status = null;
         $wo->save();
     }
 
@@ -3105,8 +3113,6 @@ class UserController extends Controller
 
     public function removeTech(Request $request, $id, $techId)
     {
-        DB::beginTransaction();
-    
         try {
             $wo = WorkOrder::find($id);
             if (!$wo) {
@@ -3122,20 +3128,17 @@ class UserController extends Controller
                 $tech->save();
             }
     
-            if ($request->reason) {
-                TechDeletionReason::create([
-                    'wo_id' => $id,
-                    'tech_id' => $techId,
-                    'reason' => $request->reason,
-                ]);
-            }
+            // if ($request->has('reason')) {
+            //     TechDeletionReason::create([
+            //         'wo_id' => $id,
+            //         'tech_id' => $techId,
+            //         'reason' => $request->reason,
+            //     ]);
+            // }
     
             AssignedEngineer::where('wo_id', $id)->delete();
     
-            DB::commit();
-    
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::alert($e);
         }
     }
