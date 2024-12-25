@@ -2012,14 +2012,17 @@ class UserController extends Controller
         $notify[] = ['success', 'delete success'];
         return back()->withNotify($notify);
     }
+
     public function wOStageChange($id, $value)
     {
         $w = WorkOrder::find($id);
         $w->stage = $value;
         $w->save();
         $notify[] = ['success', 'Stage Update Success'];
+    
         return back()->withNotify($notify);
     }
+    
 
 
     // New functions
@@ -2110,6 +2113,11 @@ class UserController extends Controller
     public function nextStatus($id)
     {
         $wo = WorkOrder::find($id);
+        if ($wo->status == Status::CHECKED_OUT) {
+            $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
+            $invoiceDate->date = \Carbon\Carbon::now();
+            $invoiceDate->save();
+        }
 
         if (!$wo) {
             $notify[] = ['error', 'Work Order not found'];

@@ -408,7 +408,9 @@
                             @elseif($invoice->order_type == 3)
                             <td><input type="text" style="border:none" value="Install"></td>
                             @endif
-                            <td><input type="text" value="{{ @$invoice->updated_at->format('m/d/Y') }}" style="border:none"></td>
+                            <td><input type="text" value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '' }}"
+
+                            style="border:none"></td>
                             <td><input type="text" value="{{@$invoice->p_o}}" style="border:none"></td>
                             <td><input type="text" value="{{@$invoice->customer->billing_term}}" style="border:none"></td>
                             <td>{{@$invoice->order_id}}</td>
