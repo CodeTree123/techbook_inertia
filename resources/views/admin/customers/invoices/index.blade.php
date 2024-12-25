@@ -589,7 +589,7 @@
                         <table class="price-box table table-hover" style="width: 500px;">
                             <tbody>
                                 <tr class="tax">
-                                    <td>Sub-total</td>
+                                    <td><div class="d-flex align-items-center" style="height: 40px">Sub-total</div></td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>
@@ -599,7 +599,9 @@
                                     </td>
                                 </tr>
                                 <tr class="tax">
-                                    <td>Sales Tax</td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="height: 40px">Sales Tax</div>
+                                    </td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>
@@ -609,7 +611,7 @@
                                     </td>
                                 </tr>
                                 <tr class="shippingField">
-                                    <td>Shipping & Handling</td>
+                                    <td><div class="d-flex align-items-center" style="height: 40px">Shipping & Handling</div></td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>
@@ -619,7 +621,7 @@
                                     </td>
                                 </tr>
                                 <tr class="tax">
-                                    <td>Credit</td>
+                                    <td><div class="d-flex align-items-center" style="height: 40px">Credit</div></td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto d-flex align-items-center justify-content-end">
                                             <span class="p-2">$</span>
@@ -632,7 +634,7 @@
                                     </td>
                                 </tr>
                                 <tr class="tax">
-                                    <td>Balance Due</td>
+                                    <td><div class="d-flex align-items-center" style="height: 40px">Balance Due</div></td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>
