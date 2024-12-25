@@ -2113,7 +2113,7 @@ class UserController extends Controller
     public function nextStatus($id)
     {
         $wo = WorkOrder::find($id);
-        if ($wo->status == Status::CHECKED_OUT) {
+        if ($wo->stage == Status::STAGE_CLOSED) {
             $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
             $invoiceDate->date = \Carbon\Carbon::now();
             $invoiceDate->save();

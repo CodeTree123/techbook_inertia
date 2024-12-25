@@ -157,8 +157,8 @@ const Overview = ({ id, details, onSuccessMessage }) => {
                                 <td>
                                     {
                                         !editable ?
-                                            <p className="mb-0 fw-bold">Dilshan Ahmed</p> :
-                                            <input className="mb-0 fw-bold p-0" type="text" defaultValue="Dilshan Ahmed" name="team" />
+                                            <p className="mb-0 fw-bold"></p> :
+                                            <input className="mb-0 fw-bold p-0" type="text" defaultValue={''} name="team" />
                                     }
 
                                 </td>

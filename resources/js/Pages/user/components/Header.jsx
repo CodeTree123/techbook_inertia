@@ -3,6 +3,7 @@ import React from 'react'
 import '../../../../css/header.css'
 import CreateSiteModal from './Site/CreateSiteModal';
 import SearchSiteModal from './Site/SearchSiteModal';
+
 const Header = ({onSuccessMessage, onErrorMessage}) => {
     const { user } = usePage().props;
     return (
@@ -49,7 +50,7 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                 <div className="d-flex align-items-center">
                     <div className="logo">
                         <Link href="/user/dashboard">
-                            <img src="/landingPage/images/t_logo.png" alt="Logo" />
+                            <img src="/landingPage/images/tb_logo.jpeg" alt="Logo" />
                         </Link>
                     </div>
                     <div className="border-none-vertical" style={{ marginLeft: "50px", borderLeft: "4px solid #F2F2F2" }}></div>
