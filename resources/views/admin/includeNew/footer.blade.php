@@ -1,4 +1,4 @@
-<footer class="main-footer text-center">
+<footer class="main-footer text-center no-print">
     <strong>2014-<?php echo date('Y'); ?> <a href="#">Tech Yeah</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">

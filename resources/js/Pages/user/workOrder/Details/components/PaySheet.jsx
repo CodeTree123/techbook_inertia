@@ -11,7 +11,7 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
 
     const otherExpensesTotal = details?.other_expenses?.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0) || 0;
 
-    const totalCost = (rate * totalHours) + techPartsTotal + parseFloat(details.travel_cost) + otherExpensesTotal;
+    const totalCost = (rate * totalHours) + techPartsTotal + parseFloat(details.travel_cost ?? 0) + otherExpensesTotal;
 
     const [editable, setEditable] = useState(false);
 

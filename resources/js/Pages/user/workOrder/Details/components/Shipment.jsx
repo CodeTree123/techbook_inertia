@@ -48,7 +48,7 @@ const Shipment = ({ id, details, onSuccessMessage }) => {
                                 <input type="text" name="from" onChange={(e)=>setData({ ...data, shipment_from: e.target.value})} placeholder="Enter Shipment From" className="mb-2 border-bottom w-100" />
                                 <label htmlFor className="mt-2">To</label>
                                 <input type="text" name="to" onChange={(e)=>setData({ ...data, shipment_to: e.target.value})} placeholder="Enter Shipment To" className="mb-2 border-bottom w-100" />
-                                <label htmlFor className="mt-2">Date</label>
+                                <label htmlFor className="mt-2">Issue Date</label>
                                 <input type="date" name="date" onChange={(e)=>setData({ ...data, created_at: e.target.value})} placeholder="Shipment Date" className="mb-2 border-bottom w-100" />
                             </div>
                         </div>
