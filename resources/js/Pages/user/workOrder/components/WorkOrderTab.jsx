@@ -34,7 +34,7 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                 <Details id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>
             <TabPanel>
-                <FieldTech id={id} details={details} onSuccessMessage={onSuccessMessage}/>
+                <FieldTech id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>
             <TabPanel>Content for Tab 3</TabPanel>
             <TabPanel>Content for Tab 4</TabPanel>

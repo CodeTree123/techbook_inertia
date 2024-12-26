@@ -37,10 +37,8 @@ export default function WoView({ wo }) {
     const isValidSchedule = wo?.schedules?.every((schedule) => {
       const scheduleDate = new Date(schedule.on_site_by);
       const scheduleDateTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`); 
-      console.log(scheduleDateTime);
       
       const now = new Date();
-      console.log(now);
       // If schedule is in the future, it's valid
       if (scheduleDateTime > now) { 
         return true; 
