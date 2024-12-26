@@ -8,6 +8,7 @@ import BackStatus from './components/BackStatus';
 import WorkOrderTab from './components/WorkOrderTab';
 import Reschedule from './components/Reschedule';
 import MainLayout from '../layout/MainLayout';
+import { DateTime } from 'luxon';
 export default function WoView({ wo }) {
   console.log(wo);
 
@@ -20,11 +21,13 @@ export default function WoView({ wo }) {
   useEffect(() => {
     if (atRisk) {
       post(route('user.wo.goAtRisk', wo.id), {
+        preserveScroll: true,
         onSuccess: () => {
         }
       });
-    }else{
+    } else {
       post(route('user.wo.goAtEase', wo.id), {
+        preserveScroll: true,
         onSuccess: () => {
         }
       });
@@ -32,37 +35,112 @@ export default function WoView({ wo }) {
   }, [wo.id, atRisk]);
 
   useEffect(() => {
-    let latestRiskId = null;
-  
-    const isValidSchedule = wo?.schedules?.every((schedule) => {
-      const scheduleDate = new Date(schedule.on_site_by);
-      const scheduleDateTime = new Date(`${schedule.on_site_by}T${schedule.scheduled_time}`); 
-      
-      const now = new Date();
-      // If schedule is in the future, it's valid
-      if (scheduleDateTime > now) { 
-        return true; 
+    const timezoneMap = {
+      'PT': 'America/Los_Angeles',
+      'MT': 'America/Denver',
+      'CT': 'America/Chicago',
+      'ET': 'America/New_York',
+      'AKT': 'America/Anchorage',
+      'HST': 'Pacific/Honolulu',
+    };
+
+    const selectedTimezone = timezoneMap[wo?.site?.time_zone]; // Get the selected timezone
+
+    const now = DateTime.now().setZone(selectedTimezone);
+
+    if (wo.schedule_type === 'single') {
+      const schedule = wo?.schedules?.[0] || null;
+      if (schedule) {
+        setLatestAtRiskScheduleId(schedule.id); // Store the latest schedule ID
+
+        // Convert the schedule date and time to Luxon DateTime in the selected time zone
+        const scheduleDateTime = `${schedule.on_site_by}T${schedule.scheduled_time}`; // Format the date and time string
+        const scheduleLuxonDateTime = DateTime.fromISO(scheduleDateTime, { zone: 'utc' }) // Parse as UTC
+          .setZone(selectedTimezone, { keepLocalTime: true });
+
+        // Compare the two times in the selected time zone
+        if (Array.isArray(wo?.check_in_out) && wo?.check_in_out.length > 0) {
+          setAtRisk(false); // If check-in/out exists, set atRisk to false
+        } else if (scheduleLuxonDateTime <= now) {
+          setAtRisk(true); // If the schedule time has passed or is equal to current time, set atRisk to true
+        } else {
+          setAtRisk(false)
+        }
       }
-  
-      // If schedule is in the past, check for valid check-in
-      const hasCheckInOutBeforeTime = wo?.check_in_out?.some((checkInOut) => {
-        const checkInDateTime = new Date(`${checkInOut.date}T${checkInOut.check_in}`);
-        return checkInDateTime <= scheduleDateTime; 
+    } else {
+      let latestRiskId = null; // Track the ID of the latest at-risk schedule
+      let lastCheckInTime = null; // Track the most recent valid check-in time
+
+      const isValidSchedule = wo?.schedules?.every((schedule, index, schedules) => {
+        const scheduleDateTime = `${schedule.on_site_by}T${schedule.scheduled_time}`;
+        const scheduleLuxonDateTime = DateTime.fromISO(scheduleDateTime, { zone: 'utc' })
+          .setZone(selectedTimezone, { keepLocalTime: true });
+
+        // Check if the schedule is in the future
+        if (scheduleLuxonDateTime > now) {
+          return true; // Future schedules are always valid
+        }
+
+        // For the first schedule or if there's no previous schedule, we don't check the previous schedule time
+        const previousScheduleTime = index > 0 ? schedules[index - 1].scheduled_time : null;
+
+        if (previousScheduleTime) {
+          const previousScheduleDateTime = `${schedule.on_site_by}T${previousScheduleTime}`;
+          const previousScheduleLuxonDateTime = DateTime.fromISO(previousScheduleDateTime, { zone: 'utc' })
+            .setZone(selectedTimezone, { keepLocalTime: true });
+
+          // Check if the check-in falls between the previous schedule's time and the current one
+          const hasValidCheckIn = wo?.check_in_out?.some((checkInOut) => {
+            const rawDate = checkInOut.date; // "12/23/24"
+            const rawTime = checkInOut.check_in; // "06:12:18"
+
+            // Parse date string into Luxon format (MM/DD/YY to YYYY-MM-DD)
+            const parsedDate = DateTime.fromFormat(rawDate, 'MM/dd/yy');
+            if (!parsedDate.isValid) {
+              console.error('Invalid Date:', parsedDate.invalidExplanation);
+              return false;
+            }
+
+            // Combine parsed date and raw time into ISO format
+            const isoString = `${parsedDate.toISODate()}T${rawTime}`;
+            console.log('ISO String:', isoString);
+
+            // Parse combined string with Luxon
+            const checkInLuxonDateTime = DateTime.fromISO(isoString, { zone: 'utc' });
+            if (!checkInLuxonDateTime.isValid) {
+              console.error('Invalid Check-In DateTime:', checkInLuxonDateTime.invalidExplanation);
+              return false;
+            }
+
+            // Convert to selected timezone
+            const adjustedCheckInTime = checkInLuxonDateTime.setZone(selectedTimezone, { keepLocalTime: true });
+            console.log('Adjusted Check-In Time:', adjustedCheckInTime.toISO());
+
+            // Ensure the check-in falls within the time window
+            return adjustedCheckInTime > previousScheduleLuxonDateTime && adjustedCheckInTime <= scheduleLuxonDateTime;
+          });
+
+          if (!hasValidCheckIn) {
+            latestRiskId = schedule.id; // Track the latest at-risk schedule
+          }
+
+          return hasValidCheckIn; // A schedule is valid only if there's a valid check-in
+        }
+
+        return true; // If no previous schedule, continue without validation for the first schedule
       });
-  
-      if (!hasCheckInOutBeforeTime) {
-        latestRiskId = schedule.id;
-      }
-  
-      return hasCheckInOutBeforeTime; 
-    });
-  
-    setAtRisk(!isValidSchedule);
-    setLatestAtRiskScheduleId(latestRiskId);
-  }, [wo?.schedules, wo?.check_in_out]);
-  
-  
-  
+
+      // Update the state based on the validation results
+      setAtRisk(!isValidSchedule);
+      setLatestAtRiskScheduleId(latestRiskId);
+
+    }
+
+  }, [wo.schedule_type, wo?.schedules, wo?.check_in_out, setAtRisk, setLatestAtRiskScheduleId]);
+
+  console.log(atRisk);
+
+
 
 
   const getStage = () => {

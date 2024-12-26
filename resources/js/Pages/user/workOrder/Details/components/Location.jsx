@@ -46,8 +46,22 @@ const Location = ({ id, details, onSuccessMessage }) => {
         });
     };
 
+    let latitude = 34.9776679; // Default latitude
+    let longitude = -120.4379281; // Default longitude
+    const coordinates = details?.site?.co_ordinates
+    if (coordinates) {
+        const cleanedCoordinates = coordinates
+            .replace(/POINT\(|\)/g, '') // Remove "POINT(" and ")"
+            .split(' '); // Split by space
+
+        latitude = cleanedCoordinates[0] || latitude; // Fallback to default if undefined
+        longitude = cleanedCoordinates[1] || longitude; // Fallback to default if undefined
+    }
+
+    const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyCZQq1GlPJb8PrwOkCiihS-tAq0qS-O1j8&q=${latitude},${longitude}`;
+
     return (
-        <form onSubmit={(e)=>submit(e)} className="card bg-white shadow-lg border-0 mb-4">
+        <form onSubmit={(e) => submit(e)} className="card bg-white shadow-lg border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Location</h3>
                 <div className="d-flex action-group gap-2">
@@ -95,15 +109,14 @@ const Location = ({ id, details, onSuccessMessage }) => {
                     {details?.site?.address_1},</p>
                 <p className="mb-0">{details?.site?.city}, {details?.site?.state}, </p>
                 <p className="mb-0">{details?.site?.zipcode}</p>
-                {/* 
-                                  <iframe
-                                      src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCZQq1GlPJb8PrwOkCiihS-tAq0qS-O1j8&q=35.0399322,-85.3071289"
-                                      width="100%"
-                                      height="450"
-                                      style="border:0;"
-                                      allowfullscreen=""
-                                      loading="lazy">
-                                  </iframe> */}
+                <iframe
+                    src={mapUrl}
+                    width="100%"
+                    height="450"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                ></iframe>
             </div>
         </form>
 
