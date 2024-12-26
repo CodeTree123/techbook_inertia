@@ -45,7 +45,7 @@ textarea {
 }
 
 .tab {
-    border: 1px solid #9BCFF5;
+    border: 1px solid #9BCFF5 !important;
     font-weight: 700;
     transition: 0.2s;
 }

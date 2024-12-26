@@ -29,11 +29,11 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
         setEditableRow(null);
     }
 
-    const { data, setData, post, delete:deleteItem, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         'on_site_by': '',
         'scheduled_time': '',
         'h_operation': '',
-        'schedule_note': '',
+        'estimated_time': '',
     });
 
     const submit = (e, id) => {
@@ -70,166 +70,170 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
 
     return (
         <>
-            {
-                details?.schedules?.map((schedule, index) => (
-                    <form onSubmit={(e) => submit(e, schedule.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
+
+            {details?.schedules?.length > 0 && (
+                details?.schedule_type === 'single' ? (
+                    // Render a single schedule if there's exactly one schedule
+                    <form onSubmit={(e) => submit(e, details?.schedules[0]?.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
                         <p>Start at a specific date and time</p>
                         <b>
-                            {new Date(schedule.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
+                            {new Date(details?.schedules[0]?.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
                         </b>
                         <div>
                             <b>
                                 {
-                                    editableRow != index &&
+                                    editableRow !== 0 &&
                                     <span className="nrml-txt">
-                                        {formatDate(schedule.on_site_by)}
+                                        {formatDate(details?.schedules[0]?.on_site_by)}
                                         <span className='mx-1'>at</span>
-                                        {formatTime(schedule.scheduled_time)}
-                                        ({details.site.time_zone})
+                                        {formatTime(details?.schedules[0]?.scheduled_time)}
+                                        ({details?.site?.time_zone})
                                     </span>
                                 }
                                 {
-                                    editableRow == index &&
+                                    editableRow === 0 &&
                                     <span>
-                                        <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={schedule.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                        <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
                                         at
-                                        <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={schedule.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
-                                        {/* <select name="time_zone" className="mb-2 border-bottom fw-bold">
-                                        <option value>Select Timezone</option>
-                                        <option value="PT">
-                                            America/Los_Angeles (PT)
-                                        </option>
-                                        <option value="MT">
-                                            America/Denver (MT)
-                                        </option>
-                                        <option value="CT">
-                                            America/Chicago (CT)
-                                        </option>
-                                        <option value="ET" selected>
-                                            America/New_York (ET)
-                                        </option>
-                                        <option value="AKT">
-                                            America/Anchorage (AKT)
-                                        </option>
-                                        <option value="HST">
-                                            Pacific/Honolulu (HST)
-                                        </option>
-                                        <option value="PT/MT">
-                                            America/Los_Angeles (PT/MT)
-                                        </option>
-                                        <option value="CT/MT">
-                                            America/Chicago (CT/MT)
-                                        </option>
-                                        <option value="CT/ET">
-                                            America/New_York (CT/ET)
-                                        </option>
-                                    </select> */}
+                                        <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
                                     </span>
                                 }
-
-                                {/* <span class="nrml-txt">12-20-24</span>
-                                              <span>
-                                                  <input type="date" name="on_site_by" class="mb-2 border-bottom nrml-inp fw-bold"
-                                                      value="2024-12-20">
-
-                                              </span> at
-                                              <span class="nrml-txt">09:00 AM</span>
-                                              <span>
-                                                  <input type="time" name="scheduled_time" class="mb-2 border-bottom nrml-inp fw-bold" value="12:00">
-                                              </span>
-                                              <span class="nrml-txt">(ET)</span>
-                                              <span>
-                                                                                                          <select name="time_zone" class="mb-2 border-bottom nrml-inp fw-bold">
-                                                      <option value="">Select Timezone</option>
-                                                          <option value="PT" >
-                                                          America/Los_Angeles (PT)
-                                                      </option>
-  <option value="MT" >
-                                                          America/Denver (MT)
-                                                      </option>
-  <option value="CT" >
-                                                          America/Chicago (CT)
-                                                      </option>
-  <option value="ET"  selected >
-                                                          America/New_York (ET)
-                                                      </option>
-  <option value="AKT" >
-                                                          America/Anchorage (AKT)
-                                                      </option>
-  <option value="HST" >
-                                                          Pacific/Honolulu (HST)
-                                                      </option>
-  <option value="PT/MT" >
-                                                          America/Los_Angeles (PT/MT)
-                                                      </option>
-  <option value="CT/MT" >
-                                                          America/Chicago (CT/MT)
-                                                      </option>
-  <option value="CT/ET" >
-                                                          America/New_York (CT/ET)
-                                                      </option>
-                                                      </select>
-                                              </span> */}
                             </b>
                             <p>Approximate hours to complete</p>
                             {
-                                editableRow != index &&
-                                <b className="nrml-txt">{schedule.h_operation}</b>
+                                editableRow !== 0 &&
+                                <b className="nrml-txt">{details?.schedules[0]?.h_operation}</b>
                             }
-
                             {
-                                editableRow == index &&
-                                <input type="text" name="h_operation" placeholder='Hours of operation' className="mb-2 border-bottom fw-bold" defaultValue={schedule.h_operation} onChange={(e) => setData({ ...data, h_operation: e.target.value })} />
+                                editableRow === 0 &&
+                                <input type="text" name="h_operation" placeholder='Hours of operation' className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.h_operation} onChange={(e) => setData({ ...data, h_operation: e.target.value })} />
                             }
-
-                            <p>updated by {details.employee.name} <span className='mx-1'>on</span>
-                                {formatDate(details.updated_at)}  <span className='mx-1'>at</span>
-                                {new Date(details.updated_at).toLocaleTimeString('en-US', {
+                            <br />
+                            {
+                                editableRow === 0 &&
+                                <input type="text" name="h_operation" placeholder='Estimated hours' className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.estimated_time} onChange={(e) => setData({ ...data, estimated_time: e.target.value })} />
+                            }
+                            <p>Updated by {details?.employee.name} <span className='mx-1'>on</span>
+                                {formatDate(details?.updated_at)}  <span className='mx-1'>at</span>
+                                {new Date(details?.updated_at).toLocaleTimeString('en-US', {
                                     hour: '2-digit',
                                     minute: '2-digit',
                                     hour12: true
                                 })}
                             </p>
-
-                            {
-                                schedule.schedule_note &&
-                                <i style={{ color: '#6a6a6a' }} className="nrml-txt">Note: {schedule.schedule_note}</i>
-                            }
-                            {
-                                editableRow == index &&
-                                <textarea name="schedule_note" placeholder='Schedule Note' className="mb-2 border-bottom fw-bold" defaultValue={schedule.schedule_note} onChange={(e) => setData({ ...data, schedule_note: e.target.value })} />
-                            }
-
                         </div>
 
                         <div className="d-flex action-group gap-2 position-absolute end-0 top-0 p-3">
                             {
-                                editableRow != index &&
-                                <button type='button' onClick={() => handleEdit(index)} className="btn edit-btn">
+                                editableRow !== 0 &&
+                                <button type='button' onClick={() => handleEdit(0)} className="btn edit-btn">
                                     <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                 </button>
                             }
                             {
-                                editableRow != index &&
-                                <button onClick={(e)=>deleteSchedule(e,schedule.id)} type="button" className="btn" style={{height: "max-content;"}}>
+                                editableRow !== 0 &&
+                                <button onClick={(e) => deleteSchedule(e, details?.schedules[0]?.id)} type="button" className="btn" style={{ height: "max-content;" }}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
-                                </button>}
+                                </button>
+                            }
                             {
-                                editableRow == index &&
+                                editableRow === 0 &&
                                 <button type='submit' className="btn btn-success fw-bold">
                                     Save
                                 </button>
                             }
                             {
-                                editableRow == index &&
+                                editableRow === 0 &&
                                 <button type='button' className="btn btn-danger fw-bold" onClick={() => handleCancel()}>
                                     Cancel
                                 </button>
                             }
                         </div>
                     </form>
-                ))
+                ) : (
+                    // Render all schedules if it's not a single schedule or there are multiple schedules
+                    details?.schedules?.map((schedule, index) => (
+                        <form onSubmit={(e) => submit(e, schedule.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }} key={schedule.id}>
+                            <p>Start at a specific date and time</p>
+                            <b>
+                                {new Date(schedule.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
+                            </b>
+                            <div>
+                                <b>
+                                    {
+                                        editableRow !== index &&
+                                        <span className="nrml-txt">
+                                            {formatDate(schedule.on_site_by)}
+                                            <span className='mx-1'>at</span>
+                                            {formatTime(schedule.scheduled_time)}
+                                            ({details?.site.time_zone})
+                                        </span>
+                                    }
+                                    {
+                                        editableRow === index &&
+                                        <span>
+                                            <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={schedule.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                            at
+                                            <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={schedule.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
+                                        </span>
+                                    }
+                                </b>
+                                <p>Approximate hours to complete</p>
+                                {
+                                    editableRow !== index &&
+                                    <b className="nrml-txt">{schedule.h_operation}</b>
+                                }
+                                {
+                                    editableRow === index &&
+                                    <input type="text" name="h_operation" placeholder='Hours of operation' className="mb-2 border-bottom fw-bold" defaultValue={schedule.h_operation} onChange={(e) => setData({ ...data, h_operation: e.target.value })} />
+                                }
+                                <br />
+                                {
+                                    editableRow === index &&
+                                    <input type="text" name="h_operation" placeholder='Estimated hours' className="mb-2 border-bottom fw-bold" defaultValue={schedule?.estimated_time} onChange={(e) => setData({ ...data, estimated_time: e.target.value })} />
+                                }
+                                <p>Updated by {details?.employee.name} <span className='mx-1'>on</span>
+                                    {formatDate(details?.updated_at)}  <span className='mx-1'>at</span>
+                                    {new Date(details?.updated_at).toLocaleTimeString('en-US', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    })}
+                                </p>
+                            </div>
+
+                            <div className="d-flex action-group gap-2 position-absolute end-0 top-0 p-3">
+                                {
+                                    editableRow !== index &&
+                                    <button type='button' onClick={() => handleEdit(index)} className="btn edit-btn">
+                                        <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
+                                    </button>
+                                }
+                                {
+                                    editableRow !== index &&
+                                    <button onClick={(e) => deleteSchedule(e, schedule.id)} type="button" className="btn" style={{ height: "max-content;" }}>
+                                        <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
+                                    </button>
+                                }
+                                {
+                                    editableRow === index &&
+                                    <button type='submit' className="btn btn-success fw-bold">
+                                        Save
+                                    </button>
+                                }
+                                {
+                                    editableRow === index &&
+                                    <button type='button' className="btn btn-danger fw-bold" onClick={() => handleCancel()}>
+                                        Cancel
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    ))
+                )
+            )
             }
+
 
         </>
 

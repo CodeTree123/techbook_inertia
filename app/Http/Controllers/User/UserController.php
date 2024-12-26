@@ -2339,11 +2339,13 @@ class UserController extends Controller
         $rules = [
             'on_site_by' => 'required',
             'scheduled_time' => 'required',
+            'estimated_time' => 'max:24'
         ];
 
         $messages = [
             'on_site_by.required' => 'Schedule date is required',
             'scheduled_time.required' => 'Schedule time is required',
+            'estimated_time.max' => 'Estimated hours cannot be more than 24 hours',
         ];
 
         $validated = $request->validate($rules, $messages);
@@ -2354,7 +2356,7 @@ class UserController extends Controller
         $schdule->on_site_by = $request->on_site_by;
         $schdule->scheduled_time = $request->scheduled_time;
         $schdule->h_operation = $request->h_operation;
-        $schdule->schedule_note = $request->schedule_note;
+        $schdule->estimated_time = $request->estimated_time;
 
         $schdule->save();
 
@@ -2369,7 +2371,6 @@ class UserController extends Controller
         $schdule->on_site_by = $request->on_site_by ?? $schdule->on_site_by;
         $schdule->scheduled_time = $request->scheduled_time ?? $schdule->scheduled_time;
         $schdule->h_operation = $request->h_operation ?? $schdule->h_operation;
-        $schdule->schedule_note = $request->schedule_note ?? $schdule->schedule_note;
 
         $schdule->save();
     }
@@ -2379,6 +2380,19 @@ class UserController extends Controller
         $schdule = WorkOrderSchedule::find($id);
 
         $schdule->delete();
+    }
+
+    public function updateScheduleType(Request $request, $id, $value)
+    {
+        $wo = WorkOrder::find($id);
+        
+        if (!$wo) {
+            return response()->json(['error' => 'Work order not found.'], 404);
+        }
+    
+        $wo->schedule_type = $value;
+
+        $wo->save();
     }
 
     public function createContact(Request $request, $id)
@@ -2647,7 +2661,6 @@ class UserController extends Controller
             $schdule->on_site_by = $request['on_site_by'] ?? $schdule->on_site_by;
             $schdule->scheduled_time = $request['scheduled_time'] ?? $schdule->scheduled_time;
             $schdule->h_operation = $request['h_operation'] ?? $schdule->h_operation;
-            $schdule->schedule_note = $request['schedule_note'] ?? $schdule->schedule_note;
             $schdule->save();
 
             $wo = WorkOrder::find($schdule->wo_id);
