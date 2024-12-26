@@ -1772,7 +1772,6 @@ class UserController extends Controller
 
     public function distanceResponse(Request $request)
     {
-        dd($request->all());
         $radius = 150;
         if ($request->has('radiusValue')) {
             $radius += $request->radiusValue;
