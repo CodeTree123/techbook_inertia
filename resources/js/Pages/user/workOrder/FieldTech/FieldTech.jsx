@@ -70,7 +70,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
         setLoaderVisible(true);
 
         try {
-            const response = await fetch(`/find-tech-with-distance`, {
+            const response = await fetch(`/user/find/tech/for/work/worder`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
