@@ -552,28 +552,6 @@
                     <div class="page-container d-flex justify-content-end pb-2">
                         <button type="button" class="btn btn-dark" style="z-index: 99">Page Break</button>
                     </div>
-                    <!-- <div class="d-flex mt-5 wo-req">
-                            <div>
-                                <h6 class="fst-italic" style="white-space: nowrap;">Work Requested : </h6>
-                            </div>
-                            <div class="w-100 px-5 py-0">
-                                <address class="w-100">
-                                    <textarea class="w-100 p-0" name="" id="wo-desc" value="" style="border:none">{{ strip_tags($invoice->scope_work) }}</textarea>
-                                </address>
-                            </div>
-                        </div> -->
-                    <!-- <div class="d-flex mt-5 wo-perform">
-                            <div>
-                                <h6 class="fst-italic" style="white-space: nowrap;">Work Performed</h6>
-                            </div>
-                            <div class="w-100 px-5 py-0">
-                                <address class="w-100">
-                                    
-
-                                </address>
-                            </div>
-                        </div> -->
-
                     <hr>
                     <div class="wo-calc" style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <!-- Left Side Content -->
