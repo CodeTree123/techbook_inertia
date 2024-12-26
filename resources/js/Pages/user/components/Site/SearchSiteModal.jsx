@@ -33,8 +33,6 @@ const SearchSiteModal = ({ onSuccessMessage }) => {
             return [];
         }
     }
-
-    console.log(siteData);
     
     
 

@@ -1937,7 +1937,6 @@ class UserController extends Controller
         return response()->json(['technicians' => $completeInfo], 200);
     }
 
-
     public function assignTech(Request $request)
     {
         $orderId = $request->workOrderId;

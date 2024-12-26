@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import TechData from './components/TechData';
 import { Modal } from 'react-bootstrap';
 
-const FieldTech = ({ id, details, onSuccessMessage }) => {
+const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
     const [search, setSearch] = useState('');
     const [technicians, setTechnicians] = useState([]);
@@ -63,6 +63,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
 
     // google api
     const [responseData, setResponseData] = useState(null);
+    const [responseError, setResponseErros] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
 
 
@@ -83,6 +84,8 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                onErrorMessage(errorData?.errors);
+                setLoaderVisible(false);
                 return;
             }
 
@@ -94,6 +97,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
             setLoaderVisible(false);
         }
     };
+    console.log(responseData);
 
     // Modal
 
@@ -254,7 +258,7 @@ const FieldTech = ({ id, details, onSuccessMessage }) => {
                                     <button onClick={(e) => assignTech(e, selectedTechnician.id)} type="button" className="btn btn-dark">Assign</button>
                                 </Modal.Footer>
                             </Modal>
-
+                            <p className='text-danger'>{responseError?.errors}</p>
                             {
                                 loaderVisible ? (
                                     <p>Loading...</p>
