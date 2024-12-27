@@ -694,27 +694,44 @@ export default function WoView({ wo }) {
             </div>
 
             {
-              wo.check_in_out?.[0]?.check_in ? (
-                <div className="col-3 border-end border-bottom px-3 py-2">
-                  <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Time Logged</p>
-                  <p style={{ color: '#808080' }}>
-                    {wo?.check_in_out.reduce((sum, item) => {
-                      const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
-                      return sum + hours;
-                    }, 0)} Hours
-                  </p>
-                </div>
-              ) : (
+              wo.schedule_type == 'single' ?
+
                 <div className="col-3 border-end border-bottom px-3 py-2">
                   <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Scheduled Time</p>
-                  {upcomingSchedule ? (
-                    <p>{upcomingSchedule.on_site_by} at {scheduledTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
+                  {wo.schedules[0] ? (
+                    <p>{
+                      DateTime.fromISO(wo.schedules[0].on_site_by).toFormat('MM-dd-yy')
+                    } at {DateTime.fromISO(wo.schedules[0].scheduled_time).toFormat('hh:mm a')}</p>
                   ) : (
                     <p>No upcoming schedules.</p>
                   )}
-                </div>
-              )
+                </div> :
+
+                wo.check_in_out?.[0]?.check_in ? (
+                  <div className="col-3 border-end border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Time Logged</p>
+                    <p style={{ color: '#808080' }}>
+                      {wo?.check_in_out.reduce((sum, item) => {
+                        const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
+                        return sum + hours;
+                      }, 0)} Hours
+                    </p>
+                  </div>
+                ) : (
+                  <div className="col-3 border-end border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Scheduled Time</p>
+                    {upcomingSchedule ? (
+                      <p>{
+                        DateTime.fromISO(upcomingSchedule.on_site_by).toFormat('MM-dd-yy')
+                      } at {scheduledTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
+                    ) : (
+                      <p>No upcoming schedules.</p>
+                    )}
+                  </div>
+                )
+
             }
+
 
 
             <div className="col-3 border-end border-bottom px-3 py-2">

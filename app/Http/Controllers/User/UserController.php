@@ -1647,8 +1647,13 @@ class UserController extends Controller
             'phone' => 'required|max:15',
         ]);
 
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
+
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()
+                ->withErrors($validator->errors());
         }
 
         // generating unique 5 digit id starting with 6000
@@ -1716,7 +1721,7 @@ class UserController extends Controller
         $customer->customer_id = $id;
         $customer->save();
 
-        return response()->json(['success' => 'New customer added.'], 200);
+        // return response()->json(['success' => 'New customer added.'], 200);
     }
 
     public function customerSearch(Request $request)
@@ -1910,7 +1915,7 @@ class UserController extends Controller
                             'company_name' => $ftech->company_name,
                             'distance' => $distanceTextMiles,
                             'status' => $ftech->status,
-                            'rate' => $rateString,
+                            'rate' => $ftech->rate,
                             'travel_fee' => $ftech->travel_fee ?? "",
                             'preference' => $ftech->preference ?? "",
                             'duration' => $durationText,
@@ -3118,6 +3123,8 @@ class UserController extends Controller
         $wo = WorkOrder::find($id);
 
         $wo->ftech_id = $techId;
+        $wo->stage = 3;
+        $wo->status = null;
         $wo->save();
 
         $tech = Technician::find($techId);
@@ -3139,6 +3146,8 @@ class UserController extends Controller
             }
     
             $wo->ftech_id = null;
+            $wo->stage = 2;
+            $wo->status = 2;
             $wo->save();
     
             $tech = Technician::find($techId);
@@ -3172,5 +3181,23 @@ class UserController extends Controller
         $otherExpense->amount = $request->price * ($request->quantity ?? 1);
 
         $otherExpense->save();
+    }
+
+    public function updateExpenses(Request $request, $id)
+    {
+        $otherExpense = OtherExpense::find($id);
+        $otherExpense->description = $request->description ?? $otherExpense->description;
+        $otherExpense->price = $request->price ?? $otherExpense->price;
+        $otherExpense->quantity = $request->quantity ?? $otherExpense->quantity;
+        $otherExpense->amount = ($request->price ?? $otherExpense->price) * ($request->quantity ?? $otherExpense->quantity);
+
+        $otherExpense->save();
+    }
+
+    public function deleteExpense($id)
+    {
+        $otherExpense = OtherExpense::find($id);
+
+        $otherExpense->delete();
     }
 }

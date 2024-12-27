@@ -223,3 +223,12 @@ textarea {
   .wo-tab.inactive {
     color: #555;
   }
+
+  .editablePoint {
+    display: none;
+    transition: 0.3s;
+  }
+
+  .editableDiv:hover .editablePoint{
+    display: flex;
+  }

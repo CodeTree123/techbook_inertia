@@ -105,7 +105,6 @@ const SearchSiteModal = ({ onSuccessMessage }) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <button onClick={() => setShowTask(false)} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button onClick={(e) => submit(e)} type="button" className="btn btn-primary">Submit</button>
                 </Modal.Footer>
             </Modal>
         </>
