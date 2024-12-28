@@ -35,10 +35,10 @@ class WorkOrder extends Model
     {
         return $this->belongsTo(Technician::class, 'ftech_id', 'id');
     }
-    public function notes()
-    {
-        return $this->hasMany(TicketNotes::class, 'work_order_id', 'id');
-    }
+    // public function notes()
+    // {
+    //     return $this->hasMany(TicketNotes::class, 'work_order_id', 'id');
+    // }
 
     public function subTicket()
     {
@@ -99,6 +99,11 @@ class WorkOrder extends Model
     public function otherExpenses()
     {
         return $this->hasMany(OtherExpense::class, 'wo_id');
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class, 'wo_id');
     }
     //scope
     //status 

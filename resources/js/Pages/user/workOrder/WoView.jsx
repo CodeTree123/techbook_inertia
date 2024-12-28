@@ -138,11 +138,6 @@ export default function WoView({ wo }) {
 
   }, [wo.schedule_type, wo?.schedules, wo?.check_in_out, setAtRisk, setLatestAtRiskScheduleId]);
 
-  console.log(atRisk);
-
-
-
-
   const getStage = () => {
     if (wo?.stage === 7) {
       return <span className="fw-bold">Cancelled</span>;
@@ -187,6 +182,7 @@ export default function WoView({ wo }) {
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+console.log(successMessage);
 
   const handleSuccessMessage = (data) => {
     setSuccessMessage(data);

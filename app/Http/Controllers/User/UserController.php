@@ -982,6 +982,7 @@ class UserController extends Controller
 
     public function storeSite(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'customer_id' => 'required',
             'site_id' => 'required|regex:/^[A-Za-z0-9]{4,12}$/|unique:customer_sites,site_id',
@@ -1397,19 +1398,19 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()
+            ->withErrors($validator->errors());
         }
 
         $skill_category = new SkillCategory();
         $skill_category->skill_name = $request->skill_name;
         $skill_category->save();
 
-        return response()->json(['message' => 'Skill Saved.'], 200);
+        return redirect()->back();
     }
 
     public function newTech(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'company_name' => 'required|max:100',
             'address' => 'nullable|max:100',
@@ -1436,7 +1437,8 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()
+            ->withErrors($validator->errors());
         }
 
         // generating unique 5 digit id starting with 5000
@@ -1533,8 +1535,7 @@ class UserController extends Controller
         $review->technician_id = $technician->id;
         $review->save();
         $technician->skills()->attach($skillsIds);
-
-        return response()->json(['success' => 'New technician added.'], 200);
+        return redirect()->back();
     }
 
     public function ftechAuto(Request $request)
@@ -2041,6 +2042,8 @@ class UserController extends Controller
             'customer',
             'technician.engineers',
             'employee',
+            'site.relatedWo:id,order_id,created_at,site_id,slug',
+            'site.relatedWo.customer:id,company_name',
             'site' => function ($query) {
                 $query->select(
                     'id',
@@ -2063,7 +2066,9 @@ class UserController extends Controller
             'schedules',
             'assignedTech.engineer',
             'techRemoveReasons',
-            'otherExpenses'
+            'otherExpenses',
+            'notes.user:id,firstname,lastname',
+            'notes.subNotes'
         ])->find($id);
     
         // Check if technician data exists
@@ -2539,7 +2544,7 @@ class UserController extends Controller
             }
         }
 
-        $timezoneMap = [
+        $oneMap = [
             'PT' => 'America/Los_Angeles',
             'MT' => 'America/Denver',
             'CT' => 'America/Chicago',
@@ -3200,4 +3205,5 @@ class UserController extends Controller
 
         $otherExpense->delete();
     }
+
 }

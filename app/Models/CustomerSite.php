@@ -20,4 +20,9 @@ class CustomerSite extends Model
     {
         return $this->hasOne(WorkOrder::class, 'site_id', 'id');
     }
+
+    function relatedWo()
+    {
+        return $this->hasMany(WorkOrder::class, 'site_id');
+    }
 }

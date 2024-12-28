@@ -16,6 +16,7 @@ use App\Models\Employee;
 use App\Models\CustomerSite;
 use App\Models\Technician;
 use App\Models\WorkOrder;
+use App\Models\SkillCategory;
 
 class UserController extends Controller
 {
@@ -395,5 +396,37 @@ class UserController extends Controller
             'message' => 'Sites fetched successfully'
         ]);
     }
+
+    public function singleTech($id)
+    {
+        $technician = Technician::with(['skills.skill:id,skill_name'])->find($id);
+
+        if ($technician) {
+            unset($technician['co_ordinates']);
+            return response()->json([
+                'success' => true,
+                'data' => $technician,
+                'message' => 'Technician fetched successfully'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Technician not found'
+        ], 404);
+    }
+
+    public function allSkillSets()
+    {
+
+        $skills = SkillCategory::all(); // Paginate the results
+
+        return response()->json([
+            'success' => true,
+            'data' => $skills,
+            'message' => 'Skills fetched successfully',
+        ]);
+    }
+    
 
 }

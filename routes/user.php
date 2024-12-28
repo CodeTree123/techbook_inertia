@@ -224,6 +224,12 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('update-expense/{id}','updateExpenses')->name('wo.updateExpenses');
                 Route::delete('delete-expense/{id}','deleteExpense')->name('wo.deleteExpense');
             });
+
+            // Notes
+            Route::controller('NoteController')->group(function () {
+                Route::post('note/create/{id}', 'store')->name('note.store');
+                Route::post('sub-note/create/{id}', 'storeSubNote')->name('subnote.store');
+            });
             //Profile setting
             Route::controller('ProfileController')->group(function () {
                 Route::get('profile-setting', 'profile')->name('profile.setting');

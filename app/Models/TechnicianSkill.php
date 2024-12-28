@@ -9,4 +9,8 @@ class TechnicianSkill extends Model
 {
     use HasFactory;
 
+    public function skill()
+    {
+        return $this->belongsTo(SkillCategory::class,  'skill_id');
+    }
 }
