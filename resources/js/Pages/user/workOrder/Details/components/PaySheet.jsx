@@ -1,5 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
+import OtherExpenses from './OtherExpenses';
 
 const PaySheet = ({ id, details, onSuccessMessage }) => {
     const rate = details?.technician?.rate?.['STD'] || 0;
@@ -52,29 +53,8 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
         <div className="card bg-white shadow-lg border-0 mb-4 action-cards">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Pay Sheet</h3>
-                <div className="d-flex action-group gap-2">
-                    {
-                        !editable &&
-                        <button type='button' onClick={() => setEditable(true)} className="btn">
-                            <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
-                        </button>
-                    }
-                    {
-                        editable &&
-                        <button onClick={(e) => updatePaysheet(e)} type='submit' className="btn btn-success fw-bold">
-                            Save
-                        </button>
-                    }
-                    {
-                        editable &&
-                        <button onClick={() => setEditable(false)} className="btn btn-danger fw-bold">
-                            Cancel
-                        </button>
-                    }
-
-                </div>
             </div>
-            <div className="card-body bg-white">
+            <div className="card-body bg-white editableDiv">
                 <p className="mb-0">Payment Terms</p>
                 <p className="mb-0 mx-5"><b>NET-{details?.technician?.terms ? details?.technician?.terms : ' '}-day terms</b>
                 </p>
@@ -100,15 +80,20 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                         <p>${totalHours * rate}
                         </p>
                     </div>
-                    <div className="d-flex mt-2 justify-content-between ps-5" style={{ fontSize: 20, fontWeight: '400 !important' }}>
+                    <div className="d-flex mt-2 justify-content-between ps-5 position-relative " style={{ fontSize: 20, fontWeight: '400 !important' }}>
                         <p>Travel</p>
                         <hr className="w-50" />
                         {
                             !editable ?
                                 <p className="">${details.travel_cost || 0.00}</p> :
-                                <input name="travel" type="text" className="text-end" style={{ width: 100 }} defaultValue={data.travel_cost} onChange={(e) => setData({ travel_cost: e.target.value })} />
+                                <input name="travel" type="text" className="text-end" style={{ width: 100 }} defaultValue={data.travel_cost} onChange={(e) => setData({ travel_cost: e.target.value })}  onBlur={(e) => updatePaysheet(e)} autoFocus/>
                         }
-
+                        {
+                            !editable &&
+                            <div className='position-absolute rounded-5 bg-primary text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '-15px', top: '-10px' }} onClick={() => setEditable(true)}>
+                                <i class="fa-solid fa-pencil" style={{ fontSize: '10px' }}></i>
+                            </div>
+                        }
 
                     </div>
                     <div className="d-flex mt-2 justify-content-between" style={{ fontSize: 20, fontWeight: '400 !important' }}>
@@ -126,33 +111,26 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                     <div className="d-flex mt-2 justify-content-between" style={{ fontSize: 20, fontWeight: '400 !important' }}>
                         <p>Others</p>
                     </div>
-                    {
-                        details?.other_expenses?.map((part) => (
-                            <div className="d-flex mt-2 justify-content-between ps-5" style={{ fontSize: 20, fontWeight: '400 !important' }}>
-                                <p>{part.description} (${part.price}) x {part.quantity}</p>
-                                <hr className="w-auto" />
-                                <p>${part.amount}</p>
-                            </div>
-                        ))
-                    }
+                    <OtherExpenses id={id} parts={details?.other_expenses} onSuccessMessage={onSuccessMessage}/>
+                    
                 </form>
                 {
                     addExpense &&
                     <div className='row'>
                         <div className='col-4'>
-                            <input type="text" className='border-bottom w-100' placeholder='Item Description' onChange={(e)=>setData({...data,description: e.target.value})}/>
+                            <input type="text" className='border-bottom w-100' placeholder='Item Description' onChange={(e) => setData({ ...data, description: e.target.value })} />
                         </div>
                         <div className='col-4'>
-                            <input type="text" className='border-bottom w-100' placeholder='Item Price' onChange={(e)=>setData({...data,price: e.target.value})}/>
+                            <input type="text" className='border-bottom w-100' placeholder='Item Price' onChange={(e) => setData({ ...data, price: e.target.value })} />
                         </div>
                         <div className='col-4'>
-                            <input type="text" className='border-bottom w-100' placeholder='Item Quantity' onChange={(e)=>setData({...data,quantity: e.target.value})}/>
+                            <input type="text" className='border-bottom w-100' placeholder='Item Quantity' onChange={(e) => setData({ ...data, quantity: e.target.value })} />
                         </div>
                         <div className='col-12 d-flex mt-2 gap-2 justify-content-end'>
-                            <button onClick={(e)=>updateExpense(e)} className='btn-success btn'>
+                            <button onClick={(e) => updateExpense(e)} className='btn-success btn'>
                                 Save
                             </button>
-                            <button onClick={()=>setAddExpense(false)} className='btn-danger btn'>
+                            <button onClick={() => setAddExpense(false)} className='btn-danger btn'>
                                 Cancel
                             </button>
                         </div>

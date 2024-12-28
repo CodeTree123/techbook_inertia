@@ -221,6 +221,8 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('update-travel/{id}','updateTravel')->name('wo.updateTravel');
 
                 Route::post('add-expense/{id}','addExpenses')->name('wo.addExpenses');
+                Route::post('update-expense/{id}','updateExpenses')->name('wo.updateExpenses');
+                Route::delete('delete-expense/{id}','deleteExpense')->name('wo.deleteExpense');
             });
             //Profile setting
             Route::controller('ProfileController')->group(function () {

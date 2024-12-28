@@ -80,14 +80,15 @@ const ShipmentTable = ({ details, onSuccessMessage }) => {
                                         <span>{shipment.shipment_to}</span>
                                     </i>
                                     <br />
-                                    <i className="nrml-txt" style={{ fontSize: 12 }}>by <span className="text-uppercase">{shipment.associate} </span>
-                                        <span style={{ fontSize: 12 }}>
-                                            ({new Date(shipment.created_at).toLocaleDateString('en-US', {
-                                                month: '2-digit',
-                                                day: '2-digit',
-                                                year: 'numeric'
-                                            })})
-                                        </span>
+                                    <i className="nrml-txt" style={{ fontSize: 12 }}>by <span className="text-uppercase">{shipment.associate} </span></i>
+                                    <br />
+                                    <i style={{ fontSize: 12 }}>
+                                        Issue Date: 
+                                        ({new Date(shipment.created_at).toLocaleDateString('en-US', {
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            year: 'numeric'
+                                        })})
                                     </i>
                                 </>
                             }
@@ -141,7 +142,7 @@ const ShipmentTable = ({ details, onSuccessMessage }) => {
                             }
                             {
                                 editingRow != index &&
-                                <a onClick={(e) => deleteShipment(e,shipment.id)} className="btn" style={{ height: 'max-content' }}>
+                                <a onClick={(e) => deleteShipment(e, shipment.id)} className="btn" style={{ height: 'max-content' }}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                 </a>
                             }

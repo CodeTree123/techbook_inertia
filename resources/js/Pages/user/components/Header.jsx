@@ -3,6 +3,8 @@ import React from 'react'
 import '../../../../css/header.css'
 import CreateSiteModal from './Site/CreateSiteModal';
 import SearchSiteModal from './Site/SearchSiteModal';
+import CreateCustomerModal from './Customer/CreateCustomerModal';
+import SearchCustomerModal from './Customer/SearchCustomerModal';
 
 const Header = ({onSuccessMessage, onErrorMessage}) => {
     const { user } = usePage().props;
@@ -111,8 +113,8 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                                         </li>
                                         <li><a href="#">Customer</a>
                                             <ul>
-                                                <li><a href="#">New Customer</a></li>
-                                                <li><a href="#">Search Customer</a></li>
+                                                <CreateCustomerModal onSuccessMessage={onSuccessMessage}/>
+                                                <SearchCustomerModal onSuccessMessage={onSuccessMessage}/>
                                             </ul>
                                         </li>
                                         <li><a href="#">Quotes</a>

@@ -50,14 +50,19 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
     const assignTech = (e, techId) => {
         e.preventDefault();
-        post(route('user.wo.assignTechToWo', [id, techId]), {
-            preserveScroll: true,
-            onSuccess: () => {
-                onSuccessMessage('Technician Assigned Successfully');
-                setShowModal(false);
-                setSelectedTechnician(null);
-            }
-        });
+        if (details.stage <= 3) {
+            post(route('user.wo.assignTechToWo', [id, techId]), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    onSuccessMessage('Technician Assigned Successfully');
+                    setShowModal(false);
+                    setSelectedTechnician(null);
+                }
+            });
+        } else {
+            onErrorMessage('Not Allowed to Assign Technician');
+        }
+
     }
 
 
@@ -204,7 +209,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                 <div className='col-4 d-flex gap-2 justify-content-end'>
                                                     {
                                                         !details.ftech_id ?
-                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border'>Assign</button> :
+                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3}>Assign</button> :
                                                             <button className='btn btn-light border' disabled>Assigned</button>
                                                     }
 
@@ -215,25 +220,28 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                             <div className='position-absolute top-0 end-0 badge text-bg-warning'>{tech.tech_type}</div>
                                         </div>
                                     ))}
-                                    <div className="pagination justify-content-end align-items-center gap-1">
-                                        <button
-                                            disabled={currentPage === 1}
-                                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                            className='btn btn-outline-primary'
-                                        >
-                                            Previous
-                                        </button>
-                                        <span>
-                                            Page {currentPage} of {totalPages}
-                                        </span>
-                                        <button
-                                            disabled={currentPage === totalPages}
-                                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                            className='btn btn-outline-primary'
-                                        >
-                                            Next
-                                        </button>
-                                    </div>
+                                    {
+                                        technicians.length != 0 &&
+                                        <div className="pagination justify-content-end align-items-center gap-1">
+                                            <button
+                                                disabled={currentPage === 1}
+                                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                                className='btn btn-outline-primary'
+                                            >
+                                                Previous
+                                            </button>
+                                            <span>
+                                                Page {currentPage} of {totalPages}
+                                            </span>
+                                            <button
+                                                disabled={currentPage === totalPages}
+                                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                                className='btn btn-outline-primary'
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    }
 
                                 </ul>
                             )}
@@ -268,7 +276,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                             <div key={tech.id} className='bg-white px-4 py-4 rounded-4 border position-relative mb-3'>
                                                 <div className='d-flex align-items-center gap-3'>
                                                     <div className="bg-primary d-flex justify-content-center align-items-center text-white" style={{ width: 30, height: 30, borderRadius: '50%' }}>{tech.company_name.charAt(0)}</div>
-                                                    <h3 className='mb-0'>{tech.company_name}</h3>
+                                                    <h3 className='mb-0'>{tech.company_name} <span>{tech.distance} ~ {tech.duration}</span></h3>
                                                 </div>
                                                 <div className='row mt-3'>
                                                     <div className='col-8 d-flex justify-content-start gap-2 mx-0'>
@@ -320,7 +328,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                     <div className='col-4 d-flex gap-2 justify-content-end'>
                                                         {
                                                             !details.ftech_id ?
-                                                                <button onClick={(e) => assignTech(e, tech.id)} className='btn btn-light border'>Assign</button> :
+                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3}>Assign</button> :
                                                                 <button className='btn btn-light border' disabled>Assigned</button>
                                                         }
 

@@ -260,7 +260,7 @@ class UserController extends Controller
 
         $customers = Customer::select('id', 'company_name')
             ->when($search, function ($query, $search) {
-                $query->where('company_name', 'like', "%{$search}%");
+                $query->where('company_name', 'like', "%{$search}%")->orWhere('customer_id', 'like', "%{$search}%");
             })
             ->orderBy('company_name', 'asc')
             ->paginate(10);
@@ -381,6 +381,17 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'data' => $site,
+            'message' => 'Sites fetched successfully'
+        ]);
+    }
+
+    public function singleCustomer($id)
+    {
+        $customer = Customer::find($id); 
+
+        return response()->json([
+            'success' => true,
+            'data' => $customer,
             'message' => 'Sites fetched successfully'
         ]);
     }
