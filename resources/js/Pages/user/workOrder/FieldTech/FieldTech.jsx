@@ -102,8 +102,6 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
             setLoaderVisible(false);
         }
     };
-    console.log(responseData);
-
     // Modal
 
     const [showModal, setShowModal] = useState(false);

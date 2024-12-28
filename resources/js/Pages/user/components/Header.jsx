@@ -5,6 +5,8 @@ import CreateSiteModal from './Site/CreateSiteModal';
 import SearchSiteModal from './Site/SearchSiteModal';
 import CreateCustomerModal from './Customer/CreateCustomerModal';
 import SearchCustomerModal from './Customer/SearchCustomerModal';
+import CreateTechModal from './FieldTech/CreateTechModal';
+import SearchTechnicianModal from './FieldTech/SearchTechnicianModal';
 
 const Header = ({onSuccessMessage, onErrorMessage}) => {
     const { user } = usePage().props;
@@ -51,7 +53,7 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
             <div className="header-main shadow bg-white">
                 <div className="d-flex align-items-center">
                     <div className="logo">
-                        <Link href="/user/dashboard">
+                        <Link href="/user/work/order/view/pdf/user/inertia/dashboard">
                             <img src="/landingPage/images/tb_logo.jpeg" alt="Logo" />
                         </Link>
                     </div>
@@ -87,8 +89,8 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                                         </li>
                                         <li><a href="#">Field Techs</a>
                                             <ul>
-                                                <li><a href="#">New</a></li>
-                                                <li><a href="#">Search</a></li>
+                                                <CreateTechModal onSuccessMessage={onSuccessMessage}/>
+                                                <SearchTechnicianModal onSuccessMessage={onSuccessMessage}/>
                                                 <li><a href="#">Zip Code</a></li>
                                                 <li><a href="#">Distance Search</a></li>
                                             </ul>

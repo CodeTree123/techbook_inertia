@@ -54,7 +54,7 @@ $general = gs();
 
                                 <li class="nav-item active">
                                     @auth
-                                    <a class="nav-link" href="{{route('user.home')}}">Home <span class="sr-only">(current)</span></a>
+                                    <a class="nav-link" href="{{route('user.work.order.list.inertia')}}">Home <span class="sr-only">(current)</span></a>
                                     @else
                                     <a class="nav-link" href="{{ route('home') }}">Home <span class="sr-only">(current)</span></a>
 

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 import Details from '../Details/Details';
 import FieldTech from '../FieldTech/FieldTech';
+import Note from '../Note/Note';
+import SiteHistory from '../SiteHistory/SiteHistory';
 
 const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
     const [tabIndex, setTabIndex] = useState(0);
@@ -36,9 +38,13 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
             <TabPanel>
                 <FieldTech id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>
-            <TabPanel>Content for Tab 3</TabPanel>
+            <TabPanel>
+                <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
+            </TabPanel>
             <TabPanel>Content for Tab 4</TabPanel>
-            <TabPanel>Content for Tab 5</TabPanel>
+            <TabPanel>
+                <SiteHistory id={id} details={details?.site?.related_wo} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
+            </TabPanel>
         </Tabs>
     )
 }
