@@ -32,13 +32,17 @@ const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage }) => {
 
     const storeNote = (e) => {
         e.preventDefault();
-        post(route('user.note.store', id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                onSuccessMessage('Note Added');
-                setData(null)
-            }
-        });
+        if(data.note != ''){
+            post(route('user.note.store', id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    onSuccessMessage('Note Added');
+                    setData(null)
+                }
+            });
+        }else{
+            onErrorMessage('Note is required')
+        }
 
     }
 
