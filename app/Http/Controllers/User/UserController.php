@@ -2819,6 +2819,7 @@ class UserController extends Controller
         return back()->withNotify($notify);
     }
 
+    // useless
     public function addCloseoutNote(Request $request, $id)
     {
 
@@ -2836,6 +2837,7 @@ class UserController extends Controller
         return back()->withNotify($notify);
     }
 
+    // useless
     public function editCloseoutNote(Request $request, $id)
     {
 
@@ -2864,6 +2866,59 @@ class UserController extends Controller
 
         $task->save();
     }
+
+    public function uploadFilePhoto(Request $request, $id)
+    {
+        // Determine max file size based on file type
+        $maxFileSize = 1024;
+        if ($request->hasFile('file')) {
+            $fileMime = $request->file('file')->getMimeType();
+            if (str_starts_with($fileMime, 'image/')) {
+                $maxFileSize = 2048;
+            }
+        }
+    
+        // Validate the request
+        $request->validate([
+            'type' => 'nullable|string',
+            'file' => 'nullable|file|max:' . $maxFileSize,
+        ], [
+            'file.max' => $maxFileSize === 2048
+                ? 'The image file size must not exceed 2MB.'
+                : 'The file size must not exceed 1MB.',
+        ]);
+    
+        // Fetch the task
+        $task = Task::find($id);
+    
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
+    
+        // Handle file upload
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('docs/tasks'), $filename);
+    
+            // Update task file path
+            $task->file = 'docs/tasks/' . $filename;
+        }
+    
+        // Toggle task completion status
+        $task->is_completed = !$task->is_completed;
+        $task->save();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'File uploaded successfully.',
+            'task' => $task,
+        ]);
+    }
+    
 
     public function editTask(Request $request, $id)
     {

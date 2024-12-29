@@ -21,10 +21,8 @@ const TaskModal = ({ id, techId, onSuccessMessage }) => {
 
     const submit = (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('file', data.file);
 
-        post(route('user.wo.addTask', [id, techId]), formData, {
+        post(route('user.wo.addTask', [id, techId]), {
             preserveScroll: true,
             onSuccess: () => {
                 onSuccessMessage('Task Created Successfully');
@@ -89,21 +87,6 @@ const TaskModal = ({ id, techId, onSuccessMessage }) => {
                             <div className="mb-3 item">
                                 <input name="item" type="text" className="form-control" id="exampleFormControlInput1" placeholder="Enter Item Name" onChange={(e) => setData({ ...data, item: e.target.value })} />
                             </div>
-                        }
-
-                        {
-                            (data.type === 'upload_file' || data.type === 'upload_photo') && (
-                                <div className="mb-3 file">
-                                    <input
-                                        name="file"
-                                        type="file"
-                                        className="form-control"
-                                        id="exampleFormControlInput1"
-                                        placeholder="Enter Item Name"
-                                        onChange={(e) => setData({ ...data, file: e.target.files[0] })}
-                                    />
-                                </div>
-                            )
                         }
 
 
