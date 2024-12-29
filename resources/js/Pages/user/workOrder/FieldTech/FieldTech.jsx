@@ -139,14 +139,14 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                             </div>
                         </div>
                         <div className='p-5 rounded-3' style={{ backgroundColor: '#F9F9F8' }}>
-                            {/* <div className='bg-white px-4 py-4 rounded-4 border mb-3'>
-                                <h4>Previous Records</h4>
+                            <div className='bg-white px-4 py-4 rounded-4 border mb-3'>
+                                <h4>Technician remove reason</h4>
                                 {
                                     details?.tech_remove_reasons?.map((reason)=>(
                                         <p className='text-danger'>{reason.reason}</p>
                                     ))
                                 }
-                            </div> */}
+                            </div>
                             {loading ? (
                                 <p>Loading...</p>
                             ) : (
@@ -343,7 +343,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         </div>
                     </> :
                     <>
-                        <TechData id={id} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} />
+                        <TechData id={id} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} />
                     </>
             }
         </div>

@@ -1019,7 +1019,7 @@ class UserController extends Controller
             $site->time_zone = $request->time_zone;
             $site->save();
     
-            return redirect()->route('sites.index')->with('success', 'Site added successfully'); 
+            return back()->with('success', 'Site added successfully'); 
         } catch (QueryException $e) {
             $errorCode = $e->errorInfo[1];
             if ($errorCode == 1062) {
@@ -3161,13 +3161,13 @@ class UserController extends Controller
                 $tech->save();
             }
     
-            // if ($request->has('reason')) {
-            //     TechDeletionReason::create([
-            //         'wo_id' => $id,
-            //         'tech_id' => $techId,
-            //         'reason' => $request->reason,
-            //     ]);
-            // }
+            if ($request->reason) {
+                TechDeletionReason::create([
+                    'wo_id' => $id,
+                    'tech_id' => $techId,
+                    'reason' => $request->reason,
+                ]);
+            }
     
             AssignedEngineer::where('wo_id', $id)->delete();
     

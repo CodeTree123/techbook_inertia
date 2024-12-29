@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap';
 import Select from "react-select";
 
-const TechData = ({ id, techData, onSuccessMessage, totalhours, assignedEng }) => {
+const TechData = ({ id, techData, onSuccessMessage, totalhours, assignedEng, setTechnicians }) => {
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         reason: '',
@@ -23,6 +23,7 @@ const TechData = ({ id, techData, onSuccessMessage, totalhours, assignedEng }) =
             onSuccess: () => {
                 onSuccessMessage('Technician Removed Successfully');
                 setShowModal(false);
+                setTechnicians([]);
             }
         });
     }
