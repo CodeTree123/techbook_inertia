@@ -33,4 +33,17 @@ class NoteController extends Controller
 
         $note->save();
     }
+
+    public function storeCloseout(Request $request, $id, $techId = null)
+    {
+
+        $note = new Note();
+        $note->wo_id = $id;
+        $note->tech_id = $techId;
+        $note->auth_id = Auth::user()->id;
+        $note->note_type = 'close_out_notes';
+        $note->note = $request->note;
+
+        $note->save();
+    }
 }

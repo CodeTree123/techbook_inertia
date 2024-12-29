@@ -7,6 +7,9 @@ import CreateCustomerModal from './Customer/CreateCustomerModal';
 import SearchCustomerModal from './Customer/SearchCustomerModal';
 import CreateTechModal from './FieldTech/CreateTechModal';
 import SearchTechnicianModal from './FieldTech/SearchTechnicianModal';
+import ZipSearchModal from './FieldTech/ZipSearchModal';
+import ImportSite from './Site/ImportSite';
+import DistanceSearchModal from './FieldTech/DistanceSearchModal';
 
 const Header = ({onSuccessMessage, onErrorMessage}) => {
     const { user } = usePage().props;
@@ -84,15 +87,15 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                                             <ul>
                                                 <CreateSiteModal onSuccessMessage={onSuccessMessage}/>
                                                 <SearchSiteModal onSuccessMessage={onSuccessMessage}/>
-                                                <li><a href="#">Import</a></li>
+                                                <ImportSite onSuccessMessage={onSuccessMessage}/>
                                             </ul>
                                         </li>
                                         <li><a href="#">Field Techs</a>
                                             <ul>
                                                 <CreateTechModal onSuccessMessage={onSuccessMessage}/>
                                                 <SearchTechnicianModal onSuccessMessage={onSuccessMessage}/>
-                                                <li><a href="#">Zip Code</a></li>
-                                                <li><a href="#">Distance Search</a></li>
+                                                <ZipSearchModal onSuccessMessage={onSuccessMessage}/>
+                                                <DistanceSearchModal onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
                                             </ul>
                                         </li>
                                         <li><a href="#">Create Sub Ticket</a>

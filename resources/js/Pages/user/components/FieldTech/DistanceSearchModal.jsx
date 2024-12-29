@@ -1,0 +1,121 @@
+import { useForm } from '@inertiajs/react';
+import React, { useEffect, useState } from 'react'
+import { Modal } from 'react-bootstrap'
+import AsyncSelect from 'react-select/async';
+
+const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
+    const [showCustomer, setShowCustomer] = useState(false);
+
+    const handleCloseCustomer = () => setShowCustomer(false);
+    const handleShowCustomer = () => {
+        setShowCustomer(true)
+    };
+
+    const [autoComplete, setAutoComplete] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null); // New state for selected object
+
+    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+        latitude: '',
+        longitude: '',
+    });
+
+    const loadOptions = async (query) => {
+        try {
+            const response = await fetch("/distance/geocode/autocomplete/search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ query }),
+            });
+            const data = await response.json();
+
+            // Check if the data is a valid object
+            if (data && data.full_name && data.latitude !== undefined && data.longitude !== undefined) {
+                const result = {
+                    label: data.full_name,
+                    value: data.full_name,
+                    lat: data.latitude,
+                    lng: data.longitude,
+                };
+                setAutoComplete([result]); // Save the result for defaultOptions
+                return [result]; // Return it as an array for AsyncSelect
+            } else {
+                console.log("Incomplete or invalid data received from server.");
+            }
+            return []; // Return an empty array if no valid data is received
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return [];
+        }
+    };
+
+    const handleSelect = (selectedOption) => {
+        setSelectedOption(selectedOption); // Update selectedOption state
+        if (selectedOption) {
+            setData({
+                latitude: selectedOption.lat,
+                longitude: selectedOption.lng,
+            });
+        } else {
+            console.error('Selected option is null.');
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            const initialData = await loadOptions('');
+            setAutoComplete(initialData);
+            setIsLoading(false);
+        };
+        fetchData();
+    }, []);
+    
+    console.log(data);
+
+
+
+    return (
+        <>
+            <li><a href="#" onClick={handleShowCustomer}>Distance Search</a></li>
+            <Modal show={showCustomer} onHide={handleCloseCustomer} size="xl">
+                <Modal.Header>
+                    <h5 className="modal-title" id="exampleModalLabel">Measure Distance Technician</h5>
+                    <button onClick={() => setShowCustomer(false)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='row'>
+                        <div className='col-12 mb-4'>
+                            <h5>Get Distance of Technician From The Project Site</h5>
+                        </div>
+                        <div className='col-md-9'>
+                            <label htmlFor="" className='form-label fw-bold'>Provide your project site address below :</label>
+                            <AsyncSelect
+                                cacheOptions
+                                loadOptions={loadOptions}
+                                defaultOptions={autoComplete}
+                                placeholder="Search By Id, Name Or Zipcode"
+                                isLoading={isLoading}
+                                onChange={(selectedOption) => handleSelect(selectedOption)}
+                            />
+                        </div>
+                        <div className='col-md-3 d-flex flex-column justify-content-end'>
+                            <button className='btn btn-outline-success' style={{ height: '42px' }}>
+                                <i class="fa-solid fa-globe me-2"></i>
+                                Start Finding
+                            </button>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button onClick={() => setShowCustomer(false)} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    )
+}
+
+export default DistanceSearchModal

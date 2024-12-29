@@ -15,6 +15,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
         'item': '',
         'file': '',
         'checkin_note': '',
+        'note': '',
     });
 
     const completeTaskForm = (e, taskId, isCompleted) => {
@@ -154,6 +155,38 @@ const Task = ({ id, details, onSuccessMessage }) => {
                 }
             });
         }
+
+    };
+
+    const [addTechCloseout, setAddCloseOut] = useState(null);
+
+    const [addCloseout, setAddClose] = useState(false);
+
+    const handleAddCloseout = (techId) => {
+        setAddCloseOut(techId);
+        setData({ note: null });
+    }
+
+    const handleAddClose = () => {
+        setAddClose(true);
+        setData({ note: null });
+    }
+
+    const addCloseoutNote = (e, techId) => {
+        e.preventDefault();
+
+        post(route('user.closeoutnote.store', [id, techId]), {
+            preserveScroll: true,
+            onSuccess: () => {
+                onSuccessMessage('Closeout Note Added Successfully');
+                setAddCloseOut(null);
+                setAddClose(false);
+                setData({ note: null })
+            },
+            onError: (e) => {
+                onSuccessMessage(e);
+            }
+        });
 
     };
 
@@ -446,6 +479,32 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                         </div>
                                     </div>
                                 }
+                                {
+                                    details?.technician?.tech_type == 'individual' &&
+                                    <div className='mt-3'>
+                                        {
+                                            addCloseout ?
+                                                <div>
+                                                    <textarea name="" className='w-100 p-3 border' placeholder='Add Closeout Note' onChange={(e) => setData({ note: e.target.value })}></textarea>
+                                                    <div className='d-flex justify-content-end gap-2'>
+                                                        <button className='btn btn-outline-primary' onClick={(e) => addCloseoutNote(e, null)}>Save</button>
+                                                        <button className='btn btn-outline-danger' onClick={() => setAddClose(false)}>Cancel</button>
+                                                    </div>
+                                                </div> :
+                                                <button className='btn btn-outline-dark' onClick={handleAddClose}>+ Add Closeout Note</button>
+                                        }
+                                        {
+                                            details?.notes?.map((note) => (
+                                                note.note_type == 'close_out_notes' &&
+                                                <div className='px-4 py-3 mt-3' style={{ backgroundColor: 'rgb(227, 242, 253)' }}>
+                                                    <h6>Closeout Note:</h6>
+                                                    {note.note}
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                }
+
                             </div>
                         </div>
                     )}
@@ -758,6 +817,29 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                     </label>
                                                 </form>
                                             </div>
+                                        </div>
+
+                                        <div className='mt-3'>
+                                            {
+                                                addTechCloseout == tech.id ?
+                                                    <div>
+                                                        <textarea name="" className='w-100 p-3 border' placeholder='Add Closeout Note' onChange={(e) => setData({ note: e.target.value })}></textarea>
+                                                        <div className='d-flex justify-content-end gap-2'>
+                                                            <button className='btn btn-outline-primary' onClick={(e) => addCloseoutNote(e, tech.id)}>Save</button>
+                                                            <button className='btn btn-outline-danger' onClick={() => setAddCloseOut(null)}>Cancel</button>
+                                                        </div>
+                                                    </div> :
+                                                    <button className='btn btn-outline-dark' onClick={() => handleAddCloseout(tech.id)}>+ Add Closeout Note</button>
+                                            }
+                                            {
+                                                details?.notes?.map((note) => (
+                                                    note.note_type == 'close_out_notes' && note.tech_id == tech.id &&
+                                                    <div className='px-4 py-3 mt-3' style={{ backgroundColor: 'rgb(227, 242, 253)' }}>
+                                                        <h6>Closeout Note:</h6>
+                                                        {note.note}
+                                                    </div>
+                                                ))
+                                            }
                                         </div>
                                     </div>
                                 </div>

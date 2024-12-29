@@ -1101,7 +1101,6 @@ class UserController extends Controller
     public function siteImport(Request $request)
     {
         $excelFile = $request->all();
-
         // Adjusting rules to check only extensions (relying on extensions due to MIME type misclassifications)
         $rules = [
             'site_excel_file' => 'required|max:5120', // file extension check
@@ -1116,7 +1115,8 @@ class UserController extends Controller
         $validator = Validator::make($excelFile, $rules, $messages);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            // return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()->withErrors($validator->errors());
         } else {
             // Import the file
             Excel::import(new SitesImport($request->customer_id), $request->file('site_excel_file'), 'csv');
