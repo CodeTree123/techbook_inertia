@@ -13,11 +13,18 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
 
     const [autoComplete, setAutoComplete] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null); // New state for selected object
+    const [selectedOption, setSelectedOption] = useState(null);
+
+    const [responseData, setResponseData] = useState(null);
+    const [responseError, setResponseErrors] = useState(null);
+    const [loaderVisible, setLoaderVisible] = useState(false);
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+        destination: '',
         latitude: '',
         longitude: '',
+        respondedTechnicians: [],
+        numberOfTech: 10
     });
 
     const loadOptions = async (query) => {
@@ -52,17 +59,56 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
         }
     };
 
-    const handleSelect = (selectedOption) => {
-        setSelectedOption(selectedOption); // Update selectedOption state
+    const handleSelect = async (selectedOption) => {
+        setSelectedOption(selectedOption);
+    
         if (selectedOption) {
-            setData({
-                latitude: selectedOption.lat,
-                longitude: selectedOption.lng,
-            });
+            const destination = selectedOption.label;
+            const latitude = selectedOption.lat;
+            const longitude = selectedOption.lng;
+    
+            setData((prevData) => ({
+                ...prevData,
+                destination,
+                latitude,
+                longitude,
+            }));
+    
+            try {
+                setLoaderVisible(true); // Show loader while processing
+                const response = await fetch(`/user/find/tech/for/work/worder`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({
+                        destination,
+                        latitude,
+                        longitude,
+                    }),
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    onErrorMessage(errorData?.errors); // Handle server errors
+                    setLoaderVisible(false);
+                    return;
+                }
+    
+                const responseData = await response.json();
+                setResponseData(responseData); // Update response state
+                sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData)); // Store in sessionStorage
+            } catch (error) {
+                console.error('Error fetching closest techs:', error);
+            } finally {
+                setLoaderVisible(false); // Hide loader after fetch
+            }
         } else {
             console.error('Selected option is null.');
         }
     };
+    
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,9 +119,8 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
         };
         fetchData();
     }, []);
-    
-    console.log(data);
 
+    console.log(responseData);
 
 
     return (
@@ -107,6 +152,14 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                                 <i class="fa-solid fa-globe me-2"></i>
                                 Start Finding
                             </button>
+                        </div>
+
+                        <div className='col-12'>
+                            {
+                                responseData?.technicians?.map((tech)=>(
+                                    <p>{tech.company_name}</p>
+                                ))
+                            }
                         </div>
                     </div>
                 </Modal.Body>

@@ -2869,7 +2869,6 @@ class UserController extends Controller
 
     public function uploadFilePhoto(Request $request, $id)
     {
-        // Determine max file size based on file type
         $maxFileSize = 1024;
         if ($request->hasFile('file')) {
             $fileMime = $request->file('file')->getMimeType();
@@ -2878,7 +2877,6 @@ class UserController extends Controller
             }
         }
     
-        // Validate the request
         $request->validate([
             'type' => 'nullable|string',
             'file' => 'nullable|file|max:' . $maxFileSize,
@@ -2888,7 +2886,6 @@ class UserController extends Controller
                 : 'The file size must not exceed 1MB.',
         ]);
     
-        // Fetch the task
         $task = Task::find($id);
     
         if (!$task) {
@@ -2898,20 +2895,97 @@ class UserController extends Controller
             ], 404);
         }
     
-        // Handle file upload
+        $fileList = [];
+    
+        if ($task->file) {
+            $fileList = json_decode($task->file, true) ?? [];
+        }
+    
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('docs/tasks'), $filename);
     
-            // Update task file path
-            $task->file = 'docs/tasks/' . $filename;
+            $fileList[] = [
+                'name' => $file->getClientOriginalName(),
+                'path' => 'docs/tasks/' . $filename,
+                'uploaded_at' => now()->toDateTimeString(),
+            ];
         }
     
-        // Toggle task completion status
+        $task->file = json_encode($fileList);
+    
         $task->is_completed = !$task->is_completed;
         $task->save();
     
+        return response()->json([
+            'success' => true,
+            'message' => 'File uploaded successfully.',
+            'task' => $task,
+        ]);
+    }
+    
+    public function uploadMoreFilePhoto(Request $request, $description)
+    {
+        $maxFileSize = 1024;
+    
+        // Check if file is an image to increase the file size limit
+        if ($request->hasFile('file')) {
+            $fileMime = $request->file('file')->getMimeType();
+            if (str_starts_with($fileMime, 'image/')) {
+                $maxFileSize = 2048; // 2MB for images
+            }
+        }
+    
+        // Validate file and type
+        $request->validate([
+            'type' => 'nullable|string',
+            'file' => 'nullable|file|max:' . $maxFileSize,
+        ], [
+            'file.max' => $maxFileSize === 2048
+                ? 'The image file size must not exceed 2MB.'
+                : 'The file size must not exceed 1MB.',
+        ]);
+    
+        // Find the task by description (case-insensitive)
+        $task = Task::whereRaw('LOWER(description) = ?', [strtolower($description)])->first();
+    
+        // If no task is found, return error
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
+    
+        // Decode the existing file list, if any
+        $fileList = $task->file ? json_decode($task->file, true) : [];
+    
+        // Handle new file upload if present
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+    
+            // Store the file (you can change this to use Storage if needed)
+            // Here we're saving to the 'public' directory for simplicity
+            $file->move(public_path('docs/tasks'), $filename);
+    
+            // Add the new file details to the list
+            $fileList[] = [
+                'name' => $file->getClientOriginalName(),
+                'path' => 'docs/tasks/' . $filename,
+                'uploaded_at' => now()->toDateTimeString(),
+            ];
+        }
+    
+        // Update the task's file field with the new file list
+        $task->file = json_encode($fileList);
+    
+        // Toggle the task completion status
+        $task->is_completed = !$task->is_completed;
+        $task->save();
+    
+        // Return success response with the updated task
         return response()->json([
             'success' => true,
             'message' => 'File uploaded successfully.',

@@ -384,14 +384,14 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                                 {
                                                                     task.type == 'upload_file' &&
                                                                     <span>
-                                                                        Uploaded File {task.file?.replace('docs/tasks/', '')}
+                                                                        Uploaded File
                                                                     </span>
                                                                 }
 
                                                                 {
                                                                     task.type == 'upload_photo' &&
                                                                     <span>
-                                                                        Upload/Take Photo {task.file?.replace('docs/tasks/', '')}
+                                                                        Upload/Take Photo
                                                                     </span>
                                                                 }
 
