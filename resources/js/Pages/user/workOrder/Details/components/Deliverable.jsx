@@ -6,13 +6,13 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
 
     });
 
-    const deleteTask = (e, taskId) => {
+    const deleteTask = (e, taskId, url) => {
         e.preventDefault();
 
-        deleteItem(route('user.wo.deleteTask', taskId), {
+        post(route('user.wo.deleteFilePhoto', [taskId, url]), {
             preserveScroll: true,
             onSuccess: () => {
-                onSuccessMessage('Task Deleted Successfully');
+                onSuccessMessage('File Deleted Successfully');
             }
         });
     };
@@ -28,13 +28,13 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
         return acc;
     }, {});
 
-    const renderFilePreview = (file, index) => {
+    const renderFilePreview = (file, index, taskId) => {
         const fileExtension = file.path.split('.').pop().toLowerCase();
         const fileUrl = `${window.location.protocol}//${window.location.host}/${file.path}`;
 
         if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
             return (
-                <div key={index} className="file-preview">
+                <div key={index} className="file-preview position-relative">
                     <div className="file-content">
                         <div>
                             <img src={fileUrl} alt={file.name} className="file-preview-image w-100" />
@@ -43,12 +43,13 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
                             </a>
                         </div>
                     </div>
+                    <p className='text-danger position-absolute' style={{cursor: 'pointer', right: '5px', top: '0px'}} onClick={(e)=>deleteTask(e, taskId, file.uploaded_at)}>X</p>
                 </div>
 
             );
         } else if (fileExtension === 'pdf') {
             return (
-                <div key={index} className="file-preview">
+                <div key={index} className="file-preview position-relative">
                     <div className="file-content">
                         <div>
                             <i className="fa fa-file-pdf preview-pdf text-danger" aria-hidden="true" style={{ fontSize: '100px' }}></i>
@@ -57,20 +58,22 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
                             </a>
                         </div>
                     </div>
+                    <p className='text-danger position-absolute' style={{cursor: 'pointer', right: '5px', top: '0px'}} onClick={(e)=>deleteTask(e, taskId, file.uploaded_at)}>X</p>
                 </div>
 
             );
         } else {
             return (
-                <div key={index} className="file-preview">
+                <div key={index} className="file-preview position-relative">
                     <div className="file-content">
                         <div>
                             <i className="fa fa-file preview-pdf" aria-hidden="true" style={{ fontSize: '100px' }}></i>
                             <a href={fileUrl} target="_blank">
-                                <p className="file-name">{file.name}</p>
+                                <p className="file-name" style={{cursor: 'pointer', right: '5px', top: '0px'}} onClick={(e)=>deleteTask(e, taskId, file.path)}>{file.uploaded_at}</p>
                             </a>
                         </div>
                     </div>
+                    <p className='text-danger position-absolute'>X</p>
                 </div>
             );
         }
@@ -125,7 +128,7 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
                             <h6>{description}</h6>
                             <div id="preDeliverCont" className="file-preview-container" />
                             <div className="w-100 pb-2 mb-2 border-bottom">
-                                <div className="d-flex gap-2">
+                                <div className="d-flex gap-2 flex-wrap">
                                     {groupedTasks[description].map((task) => {
                                         if (task.file != null) {
                                             let files = [];
@@ -144,7 +147,7 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
                                             return (
                                                 <>
                                                     {files.map((file, index) => (
-                                                        file && file.path ? renderFilePreview(file, index) : null
+                                                        file && file.path ? renderFilePreview(file, index, task.id ) : null
                                                     ))}
                                                 </>
                                             );

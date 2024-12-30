@@ -5,7 +5,7 @@ import TaskModal from './TaskModal';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 const Task = ({ id, details, onSuccessMessage }) => {
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, post, delete:deleteItem, errors, processing, recentlySuccessful } = useForm({
         type: '',
         reason: '',
         desc: '',

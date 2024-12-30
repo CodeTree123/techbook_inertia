@@ -88,12 +88,12 @@
                 font-family: 'CustomFont' !important
             }
 
-            .inv_note p{
+            .inv_note p {
                 font-family: 'CustomFont' !important;
                 margin: 0 !important;
             }
 
-            .inv_note span{
+            .inv_note span {
                 font-family: 'CustomFont' !important
             }
 
@@ -216,8 +216,8 @@
 
                 /* Avoid breaking the table rows between pages */
                 /* table {
-                        page-break-inside: avoid;
-                    } */
+                                            page-break-inside: avoid;
+                                        } */
 
                 .wo-req,
                 .wo-perform {
@@ -235,10 +235,10 @@
                 */
 
                 /* .top-print-nav {
-                        page-break-inside: break;
-                    }
+                                            page-break-inside: break;
+                                        }
 
-                    /* Print layout specific to margins */
+                                        /* Print layout specific to margins */
                 .container-fluid {
                     padding-left: 0;
                     padding-right: 0;
@@ -331,6 +331,17 @@
                 .taxprice,
                 .shipping {
                     width: 140px !important;
+                }
+
+                .input-group{
+                    display: flex;
+                    gap: 10px;
+                    align-items: center !important;
+                    padding: 13px 0
+                }
+                .input-group span, .input-group input{
+                    padding: 0 !important;
+                    margin-bottom: 0
                 }
             }
         </style>
@@ -531,22 +542,22 @@
                             <h6 class="fst-italic" style="white-space: nowrap;">Work Performed : </h6>
                         </div>
                         <div class="w-100 px-5 py-0">
-
-                            @if (isset($invoice->notes) && $invoice->notes->count() > 0)
-                                @foreach ($invoice->notes->filter(fn($note) => !empty($note->close_out_notes)) as $note)
-                                    <textarea id="wo-per-{{ $loop->index }}" class="wo_close_out w-100 p-0" style="border:none;">
-                        {{ $note->close_out_notes }}
-                        </textarea>
-                                    <div id="inv_note-{{ $loop->index }}" class="inv_note">
-                                        {!! nl2br(e($note->close_out_notes)) !!}
-                                    </div>
+                            <textarea class="wo_close_out w-100 p-0" style="border:none">
+                                @foreach ($invoice->notes as $note)
+                                    @if ($note->note_type == 'close_out_notes')
+                                        <p>{{ $note->note }}</p>
+                                    @endif
                                 @endforeach
-                            @else
-                                <textarea class="wo_close_out w-100 p-0" style="border:none"></textarea>
-                                <div id="inv_note" class="inv_note">
+                            </textarea>
 
-                                </div>
-                            @endif
+                            <div id="inv_note" class="inv_note">
+                                @foreach ($invoice->notes as $note)
+                                    @if ($note->note_type == 'close_out_notes')
+                                        <p>{{ $note->note }}</p>
+                                    @endif
+                                @endforeach
+                            </div>
+
                         </div>
                     </div>
                     <div class="page-container d-flex justify-content-end pb-2">
@@ -567,12 +578,14 @@
                         <table class="price-box table table-hover" style="width: 500px;">
                             <tbody>
                                 <tr class="tax">
-                                    <td><div class="d-flex align-items-center" style="height: 40px">Sub-total</div></td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="height: 40px">Sub-total</div>
+                                    </td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>
                                             <input type="text" class="subtotal decimal-input"
-                                                value="${{ $totalPrice }}" style="border:none">
+                                                value="{{ $totalPrice }}" style="border:none">
                                         </div>
                                     </td>
                                 </tr>
@@ -589,7 +602,10 @@
                                     </td>
                                 </tr>
                                 <tr class="shippingField">
-                                    <td><div class="d-flex align-items-center" style="height: 40px">Shipping & Handling</div></td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="height: 40px">Shipping & Handling
+                                        </div>
+                                    </td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>
@@ -599,7 +615,9 @@
                                     </td>
                                 </tr>
                                 <tr class="tax">
-                                    <td><div class="d-flex align-items-center" style="height: 40px">Credit</div></td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="height: 40px">Credit</div>
+                                    </td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto d-flex align-items-center justify-content-end">
                                             <span class="p-2">$</span>
@@ -612,7 +630,9 @@
                                     </td>
                                 </tr>
                                 <tr class="tax">
-                                    <td><div class="d-flex align-items-center" style="height: 40px">Balance Due</div></td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="height: 40px">Balance Due</div>
+                                    </td>
                                     <td class="d-flex justify-content-end">
                                         <div class="input-group w-auto">
                                             <span class="p-2">$</span>

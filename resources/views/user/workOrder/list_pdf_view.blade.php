@@ -172,7 +172,7 @@
                         <tbody>
                             @foreach ($work as $w)
                             <tr class="text-center" id="filerPageId" data-id="{{ $w->id }}">
-                                <td><a href="{{route('user.work.order.view.inertia',$w->id)}}"> {{ $w->order_id }} </a></td>
+                                <td><a href="#"> {{ $w->order_id }} </a></td>
                                 <td>{{ $w->created_at->diffForHumans() }}</td>
                                 <td><a class="btn ma" href="{{route('user.work.order.view.layout', $w->id)}}"><i class="fa-solid fa-display"></i></a></td>
                                 @if ($w->slug == null)

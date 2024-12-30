@@ -2993,6 +2993,57 @@ class UserController extends Controller
         ]);
     }
     
+    public function deleteFilePhoto(Request $request, $id, $url)
+    {
+        $task = Task::find($id);
+    
+        // If no task is found, return error
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
+    
+        // Decode the existing file list, if any
+        $fileList = $task->file ? json_decode($task->file, true) : [];
+    
+        // Find the file by URL in the list
+        $fileToDelete = null;
+        foreach ($fileList as $index => $file) {
+            if ($file['uploaded_at'] === $url) {
+                $fileToDelete = $file;
+                unset($fileList[$index]); // Remove the file from the list
+                break;
+            }
+        }
+    
+        // If file not found, return error
+        if (!$fileToDelete) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found.',
+            ], 404);
+        }
+    
+        // Delete the file from public storage (if it exists)
+        $filePath = public_path($fileToDelete['path']);
+        if (file_exists($filePath)) {
+            unlink($filePath); // Remove the file from the public directory
+        }
+    
+        // Update the task's file field with the new file list (after removal)
+        $task->file = json_encode(array_values($fileList)); // Re-index the array after unsetting the file
+        $task->save();
+    
+        // Return success response with the updated task
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'File deleted successfully.',
+        //     'task' => $task,
+        // ]);
+    }
+    
 
     public function editTask(Request $request, $id)
     {

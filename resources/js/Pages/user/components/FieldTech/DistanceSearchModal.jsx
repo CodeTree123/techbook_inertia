@@ -59,21 +59,26 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
         }
     };
 
+    console.log(selectedOption);
+
+
     const handleSelect = async (selectedOption) => {
         setSelectedOption(selectedOption);
-    
+    };
+
+    const googleSearch = async () => {
         if (selectedOption) {
             const destination = selectedOption.label;
             const latitude = selectedOption.lat;
             const longitude = selectedOption.lng;
-    
+
             setData((prevData) => ({
                 ...prevData,
                 destination,
                 latitude,
                 longitude,
             }));
-    
+
             try {
                 setLoaderVisible(true); // Show loader while processing
                 const response = await fetch(`/user/find/tech/for/work/worder`, {
@@ -88,14 +93,14 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                         longitude,
                     }),
                 });
-    
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     onErrorMessage(errorData?.errors); // Handle server errors
                     setLoaderVisible(false);
                     return;
                 }
-    
+
                 const responseData = await response.json();
                 setResponseData(responseData); // Update response state
                 sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData)); // Store in sessionStorage
@@ -107,8 +112,8 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
         } else {
             console.error('Selected option is null.');
         }
-    };
-    
+    }
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -148,16 +153,63 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                             />
                         </div>
                         <div className='col-md-3 d-flex flex-column justify-content-end'>
-                            <button className='btn btn-outline-success' style={{ height: '42px' }}>
+                            <button onClick={() => googleSearch()} className='btn btn-outline-success' style={{ height: '42px' }}>
                                 <i class="fa-solid fa-globe me-2"></i>
                                 Start Finding
                             </button>
                         </div>
 
                         <div className='col-12'>
-                            {
-                                responseData?.technicians?.map((tech)=>(
-                                    <p>{tech.company_name}</p>
+                            {loaderVisible ? 'loading...' :
+                                responseData?.technicians?.map((tech) => (
+                                    <div className='d-flex'>
+                                        <h2 className='mb-2'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '14px' }}>({tech.distance} ~ {tech.duration})</span></h2>
+                                        <div className='d-flex gap-2 justify-contetn-start align-items-center'>
+                                            {
+                                                tech.email &&
+                                                <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`mailto:${tech.email}`}>
+                                                    <i class="fa-regular fa-envelope"></i>
+                                                    {tech.email}
+                                                </a>
+                                            }
+
+                                            {
+                                                tech.phone &&
+                                                <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`callto:${tech.phone}`}>
+                                                    <i class="fa-solid fa-phone"></i>
+                                                    {tech.phone}
+                                                </a>
+                                            }
+
+                                            {
+                                                tech.rate['STD'] &&
+                                                <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
+                                                    <b>STD:</b> ${tech.rate['STD']}
+                                                </div>
+                                            }
+
+                                            {
+                                                tech.rate['EM'] &&
+                                                <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
+                                                    <b>EM:</b> ${tech.rate['EM']}
+                                                </div>
+                                            }
+
+                                            {
+                                                tech.rate['OT'] &&
+                                                <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
+                                                    <b>OT:</b> ${tech.rate['OT']}
+                                                </div>
+                                            }
+
+                                            {
+                                                tech.rate['SH'] &&
+                                                <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
+                                                    <b>SH:</b> ${tech.rate['SH']}
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
                                 ))
                             }
                         </div>
