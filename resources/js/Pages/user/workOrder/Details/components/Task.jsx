@@ -5,17 +5,17 @@ import TaskModal from './TaskModal';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 const Task = ({ id, details, onSuccessMessage }) => {
-    const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
-        'type': '',
-        'reason': '',
-        'desc': '',
-        'email': '',
-        'phone': '',
-        'from': '',
-        'item': '',
-        'file': '',
-        'checkin_note': '',
-        'note': '',
+    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+        type: '',
+        reason: '',
+        desc: '',
+        email: '',
+        phone: '',
+        from: '',
+        item: '',
+        checkin_note: '',
+        note: '',
+        task_file: null,
     });
 
     const completeTaskForm = (e, taskId, isCompleted) => {
@@ -190,6 +190,45 @@ const Task = ({ id, details, onSuccessMessage }) => {
 
     };
 
+
+    const addFilePhoto = async (e, taskId) => {
+        // Check if a file was selected
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+
+            // Create a FormData object
+            const formData = new FormData();
+            formData.append('file', file); // Append the selected file to FormData
+
+            try {
+                // Send the request using Fetch API or Axios
+                const response = await fetch(route('user.wo.uploadFilePhoto', taskId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, // Include CSRF token
+                    },
+                    body: formData, // Use FormData as the request body
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('File Uploaded Successfully', result);
+                    onSuccessMessage('File Uploaded Successfully');
+                } else {
+                    console.error('File Upload Failed:', response.statusText);
+                    onSuccessMessage('File upload failed.');
+                }
+            } catch (error) {
+                console.error('Upload Error:', error);
+                onSuccessMessage('File upload failed.');
+            }
+        } else {
+            console.log('No file selected.');
+        }
+    };
+
+
+
     return (
         <div>
             <DragDropContext onDragEnd={onDragEnd}>
@@ -280,9 +319,40 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps} key={task.id} className="px-4 py-3 mb-4 d-flex justify-content-between action-cards" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }} draggable >
                                                     <div className="d-flex">
-                                                        <form id="completeTaskForm" className='me-2' onSubmit={(e) => completeTaskForm(e, task.id, task.is_completed)}>
-                                                            <input type="checkbox" id="completeTaskCheckbox" onChange={(e) => completeTaskForm(e, task.id, task.is_completed)} checked={task.is_completed} />
-                                                        </form>
+                                                        {
+                                                            (task.type === 'upload_file' || task.type === 'upload_photo') && !task.file ? (
+                                                                <form id="completeTaskForm" className="me-2">
+                                                                    <label
+                                                                        htmlFor={`completeTaskFileUpload-${task.id}`}
+                                                                        className="border bg-white rounded"
+                                                                        style={{ width: '16px', height: '16px' }}
+                                                                    >
+                                                                        {/* Optional: Add an icon or text inside the label for accessibility */}
+                                                                    </label>
+                                                                    <input
+                                                                        type="file"
+                                                                        id={`completeTaskFileUpload-${task.id}`}
+                                                                        className="invisible"
+                                                                        onChange={(e) => addFilePhoto(e, task.id)}
+                                                                    />
+                                                                </form>
+                                                            ) : (
+                                                                <form
+                                                                    id="completeTaskForm"
+                                                                    className="me-2"
+                                                                    onSubmit={(e) => completeTaskForm(e, task.id, task.is_completed)}
+                                                                >
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        id={`completeTaskCheckbox-${task.id}`}
+                                                                        onChange={(e) => completeTaskForm(e, task.id, task.is_completed)}
+                                                                        checked={!!task.is_completed}
+                                                                    />
+                                                                </form>
+                                                            )
+                                                        }
+
+
 
                                                         <label className="form-check-label">
                                                             <form onSubmit={(e) => submit(e, task.id)}>
