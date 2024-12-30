@@ -193,6 +193,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('add-task/{id}/{tech_id?}', 'addTask')->name('wo.addTask');
                 Route::post('complete-task/{id}', 'completeTask')->name('wo.completeTask');
                 Route::post('upload-file-photo/{id}', 'uploadFilePhoto')->name('wo.uploadFilePhoto');
+                Route::post('upload-more-file-photo/{description}', 'uploadMoreFilePhoto')->name('wo.uploadMoreFilePhoto');
                 Route::post('update-task/{id}', 'editTask')->name('wo.editTask');
                 Route::delete('delete-task/{id}', 'deleteTask')->name('wo.deleteTask');
                 Route::post('assign-task/{taskId}/{techId}', 'assignTechToTask')->name('wo.assignTechToTask');
