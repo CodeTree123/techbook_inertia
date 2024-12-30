@@ -290,7 +290,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                             <div key={tech.id} className='bg-white px-4 py-4 rounded-4 border position-relative mb-3'>
                                                 <div className='d-flex align-items-center gap-3'>
                                                     <div className="bg-primary d-flex justify-content-center align-items-center text-white" style={{ width: 30, height: 30, borderRadius: '50%' }}>{tech.company_name.charAt(0)}</div>
-                                                    <h3 className='mb-0'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '12px' }}>({tech.distance} ~ {tech.duration})</span></h3>
+                                                    <h3 className='mb-0'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '14px' }}>({tech.distance} ~ {tech.duration})</span></h3>
                                                 </div>
                                                 <div className='row mt-3'>
                                                     <div className='col-8 d-flex justify-content-start gap-2 mx-0'>
