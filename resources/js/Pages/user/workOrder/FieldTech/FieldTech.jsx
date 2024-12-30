@@ -70,11 +70,15 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     const [responseData, setResponseData] = useState(null);
     const [responseError, setResponseErros] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
 
 
-    const closestTech = async (destination) => {
+    const closestTech = async (destination, cnt) => {
         setLoaderVisible(true);
+        setClickCount(clickCount + cnt)
 
+        const radiusValue = clickCount == 0 ? null : clickCount * 50
+        console.log(radiusValue);
         try {
             const response = await fetch(`/user/find/tech/for/work/worder`, {
                 method: "POST",
@@ -84,6 +88,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                 },
                 body: JSON.stringify({
                     destination,
+                    radiusValue
                 }),
             });
 
@@ -97,11 +102,22 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
             const responseData = await response.json();
             setLoaderVisible(false);
             setResponseData(responseData);
+
+            sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
         } catch (error) {
             console.error('Error fetching closest techs:', error);
             setLoaderVisible(false);
         }
     };
+
+
+    useEffect(() => {
+        const storedData = sessionStorage.getItem(`workOrder_${id}`);
+        if (storedData) {
+            setResponseData(JSON.parse(storedData));
+        }
+    }, [id]);
+
     // Modal
 
     const [showModal, setShowModal] = useState(false);
@@ -132,7 +148,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         <div className='row justify-content-end'>
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
-                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1' style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode)}>
+                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1' style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null)}>
                                     <i className="fa-brands fa-google" style={{ fontSize: 16 }} aria-hidden="true" />
                                     Find Tech
                                 </button>
@@ -142,7 +158,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                             <div className='bg-white px-4 py-4 rounded-4 border mb-3'>
                                 <h4>Technician remove reason</h4>
                                 {
-                                    details?.tech_remove_reasons?.map((reason)=>(
+                                    details?.tech_remove_reasons?.map((reason) => (
                                         <p className='text-danger'>{reason.reason}</p>
                                     ))
                                 }
@@ -274,7 +290,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                             <div key={tech.id} className='bg-white px-4 py-4 rounded-4 border position-relative mb-3'>
                                                 <div className='d-flex align-items-center gap-3'>
                                                     <div className="bg-primary d-flex justify-content-center align-items-center text-white" style={{ width: 30, height: 30, borderRadius: '50%' }}>{tech.company_name.charAt(0)}</div>
-                                                    <h3 className='mb-0'>{tech.company_name} <span>{tech.distance} ~ {tech.duration}</span></h3>
+                                                    <h3 className='mb-0'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '12px' }}>({tech.distance} ~ {tech.duration})</span></h3>
                                                 </div>
                                                 <div className='row mt-3'>
                                                     <div className='col-8 d-flex justify-content-start gap-2 mx-0'>
@@ -337,6 +353,25 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                 <div className='position-absolute top-0 end-0 badge text-bg-warning'>{tech.tech_type}</div>
                                             </div>
                                         ))}
+
+                                        {
+                                            responseData && responseData?.technicians?.length != 0 &&
+                                            <div className="pagination justify-content-end align-items-center gap-1">
+                                                <button
+                                                    disabled={clickCount == 0}
+                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, -1)}
+                                                    className='btn btn-outline-primary'
+                                                >
+                                                    Previous
+                                                </button>
+                                                <button
+                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, 1)}
+                                                    className='btn btn-outline-primary'
+                                                >
+                                                    Next
+                                                </button>
+                                            </div>
+                                        }
                                     </ul>
                                 )
                             }
