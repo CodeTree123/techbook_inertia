@@ -883,37 +883,49 @@ class CustomerController extends Controller
     {
         $max_exec_time = ini_get('max_execution_time');
         ini_set('max_execution_time', 300);
-        $sites = CustomerSite::whereRaw("ST_X(co_ordinates) IS NULL OR ST_Y(co_ordinates) IS NULL")->get(['id', 'address_1','location','zipcode','state','city']);
+
+        // Fetch the last 10 sites with missing coordinates
+        $sites = CustomerSite::whereRaw("ST_X(co_ordinates) IS NULL OR ST_Y(co_ordinates) IS NULL")
+            ->latest('id') // Assuming 'id' is an auto-incrementing primary key
+            ->take(10)
+            ->get(['id', 'address_1', 'location', 'zipcode', 'state', 'city']);
+
         $address_array = [];
-        if (count($sites) != 0) {
+
+        if ($sites->isNotEmpty()) {
             foreach ($sites as $site) {
-                $address['city'] = $site->city;
-                $address['state'] = $site->state;
-                $address['zipcode'] = $site->zipcode;
-                $address['location'] = $site->location;
-                $address['address_1'] = $site->address_1;
-                $address['address_2'] = $site->address_2;
+                $address = [
+                    'city' => $site->city,
+                    'state' => $site->state,
+                    'zipcode' => $site->zipcode,
+                    'location' => $site->location,
+                    'address_1' => $site->address_1,
+                    'address_2' => $site->address_2 ?? '', // Handle null
+                ];
                 $address_string = implode(", ", $address);
                 $address_array[] = [
                     'id' => $site->id,
                     'address' => $address_string
                 ];
             }
+
             $coordinates = $this->geocodingService->geocodeAddresses($address_array);
-            if ($coordinates != null) {
+
+            if ($coordinates !== null) {
                 foreach ($coordinates as $value) {
                     CustomerSite::where('id', $value['id'])->update([
                         'co_ordinates' => DB::raw("ST_GeomFromText('POINT(" . $value['lat'] . " " . $value['lng'] . ")', 4326)"),
                     ]);
                 }
+                $notify[] = ['success', 'Coordinates added successfully to the last 10 sites'];
+            } else {
+                $notify[] = ['error', 'Failed to fetch coordinates'];
             }
-            ini_set('max_execution_time', $max_exec_time);
-            $notify[] = ['success', 'lat long added successfully'];
-            return back()->withNotify($notify);
         } else {
-            ini_set('max_execution_time', $max_exec_time);
-            $notify[] = ['success', 'No Sites found with empty coordinates !'];
-            return back()->withNotify($notify);
+            $notify[] = ['info', 'No sites found with empty coordinates'];
         }
+
+        ini_set('max_execution_time', $max_exec_time);
+        return back()->withNotify($notify);
     }
 }
