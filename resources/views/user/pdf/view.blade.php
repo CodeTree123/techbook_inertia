@@ -70,10 +70,10 @@
                     </th>
                 </tr>
                 <tr>
-                    <th><b>Scheduled date: </b> {{ $views->on_site_by }}</th>
+                    <th><b>Scheduled date: </b> {{ @$scheduled->on_site_by }}</th>
                 </tr>
                 <tr>
-                    <th><b>Scheduled time: </b> {{ @$views->scheduled_time }}</th>
+                    <th><b>Scheduled time: </b> {{ @$scheduled->scheduled_time }}</th>
                 </tr>
                 <tr>
                     <th><b>Location Name: </b> {{ @$views->site->location }}

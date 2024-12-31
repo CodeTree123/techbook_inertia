@@ -130,7 +130,8 @@ class SiteController extends Controller
     {
 
         $pageTitle = "Download Work Order";
-        $views = WorkOrder::with('site', 'customer', 'employee')->find($id);
+        $views = WorkOrder::with('site', 'customer', 'employee','schedules')->find($id);
+        $scheduled = $views->schedules()->latest()->first();
         $imageFileNames = $views->pictures ? json_decode($views->pictures) : [];
         $pdf = PDF::loadView('user.pdf.work_order', compact('pageTitle', 'views', 'imageFileNames'))->setOptions(['defaultFont' => 'sans-serif']);
         $pdf->setPaper('A4', 'portrait');
@@ -143,7 +144,8 @@ class SiteController extends Controller
     public function pdfWorkOrderUserView($id)
     {
         $pageTitle = "View Pdf";
-        $views = WorkOrder::with('site', 'customer', 'employee')->find($id);
+        $views = WorkOrder::with('site', 'customer', 'employee','schedules')->find($id);
+        $scheduled = $views->schedules()->latest()->first();
         $imageFileNames = json_decode($views->pictures);
         return view('user.pdf.view', compact('pageTitle', 'views', 'imageFileNames'));
     }
