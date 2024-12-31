@@ -9,11 +9,13 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
         'MT': 'America/Denver',
         'CT': 'America/Chicago',
         'ET': 'America/New_York',
+        'CT/MT': 'America/Chicago',
         'AKT': 'America/Anchorage',
         'HST': 'Pacific/Honolulu',
     };
 
-    const selectedTimezone = timezoneMap[timezone];
+    const selectedTimezone = timezoneMap[timezone] || 'America/Chicago'; 
+    
     return (
         <div>
             <div className='bg-white border rounded py-3 px-3 row mb-3'>
@@ -21,9 +23,8 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
                     <thead className='border-0'>
                         <tr>
                             <th className='text-start border-0'>Work Order</th>
-                            <th className='text-start border-0'>Work Order Type</th>
                             <th className='text-start border-0'>Date</th>
-                            <th className='text-start border-0'>Client</th>
+                            <th className='text-start border-0'>Scope Of Work</th>
                             <th className='text-start border-0'>Problem Code</th>
                             <th className='text-start border-0'>Resolution Code</th>
                         </tr>
@@ -35,9 +36,20 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
                                 <td className='border-0 fw-bold' style={{ borderRadius: '10px 0 0 10px' }}>
                                     <Link href={`/user/work/order/view/layout/user/dashboard/inertia/${wo.id}`}>{wo.order_id}</Link>
                                 </td>
-                                <td className='border-0 fw-bold'></td>
                                 <td className='border-0 fw-bold'>{DateTime.fromISO(wo.created_at, { zone: selectedTimezone }).toFormat('M/d/yyyy')} at {DateTime.fromISO(wo.created_at, { zone: selectedTimezone }).toFormat('HH:mma')} ({timezone})</td>
-                                <td className='border-0 fw-bold'>{wo?.customer?.company_name}</td>
+                                <td
+                                    className="border-0 fw-bold"
+                                    style={{
+                                        whiteSpace: 'nowrap',   // Prevent wrapping
+                                        overflow: 'hidden',     // Hide overflowing content
+                                        textOverflow: 'ellipsis', // Show ellipsis for overflowed text
+                                        maxWidth: '400px',      // Or set an appropriate width
+                                    }}
+                                    title={wo.scope_work.replace(/<[^>]*>/g, '')} // Tooltip on hover showing the full content
+                                    data-bs-toggle="tooltip" // Enables the tooltip
+                                >
+                                    {wo.scope_work.replace(/<[^>]*>/g, '')}
+                                </td>
                                 <td className='border-0 fw-bold'>#595</td>
                                 <td className='border-0 fw-bold'>#59552</td>
                             </tr>

@@ -36,6 +36,9 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
         'estimated_time': '',
     });
 
+    console.log(data);
+    
+
     const submit = (e, id) => {
         e.preventDefault();
 
@@ -102,7 +105,7 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                             <p>Approximate hours to complete</p>
                             {
                                 editableRow !== 0 &&
-                                <b className="nrml-txt">{details?.schedules[0]?.h_operation}</b>
+                                <b className="nrml-txt">Hours of operation: {details?.schedules[0]?.h_operation}</b>
                             }
                             {
                                 editableRow === 0 &&
@@ -110,10 +113,14 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                             }
                             <br />
                             {
+                                    editableRow !== 0 &&
+                                    <b className="nrml-txt mb-2">Estimated Hours: {details?.schedules[0]?.estimated_time} hour(s)</b>
+                                }
+                            {
                                 editableRow === 0 &&
                                 <input type="text" name="h_operation" placeholder='Estimated hours' className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.estimated_time} onChange={(e) => setData({ ...data, estimated_time: e.target.value })} />
                             }
-                            <p>Updated by {details?.employee.name} <span className='mx-1'>on</span>
+                            <p>Updated by {details?.employee?.name} <span className='mx-1'>on</span>
                                 {formatDate(details?.updated_at)}  <span className='mx-1'>at</span>
                                 {new Date(details?.updated_at).toLocaleTimeString('en-US', {
                                     hour: '2-digit',
@@ -181,13 +188,17 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                                 <p>Approximate hours to complete</p>
                                 {
                                     editableRow !== index &&
-                                    <b className="nrml-txt">{schedule.h_operation}</b>
+                                    <b className="nrml-txt">Hours of operation: {schedule.h_operation}</b>
                                 }
                                 {
                                     editableRow === index &&
                                     <input type="text" name="h_operation" placeholder='Hours of operation' className="mb-2 border-bottom fw-bold" defaultValue={schedule.h_operation} onChange={(e) => setData({ ...data, h_operation: e.target.value })} />
                                 }
                                 <br />
+                                {
+                                    editableRow !== index &&
+                                    <b className="nrml-txt mb-2">Estimated Hours: {schedule?.estimated_time} hour(s)</b>
+                                }
                                 {
                                     editableRow === index &&
                                     <input type="text" name="h_operation" placeholder='Estimated hours' className="mb-2 border-bottom fw-bold" defaultValue={schedule?.estimated_time} onChange={(e) => setData({ ...data, estimated_time: e.target.value })} />

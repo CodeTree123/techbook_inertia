@@ -378,7 +378,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         </div>
                     </> :
                     <>
-                        <TechData id={id} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} />
+                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} />
                     </>
             }
         </div>
