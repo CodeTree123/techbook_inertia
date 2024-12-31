@@ -7,6 +7,8 @@ use App\Models\PasswordReset;
 use App\Models\User;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordResets;
 
 class ForgotPasswordController extends Controller
 {
@@ -63,18 +65,7 @@ class ForgotPasswordController extends Controller
         $password->created_at = \Carbon\Carbon::now();
         $password->save();
 
-        $userIpInfo = getIpInfo();
-        $userBrowserInfo = osBrowser();
-        notify($user, 'PASS_RESET_CODE', [
-            'code' => $code,
-            'operating_system' => @$userBrowserInfo['os_platform'],
-            'browser' => @$userBrowserInfo['browser'],
-            'ip' => @$userIpInfo['ip'],
-            'time' => @$userIpInfo['time']
-        ],['email']);
-
-        $email = $user->email;
-        session()->put('pass_res_mail',$email);
+        Mail::to($user->email)->send(new PasswordResets($code));
         $notify[] = ['success', 'Password reset email sent successfully'];
         return to_route('user.password.code.verify')->withNotify($notify);
     }

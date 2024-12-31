@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordResets;
 
 class ForgotPasswordController extends Controller
 {
@@ -81,18 +83,8 @@ class ForgotPasswordController extends Controller
         $adminPasswordReset->created_at = date("Y-m-d h:i:s");
         $adminPasswordReset->save();
 
-        $adminIpInfo = getIpInfo();
-        $adminBrowser = osBrowser();
-        notify($admin, 'PASS_RESET_CODE', [
-            'code' => $code,
-            'operating_system' => $adminBrowser['os_platform'],
-            'browser' => $adminBrowser['browser'],
-            'ip' => $adminIpInfo['ip'],
-            'time' => $adminIpInfo['time']
-        ],['email'],false);
-
-        $email = $admin->email;
-        session()->put('pass_res_mail',$email);
+            // Send the email
+        Mail::to($admin->email)->send(new PasswordResets($code));
 
         return to_route('admin.password.code.verify');
     }
