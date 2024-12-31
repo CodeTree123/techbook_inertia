@@ -802,7 +802,7 @@ console.log(successMessage);
             </div>
 
             <div className="col-2 d-flex gap-1 justify-content-end px-3 py-4">
-              <a href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/24`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
+            <a href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/${wo.id}`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
                 <i className="fa fa-eye" aria-hidden="true" />
               </a>
               <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} />

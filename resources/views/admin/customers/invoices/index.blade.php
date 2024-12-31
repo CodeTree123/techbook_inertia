@@ -387,7 +387,7 @@
                                             style=" font-weight: bold;">Site Number</span></td>
                                     <td style="padding: 10px; text-align: right;">
                                         <span style="color: #000000;">
-                                            {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] : '' }}
+                                        {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] ?? '' : '' }}
                                         </span>
                                     </td>
                                 </tr>
