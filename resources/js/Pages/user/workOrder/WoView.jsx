@@ -182,7 +182,6 @@ export default function WoView({ wo }) {
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-console.log(successMessage);
 
   const handleSuccessMessage = (data) => {
     setSuccessMessage(data);

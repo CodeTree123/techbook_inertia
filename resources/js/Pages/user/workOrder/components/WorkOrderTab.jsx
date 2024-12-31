@@ -4,6 +4,7 @@ import Details from '../Details/Details';
 import FieldTech from '../FieldTech/FieldTech';
 import Note from '../Note/Note';
 import SiteHistory from '../SiteHistory/SiteHistory';
+import WoLog from '../WoLog/WoLog';
 
 const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
     const [tabIndex, setTabIndex] = useState(0);
@@ -41,7 +42,9 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
             <TabPanel>
                 <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>
-            <TabPanel>Content for Tab 4</TabPanel>
+            <TabPanel>
+                <WoLog id={id} details={details?.time_logs} timezone={details?.site?.time_zone}/>
+            </TabPanel>
             <TabPanel>
                 <SiteHistory id={id} details={details?.site?.related_wo} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>

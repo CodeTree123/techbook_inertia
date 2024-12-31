@@ -62,7 +62,7 @@ const AllWorkOrder = ({ w_orders }) => {
       <MainLayout>
         <Head title={'All WorkOrder | Techbook'} />
         <div className="container-fluid total-bg">
-          <div className='bg-white border rounded py-3 px-1 row justify-content-between align-items-center mt-5 mb-3'>
+          <div className='bg-white border rounded py-3 px-1 row justify-content-between align-items-center mt-3 mb-3'>
             <h2 class="fs-4 mb-0 col-md-2">All Work Orders</h2>
 
             <div className='d-flex gap-2 col-md-10 justify-content-end'>

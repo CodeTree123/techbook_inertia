@@ -55,6 +55,7 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use App\Models\TechDeletionReason;
 use App\Models\OtherExpense;
+use Illuminate\Support\Facades\Auth; 
 
 class UserController extends Controller
 {
@@ -2042,7 +2043,7 @@ class UserController extends Controller
             'customer',
             'technician.engineers',
             'employee',
-            'site.relatedWo:id,order_id,created_at,site_id,slug',
+            'site.relatedWo:id,order_id,created_at,site_id,slug,scope_work',
             'site.relatedWo.customer:id,company_name',
             'site' => function ($query) {
                 $query->select(
@@ -2250,40 +2251,56 @@ class UserController extends Controller
         return back()->withNotify($notify);
     }
 
+    public function createWorkOrderTimeLog($columnName, $wo, $preLog, $value, $toUser = null, $type,  $msg) {
+        $wo_log = new WorkOrderTimeLog();
+        $wo_log->wo_id = $wo->id;
+        $wo_log->pre_log_id = $preLog->id ?? null;
+        $wo_log->by_user = Auth::user()->firstname . ' ' . Auth::user()->lastname;
+        $wo_log->to_user = $toUser;
+        $wo_log->event_title = $msg;
+        $wo_log->table_name = 'work_orders';
+        $wo_log->column_name = $columnName;
+        $wo_log->value_type = $type;
+        $wo_log->value = $value;
+        $wo_log->recorded_at = $wo->updated_at;
+        $wo_log->save();
+    }
+
 
     public function updateOverview(Request $request, $id)
     {
-        Log::alert($request->all());
-        $rules = [
-            'cus_id' => 'required|exists:customers,id',
-            'priority' => 'required|integer|min:1|max:5',
-            'requested_by' => 'required|string|max:255',
-            'wo_manager' => 'required|exists:employees,id',
-        ];
-
-        $messages = [
-            'cus_id.required' => 'Customer ID is required.',
-            'cus_id.exists' => 'The selected customer does not exist.',
-            'priority.required' => 'Priority is required.',
-            'priority.integer' => 'Priority must be a valid number.',
-            'priority.min' => 'Priority must be at least 1.',
-            'priority.max' => 'Priority cannot exceed 5.',
-            'requested_by.required' => 'Requested By field is required.',
-            'requested_by.string' => 'Requested By must be a valid string.',
-            'requested_by.max' => 'Requested By cannot exceed 255 characters.',
-            'wo_manager.required' => 'Work Order Manager is required.',
-            'wo_manager.exists' => 'The selected manager does not exist.',
-        ];
-
-        $validated = $request->validate($rules, $messages);
 
         $wo = WorkOrder::find($id);
-        $wo->slug = $validated['cus_id'];
-        $wo->priority = $validated['priority'];
-        $wo->requested_by = $validated['requested_by'];
-        $wo->em_id = $validated['wo_manager'];
+        $wo->slug = $request['cus_id'] ?? $wo->slug;
+        $wo->priority = $request['priority'] ?? $wo->priority;
+        $wo->requested_by = $request['requested_by'] ?? $wo->requested_by;
+        $wo->em_id = $request['wo_manager'] ?? $wo->em_id;
 
         $wo->save();
+
+        if ($request->priority) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'priority')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('priority', $wo, $preLog, $wo->priority, '', 'nrml_text', $wo->priority ? 'Priority Updated':'Priority Added');
+        }
+        
+        // Check for customer ID update
+        if ($request->cus_id) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'slug')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('slug', $wo, $preLog, $wo->slug, $wo->customer->company_name ?? '', 'id', $wo->cus_id ? 'Customer Updated':'Customer Added');
+        }
+        
+        // Check for requested by update
+        if ($request->requested_by) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'requested_by')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('requested_by', $wo, $preLog, $wo->requested_by, $request->requested_by, 'nrml_text', $wo->requested_by ? 'Requested User Updated':'Requested User Added');
+        }
+        
+        // Check for work order manager update
+        if ($request->wo_manager) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'em_id')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('em_id', $wo, $preLog, $wo->em_id, $wo->employee->name ?? '', 'id', $wo->em_id ? 'Employee Updated':'Employee Added');
+        }
+        
     }
 
     public function updateScopeOfWork(Request $request, $id)
@@ -2299,30 +2316,29 @@ class UserController extends Controller
         $validated = $request->validate($rules, $messages);
 
         $wo = WorkOrder::find($id);
-        $wo->scope_work = $validated['scope_work'];
+        $wo->scope_work = $validated['scope_work'] ?? $wo->scope_work;
 
         $wo->save();
 
-        $notify[] = ['success', 'Scope of work is Updated Successfully'];
-        return back()->withNotify($notify);
+        if ($request->scope_work) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'scope_work')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('scope_work', $wo, $preLog, $wo->scope_work, '', 'nrml_text', $preLog ? 'Scope Of Work Updated':'Scope Of Work Added');
+        }
+        
     }
 
     public function updateTools(Request $request, $id)
     {
-        $rules = [
-            'r_tools' => 'required',
-        ];
-
-        $messages = [
-            'r_tools.required' => 'Scope of work is required',
-        ];
-
-        $validated = $request->validate($rules, $messages);
 
         $wo = WorkOrder::find($id);
-        $wo->r_tools = $validated['r_tools'];
+        $wo->r_tools = $request['r_tools'];
 
         $wo->save();
+
+        if ($request->r_tools) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'r_tools')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('r_tools', $wo, $preLog, $wo->r_tools, '', 'nrml_text', $preLog ? 'Required Tools Updated':'Required Tools Added');
+        }
     }
 
     public function updateDispatchedInstruction(Request $request, $id)
@@ -2381,6 +2397,7 @@ class UserController extends Controller
         $schdule->on_site_by = $request->on_site_by ?? $schdule->on_site_by;
         $schdule->scheduled_time = $request->scheduled_time ?? $schdule->scheduled_time;
         $schdule->h_operation = $request->h_operation ?? $schdule->h_operation;
+        $schdule->estimated_time = $request->estimated_time ?? $schdule->estimated_time;
 
         $schdule->save();
     }
@@ -3385,5 +3402,8 @@ class UserController extends Controller
 
         $otherExpense->delete();
     }
+
+
+    // Site History
 
 }

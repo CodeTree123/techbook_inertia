@@ -74,7 +74,11 @@ const NoteList = ({ id, details, timezone, addNote, setAddNote, onSuccessMessage
 
                     {
                         addNote == details.id && <div className='p-2 rounded-bottom-2' style={{ backgroundColor: '#E1E1E1' }}>
-                            <textarea name="" className='w-100 p-2 rounded-2' placeholder='Add Note' rows={2} id="" autoFocus onChange={(e) => setData({ ...data, note: e.target.value })} onBlur={(e) => storeSubNote(e, details.id)}></textarea>
+                            <textarea name="" className='w-100 p-2 rounded-2' placeholder='Add Note' rows={2} id="" autoFocus onChange={(e) => setData({ ...data, note: e.target.value })}></textarea>
+                            <div className='d-flex justify-content-end gap-2'>
+                                <button className='btn px-5 fw-bold text-white' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeSubNote(e, details.id)}>POST</button>
+                                <button className='btn px-5 fw-bold text-white' style={{ backgroundColor: 'rgba(226,31,109,0.5)' }} onClick={() => setAddNote(null)}>Cancel</button>
+                            </div>
                         </div>
                     }
                 </div>

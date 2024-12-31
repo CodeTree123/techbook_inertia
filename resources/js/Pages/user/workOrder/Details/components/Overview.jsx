@@ -44,10 +44,10 @@ const Overview = ({ id, details, onSuccessMessage }) => {
     };
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
-        'cus_id': details.slug,
-        'priority': details.priority,
-        'requested_by': details.requested_by,
-        'wo_manager': details.em_id
+        'cus_id': '',
+        'priority': '',
+        'requested_by': '',
+        'wo_manager': ''
     });
 
     const handlePriorityChange = (e) => {

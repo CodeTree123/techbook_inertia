@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap';
 import Select from "react-select";
 
-const TechData = ({ id, techData, onSuccessMessage, totalhours, assignedEng, setTechnicians }) => {
+const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedEng, setTechnicians }) => {
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         reason: '',
@@ -152,7 +152,7 @@ const TechData = ({ id, techData, onSuccessMessage, totalhours, assignedEng, set
 
                 }
 
-                <button onClick={handleShowModal} className='btn btn-outline-danger'>Remove Tech</button>
+                <button onClick={handleShowModal} className='btn btn-outline-danger'  disabled={stage != 3}>Remove Tech</button>
             </div>
             <div className='mb-3 row'>
                 <div className='col-md-8 pe-5'>
@@ -365,7 +365,7 @@ const TechData = ({ id, techData, onSuccessMessage, totalhours, assignedEng, set
                 </Modal.Body>
                 <Modal.Footer>
                     <button onClick={() => setShowModal(false)} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button onClick={(e) => removeTech(e)} type="button" className="btn btn-outline-danger">Remove Tech</button>
+                    <button onClick={(e) => removeTech(e)} type="button" className="btn btn-outline-danger" disabled={stage != 3}>Remove Tech</button>
                 </Modal.Footer>
             </Modal>
 
