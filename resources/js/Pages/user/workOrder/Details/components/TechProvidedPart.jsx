@@ -23,7 +23,7 @@ const TechProvidedPart = ({ id, details, onSuccessMessage }) => {
         post(route('user.wo.storeTechPart', id), {
             preserveScroll: true,
             onSuccess: () => {
-                onSuccessMessage('Scope of work is Updated Successfully');
+                onSuccessMessage('Parts Information Added');
                 setNewItem(false);
             }
         });
@@ -31,7 +31,7 @@ const TechProvidedPart = ({ id, details, onSuccessMessage }) => {
 
 
     return (
-        <div className="card bg-white shadow-lg border-0 mb-4">
+        <div className="card bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Technician Provided Parts </h3>
             </div>

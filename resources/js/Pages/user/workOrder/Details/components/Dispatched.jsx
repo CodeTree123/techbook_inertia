@@ -26,7 +26,7 @@ const Dispatched = ({id, details, onSuccessMessage}) => {
         });
     };
     return (
-        <form onSubmit={submit} className="card action-cards bg-white shadow-lg border-0 mb-4">
+        <form onSubmit={submit} className="card action-cards bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Dispatch Instructions</h3>
 

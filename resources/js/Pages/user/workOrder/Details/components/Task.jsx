@@ -234,7 +234,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="task-list">
                     {(provided) => (
-                        <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow-lg border-0 mb-4">
+                        <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
                             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for ' + details?.technician?.company_name}</h3>
                                 <TaskModal id={id} details={details} onSuccessMessage={onSuccessMessage} />
@@ -585,7 +585,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                         details?.technician?.tech_type == 'company' &&
                         <Droppable droppableId={tech.tech_id.toString()} key={tech.tech_id}>
                             {(provided) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow-lg border-0 mb-4">
+                                <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
                                     <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                         <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks for {tech.engineer.name}</h3>
                                         <TaskModal id={id} details={details} techId={tech.tech_id} onSuccessMessage={onSuccessMessage} />

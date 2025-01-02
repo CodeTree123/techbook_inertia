@@ -59,7 +59,7 @@ const Schedule = ({ id, details, onSuccessMessage }) => {
     const selectedTimezone = timezoneMap[details?.site?.time_zone];
 
     return (
-        <div className="card bg-white shadow-lg border-0 mb-4">
+        <div className="card bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Schedule</h3>
                 <Dropdown>

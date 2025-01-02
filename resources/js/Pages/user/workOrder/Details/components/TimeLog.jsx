@@ -51,7 +51,7 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
       };
 
     return (
-        <div className="card bg-white shadow-lg border-0 mb-4">
+        <div className="card bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: "20px", fontWeight: 600 }}>Time log</h3>
             </div>
