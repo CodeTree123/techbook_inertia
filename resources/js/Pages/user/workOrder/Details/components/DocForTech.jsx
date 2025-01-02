@@ -43,7 +43,7 @@ const DocForTech = ({ id, details, onSuccessMessage }) => {
 
 
     return (
-        <div className="card action-cards bg-white shadow-lg border-0 mb-4">
+        <div className="card action-cards bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tech Yeah Documents For Technicians
                 </h3>

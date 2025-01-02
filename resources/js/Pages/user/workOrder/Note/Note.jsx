@@ -72,7 +72,7 @@ const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage }) => {
                         <option value="close_out_notes">Closeout Notes</option>
                     </select>
                 </div>
-                <button className='btn px-5 fw-bold text-white' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeNote(e)}>POST</button>
+                <button className='btn px-5 fw-bold text-black' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeNote(e)}>POST</button>
             </div>
 
             {

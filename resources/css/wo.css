@@ -1,3 +1,7 @@
+.btn{
+    cursor: pointer !important;
+}
+
 input,
 select,
 textarea {

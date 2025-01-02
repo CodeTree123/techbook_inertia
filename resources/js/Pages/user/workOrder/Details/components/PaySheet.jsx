@@ -50,7 +50,7 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
     }
 
     return (
-        <div className="card bg-white shadow-lg border-0 mb-4 action-cards">
+        <div className="card bg-white shadow border-0 mb-4 action-cards">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Pay Sheet</h3>
             </div>

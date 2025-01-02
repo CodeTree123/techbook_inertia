@@ -45,13 +45,13 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
                                         textOverflow: 'ellipsis', // Show ellipsis for overflowed text
                                         maxWidth: '400px',      // Or set an appropriate width
                                     }}
-                                    title={wo.scope_work.replace(/<[^>]*>/g, '')} // Tooltip on hover showing the full content
+                                    title={wo?.scope_work ?? wo?.scope_work?.replace(/<[^>]*>/g, '')} // Tooltip on hover showing the full content
                                     data-bs-toggle="tooltip" // Enables the tooltip
                                 >
-                                    {wo.scope_work.replace(/<[^>]*>/g, '')}
+                                    {wo?.scope_work ?? wo?.scope_work?.replace(/<[^>]*>/g, '')}
                                 </td>
                                 <td className='border-0 fw-bold'>#595</td>
-                                <td className='border-0 fw-bold'>#59552</td>
+                                <td className='border-0 fw-bold' style={{ borderRadius: '0 10px 10px 0' }}>#59552</td>
                             </tr>
                         ))}
 

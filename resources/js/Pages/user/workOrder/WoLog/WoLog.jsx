@@ -20,8 +20,6 @@ const WoLog = ({ id, details, timezone }) => {
 
     const selectedTimezone = timezoneMap[timezone];
 
-    const now = DateTime.now().setZone(selectedTimezone);
-
     return (
         <div>
             <div className='bg-white border rounded py-3 px-3 row mb-3'>
@@ -47,10 +45,15 @@ const WoLog = ({ id, details, timezone }) => {
                                             {log.event_title}
                                         </div>
                                     </td>
-                                    <td className='border-0 fw-bold'>{DateTime.fromISO(log.recorded_at, { zone: selectedTimezone }).toFormat('M/d/yyyy')} at {DateTime.fromISO(log.recorded_at, { zone: selectedTimezone }).toFormat('HH:mma')} ({timezone})</td>
+                                    <td className='border-0 fw-bold'>
+                                        {DateTime.fromISO(log.recorded_at.replace(' ', 'T'), { zone: timezoneMap[timezone] || 'UTC' }).isValid
+                                            ? `${DateTime.fromISO(log.recorded_at.replace(' ', 'T'), { zone: timezoneMap[timezone] || 'UTC' }).toFormat('M/d/yyyy')} at ${DateTime.fromISO(log.recorded_at.replace(' ', 'T'), { zone: timezoneMap[timezone] || 'UTC' }).toFormat('hh:mma')} (${timezone})`
+                                            : 'Invalid DateTime'}
+                                    </td>
+
                                     <td className='border-0 fw-bold'>{log.by_user}</td>
                                     <td className='border-0 fw-bold'>{log.to_user}</td>
-                                    <td className='border-0 fw-bold w-25'></td>
+                                    <td className='border-0 fw-bold w-25' style={{ borderRadius: '0 10px 10px 0' }}></td>
 
                                 </tr>
                             ))
