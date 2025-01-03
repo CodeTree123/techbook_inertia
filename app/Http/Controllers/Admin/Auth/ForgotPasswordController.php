@@ -91,11 +91,11 @@ class ForgotPasswordController extends Controller
 
     public function codeVerify(){
         $pageTitle = 'Verify Code';
-        $email = session()->get('pass_res_mail');
-        if (!$email) {
-            $notify[] = ['error','Oops! session expired'];
-            return to_route('admin.password.reset')->withNotify($notify);
-        }
+        // $email = session()->get('pass_res_mail');
+        // if (!$email) {
+        //     $notify[] = ['error','Oops! session expired'];
+        //     return to_route('admin.password.reset')->withNotify($notify);
+        // }
         return view('admin.auth.passwords.code_verify', compact('pageTitle','email'));
     }
 
