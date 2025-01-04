@@ -168,7 +168,6 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::delete('delete-schedule-time/{id}', 'deleteSchedule')->name('wo.deleteSchedule');
                 Route::post('update-updateScheduleType/{id}/{value}', 'updateScheduleType')->name('wo.updateScheduleType');
                 Route::post('go-at-risk/{id}', 'goAtRisk')->name('wo.goAtRisk');
-                Route::post('go-at-ease/{id}', 'goAtEase')->name('wo.goAtEase');
                 Route::post('reschedule-time/{id}', 'reSchedule')->name('wo.reSchedule');
 
                 Route::post('create-wo-contact/{id}', 'createContact')->name('wo.createContact');

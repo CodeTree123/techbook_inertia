@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 
 const ScheduleTable = ({ details, onSuccessMessage }) => {
@@ -87,7 +88,7 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                                 {
                                     editableRow !== 0 &&
                                     <span className="nrml-txt">
-                                        {formatDate(details?.schedules[0]?.on_site_by)}
+                                        {DateTime.fromISO(details?.schedules[0]?.on_site_by).toFormat("MM-dd-yy")}
                                         <span className='mx-1'>at</span>
                                         {formatTime(details?.schedules[0]?.scheduled_time)}
                                         ({details?.site?.time_zone})

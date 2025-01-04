@@ -8,7 +8,7 @@ const Reschedule = ({ id, scheduleData, onSuccessMessage }) => {
         'on_site_by': scheduleData?.on_site_by,
         'scheduled_time': scheduleData?.scheduled_time,
         'h_operation': scheduleData?.h_operation,
-        'schedule_note': scheduleData?.schedule_note,
+        'estimated_time': scheduleData?.estimated_time,
     });
 
     const submit = (e) => {
@@ -82,13 +82,13 @@ const Reschedule = ({ id, scheduleData, onSuccessMessage }) => {
                             />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label">Schedule Note</label>
-                            <textarea
-                                defaultValue={scheduleData?.schedule_note}
-                                name="schedule_note"
+                            <label className="form-label">Estimated Time</label>
+                            <input
+                                type="text"
+                                defaultValue={scheduleData?.estimated_time}
+                                name="estimated_time"
                                 className="form-control"
-                                rows={3}
-                                onChange={(e)=>setData({...data,schedule_note: e.target.value})}
+                                onChange={(e)=>setData({...data,estimated_time: e.target.value})}
                             />
                         </div>
                     </Modal.Body>

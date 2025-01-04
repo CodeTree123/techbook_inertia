@@ -20,8 +20,4 @@ export default defineConfig({
             '@': resolve(__dirname, 'resources/js'),
         },
     },
-    server: {
-        host: '0.0.0.0', // For network access
-        port: 5173,      // Default Vite dev server port
-    },
 });

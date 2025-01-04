@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import "../../../../css/wo.css"
 import AddHold from './components/AddHold';
@@ -12,27 +12,25 @@ import { DateTime } from 'luxon';
 export default function WoView({ wo }) {
   console.log(wo);
 
-  const [atRisk, setAtRisk] = useState(false);
   const [latestAtRiskScheduleId, setLatestAtRiskScheduleId] = useState(null);
 
   const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+    atRisk: false
   });
 
-  useEffect(() => {
-    if (atRisk) {
+
+  const hasRun = useRef(false);
+
+  useEffect(()=>{
+    if (!hasRun.current) {
       post(route('user.wo.goAtRisk', wo.id), {
         preserveScroll: true,
         onSuccess: () => {
-        }
-      });
-    } else {
-      post(route('user.wo.goAtEase', wo.id), {
-        preserveScroll: true,
-        onSuccess: () => {
+          hasRun.current = true;
         }
       });
     }
-  }, [wo.id, atRisk]);
+  })
 
   useEffect(() => {
     const timezoneMap = {
@@ -60,13 +58,14 @@ export default function WoView({ wo }) {
 
         // Compare the two times in the selected time zone
         if (Array.isArray(wo?.check_in_out) && wo?.check_in_out.length > 0) {
-          setAtRisk(false); // If check-in/out exists, set atRisk to false
+          setData({ atRisk: false });
         } else if (scheduleLuxonDateTime <= now) {
-          setAtRisk(true); // If the schedule time has passed or is equal to current time, set atRisk to true
+          setData({ atRisk: true });
         } else {
-          setAtRisk(false)
+          setData({ atRisk: false });
         }
       }
+
     } else {
       let latestRiskId = null; // Track the ID of the latest at-risk schedule
       let lastCheckInTime = null; // Track the most recent valid check-in time
@@ -131,12 +130,15 @@ export default function WoView({ wo }) {
       });
 
       // Update the state based on the validation results
-      setAtRisk(!isValidSchedule);
+
+      setData({atRisk: !isValidSchedule})
       setLatestAtRiskScheduleId(latestRiskId);
 
     }
 
-  }, [wo.schedule_type, wo?.schedules, wo?.check_in_out, setAtRisk, setLatestAtRiskScheduleId]);
+  }, [wo, setData, setLatestAtRiskScheduleId]);
+
+  console.log(data.atRisk);
 
   const getStage = () => {
     if (wo?.stage === 7) {
@@ -801,7 +803,7 @@ export default function WoView({ wo }) {
             </div>
 
             <div className="col-2 d-flex gap-1 justify-content-end px-3 py-4">
-            <a href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/${wo.id}`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
+              <a href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/${wo.id}`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
                 <i className="fa fa-eye" aria-hidden="true" />
               </a>
               <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} />

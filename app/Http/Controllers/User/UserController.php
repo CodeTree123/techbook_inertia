@@ -2375,8 +2375,7 @@ class UserController extends Controller
 
         $schdule->save();
 
-        $notify[] = ['success', 'New Schdule Created Successfully'];
-        return back()->withNotify($notify);
+        $this->createWorkOrderTimeLog('work_order_schedules','', $schdule->wo_id, $schdule->updated_at, '', '<p>'.$schdule->on_site_by.' at '.$schdule->scheduled_time.'</p><br/><p> Hours of operation: '.$schdule->h_operation.'</p><br/><p> Estimated Hours: '.$schdule->h_operation.'</p>', '', 'html_text','Schedule Added', $schdule->id);
     }
 
     public function updateSchedule(Request $request, $id)
@@ -2389,11 +2388,30 @@ class UserController extends Controller
         $schdule->estimated_time = $request->estimated_time ?? $schdule->estimated_time;
 
         $schdule->save();
+
+        if ($request->on_site_by) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'schedule-on_site_by-'.$schdule->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_order_schedules','schedule-on_site_by-'.$schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->on_site_by, '', 'time', $preLog ? 'Schedule Date Updated':'Schedule Date Added', $id);
+        }
+        if ($request->scheduled_time) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'schedule-scheduled_time-'.$schdule->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_order_schedules','schedule-scheduled_time-'.$schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->scheduled_time, '', 'time', $preLog ? 'Schedule Time Updated':'Schedule Time Added', $id);
+        }
+        if ($request->h_operation) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'schedule-h_operation-'.$schdule->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_order_schedules','schedule-h_operation-'.$schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->h_operation, '', 'nrml_text', $preLog ? 'Schedule Hours Of Operation Updated':'Schedule Hours Of Operation Added', $id);
+        }
+        if ($request->estimated_time) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'schedule-estimated_time-'.$schdule->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_order_schedules','schedule-estimated_time-'.$schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->estimated_time, '', 'nrml_text', $preLog ? 'Schedule Estimated Hours Updated':'Schedule Estimated Hours Added', $id);
+        }
     }
 
     public function deleteSchedule($id)
     {
         $schdule = WorkOrderSchedule::find($id);
+
+        $this->createWorkOrderTimeLog('work_order_schedules','', $schdule->wo_id, $schdule->updated_at, '', '<p>'.$schdule->on_site_by.' at '.$schdule->scheduled_time.'</p><br/><p> Hours of operation: '.$schdule->h_operation.'</p><br/><p> Estimated Hours: '.$schdule->h_operation.'</p>', '', 'html_text','Schedule Deleted', $id);
 
         $schdule->delete();
     }
@@ -2407,6 +2425,8 @@ class UserController extends Controller
         }
     
         $wo->schedule_type = $value;
+
+        $this->createWorkOrderTimeLog('work_orders','', $id, $wo->updated_at, '', $wo->schedule_type, '', 'nrml_text','Schedule Type Changed', $id);
 
         $wo->save();
     }
@@ -2600,8 +2620,8 @@ class UserController extends Controller
         $newCheckInOut->checkin_note = $request->checkin_note;
         $newCheckInOut->save();
 
-        $notify[] = ['success', 'Technician Checked in Successfully'];
-        return back()->withNotify($notify);
+        $preLog = WorkOrderTimeLog::where('column_name', 'check_in')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('check_in_outs','check_in', $newCheckInOut->work_order_id, $newCheckInOut->updated_at, $preLog, '<p>time: '.$newCheckInOut->date.' at '.$newCheckInOut->check_in.' ('.$newCheckInOut->time_zone.') </p><br/><p>note: '.$newCheckInOut->checkin_note.'</p>', '', 'html_text', $techId ? $newCheckInOut->engineer->name.' Checked In':$wo->technician->company_name. ' Checked In', $techId);
     }
 
 
@@ -2669,24 +2689,21 @@ class UserController extends Controller
         $checkInOut->total_hours = $totalHours;
         $checkInOut->save();
 
-        $notify[] = ['success', 'Technician Checked out Successfully'];
-        return back()->withNotify($notify);
+        $preLog = WorkOrderTimeLog::where('column_name', 'check_out')->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog('check_in_outs','check_out', $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p>time: '.Carbon::now()->format('m/d/y').' at '.$checkInOut->check_out.' ('.$checkInOut->time_zone.') </p><br/><p>total hours: '.$checkInOut->total_hours.'</p>', '', 'html_text', $techId ? $checkInOut->engineer->name.' Checked Out':$wo->technician->company_name. ' Checked Out', $techId);
     }
 
-    public function goAtRisk($id)
+    public function goAtRisk($id, Request $request)
     {
         $wo = WorkOrder::find($id);
 
-        $wo->stage = Status::STAGE_DISPATCH;
-        $wo->status = Status::AT_RISK;
-        $wo->save();
-    }
-
-    public function goAtEase($id)
-    {
-        $wo = WorkOrder::find($id);
-
-        $wo->status = null;
+        if($request->atRisk){
+            $wo->stage = Status::STAGE_DISPATCH;
+            $wo->status = Status::AT_RISK;
+        }else{
+            $wo->status = null;
+        }
+        
         $wo->save();
     }
 
@@ -2698,12 +2715,15 @@ class UserController extends Controller
             $schdule->on_site_by = $request['on_site_by'] ?? $schdule->on_site_by;
             $schdule->scheduled_time = $request['scheduled_time'] ?? $schdule->scheduled_time;
             $schdule->h_operation = $request['h_operation'] ?? $schdule->h_operation;
+            $schdule->estimated_time = $request['estimated_time'] ?? $schdule->estimated_time;
             $schdule->save();
 
             $wo = WorkOrder::find($schdule->wo_id);
             $wo->stage == Status::STAGE_DISPATCH;
             $wo->status = null;
             $wo->save();
+
+            $this->createWorkOrderTimeLog('work_order_schedules','', $schdule->wo_id, $schdule->updated_at, '', '<p>'.$schdule->on_site_by.' at '.$schdule->scheduled_time.'</p><br/><p> Hours of operation: '.$schdule->h_operation.'</p><br/><p> Estimated Hours: '.$schdule->h_operation.'</p>', '', 'html_text','Time Rescheduled', $schdule->id);
         } catch (\Throwable $th) {
             Log::error($th);
         }
@@ -2842,8 +2862,33 @@ class UserController extends Controller
 
         $task->save();
 
-        $notify[] = ['success', 'Task Created Successfully'];
-        return back()->withNotify($notify);
+        if ($request->type = 'call') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Phone: '.$task->phone.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
+
+        elseif ($request->type = 'collect_signature') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Signature from: '.$task->from.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
+
+        elseif ($request->type = 'custom_task') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
+
+        elseif ($request->type = 'shipping_details') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Item: '.$task->item.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
+
+        elseif ($request->type = 'send_email') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Email: '.$task->email.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
+
+        elseif ($request->type = 'upload_file') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
+
+        elseif ($request->type = 'upload_photo') {
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+        }
     }
 
     // useless
@@ -2878,7 +2923,6 @@ class UserController extends Controller
         return back()->withNotify($notify);
     }
 
-
     public function completeTask($id)
     {
         $task = Task::find($id);
@@ -2892,6 +2936,41 @@ class UserController extends Controller
         }
 
         $task->save();
+
+        if ($task->type = 'call') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-call-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks','task-call-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Phone: '.$task->phone.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
+
+        elseif ($task->type = 'collect_signature') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-collect_signature-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks','task-collect_signature-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Signature from: '.$task->from.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
+
+        elseif ($task->type = 'custom_task') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-custom_task-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-custom_task-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
+
+        elseif ($task->type = 'shipping_details') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-shipping_details-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-shipping_details-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Item: '.$task->item.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
+
+        elseif ($task->type = 'send_email') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-send_email-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-send_email-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Email: '.$task->email.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
+
+        elseif ($task->type = 'upload_file') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-upload_file-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-upload_file-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
+
+        elseif ($task->type = 'upload_photo') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-upload_photo-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-upload_photo-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->is_completed ? 'Task Marked As Completed' : 'Task Marked As Incomplete', $id);
+        }
     }
 
     public function uploadFilePhoto(Request $request, $id)
@@ -3102,8 +3181,40 @@ class UserController extends Controller
         $task->save();
     
         // Notify success and redirect back
-        $notify[] = ['success', 'Task Updated Successfully'];
-        return back()->withNotify($notify);
+        if ($task->type = 'call') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-call-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks','task-call-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Phone: '.$task->phone.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
+
+        elseif ($task->type = 'collect_signature') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-collect_signature-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks','task-collect_signature-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Signature from: '.$task->from.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
+
+        elseif ($task->type = 'custom_task') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-custom_task-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-custom_task-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
+
+        elseif ($task->type = 'shipping_details') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-shipping_details-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-shipping_details-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Item: '.$task->item.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
+
+        elseif ($task->type = 'send_email') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-send_email-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-send_email-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Email: '.$task->email.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
+
+        elseif ($task->type = 'upload_file') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-upload_file-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-upload_file-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
+
+        elseif ($task->type = 'upload_photo') {
+            $preLog = WorkOrderTimeLog::where('column_name', 'task-upload_photo-'.$task->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tasks', 'task-upload_photo-'.$task->id, $task->wo_id, $task->updated_at, $preLog, '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: '', 'html_text', $task->tech_id ? 'Task Updated For '.$task->tech->name : 'Task Updated', $id);
+        }
     }
     
 
@@ -3114,10 +3225,9 @@ class UserController extends Controller
             unlink(public_path($task->file));
         }
 
-        $task->delete();
+        $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '', $task->tech ? $task->tech->name: '', 'nrml_text', $task->tech_id ? 'Task Deleted For '.$task->tech->name : 'Task Deleted', $id);
 
-        $notify[] = ['success', 'Task Deleted Successfully'];
-        return back()->withNotify($notify);
+        $task->delete();
     }
 
     public function assignTechToTask($taskId, $techId = null)
