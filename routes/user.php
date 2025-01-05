@@ -20,7 +20,7 @@ Route::namespace('User\Auth')->name('user.')->group(function () {
     Route::controller('ForgotPasswordController')->prefix('password')->name('password.')->group(function () {
         Route::get('reset', 'showLinkRequestForm')->name('request');
         Route::post('email', 'sendResetCodeEmail')->name('email');
-        Route::get('code-verify', 'codeVerify')->name('code.verify');
+        Route::get('code-verify/{email}', 'codeVerify')->name('code.verify');
         Route::post('verify-code', 'verifyCode')->name('verify.code');
     });
     Route::controller('ResetPasswordController')->group(function () {
@@ -45,6 +45,11 @@ Route::middleware('auth')->name('user.')->group(function () {
         Route::middleware('registration.complete')->namespace('User')->group(function () {
             Route::controller('UserController')->group(function () {
                 Route::get('dashboard', 'home')->name('home');
+
+                // new work order
+                Route::get('work/order/new/{type}', 'newWo')->name('work.order.new');
+                Route::post('work/order/new/store', 'storeWo')->name('work.order.store');
+
                 //work order manage
                 Route::get('order/delete/{id}', 'wODelete')->name('order.delete');
                 Route::get('order/stage/{id}/{value}', 'wOStageChange')->name('order.stage.change');

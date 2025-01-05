@@ -67,7 +67,7 @@ class ForgotPasswordController extends Controller
 
         Mail::to($user->email)->send(new PasswordResets($code));
         $notify[] = ['success', 'Password reset email sent successfully'];
-        return to_route('user.password.code.verify')->withNotify($notify);
+        return to_route('user.password.code.verify',$user->email)->withNotify($notify);
     }
 
     public function findFieldType()
@@ -79,13 +79,13 @@ class ForgotPasswordController extends Controller
         return $fieldType;
     }
 
-    public function codeVerify(){
+    public function codeVerify($email){
         $pageTitle = 'Verify Email';
-        $email = session()->get('pass_res_mail');
-        if (!$email) {
-            $notify[] = ['error','Oops! session expired'];
-            return to_route('user.password.request')->withNotify($notify);
-        }
+        // $email = session()->get('pass_res_mail');
+        // if (!$email) {
+        //     $notify[] = ['error','Oops! session expired'];
+        //     return to_route('user.password.request')->withNotify($notify);
+        // }
         return view('user.auth.passwords.code_verify',compact('pageTitle','email'));
     }
 

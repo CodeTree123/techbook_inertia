@@ -22,7 +22,7 @@ export default function WoView({ wo }) {
   const hasRun = useRef(false);
 
   useEffect(()=>{
-    if (!hasRun.current) {
+    if (!hasRun.current && wo.stage == 3) {
       post(route('user.wo.goAtRisk', wo.id), {
         preserveScroll: true,
         onSuccess: () => {
@@ -138,8 +138,6 @@ export default function WoView({ wo }) {
 
   }, [wo, setData, setLatestAtRiskScheduleId]);
 
-  console.log(data.atRisk);
-
   const getStage = () => {
     if (wo?.stage === 7) {
       return <span className="fw-bold">Cancelled</span>;
@@ -169,7 +167,7 @@ export default function WoView({ wo }) {
 
   let scheduledTime;
 
-  const upcomingSchedule = wo.schedules.find(schedule => {
+  const upcomingSchedule = wo?.schedules.find(schedule => {
     const scheduledDate = new Date(schedule.on_site_by);
     scheduledTime = new Date(
       scheduledDate.getFullYear(),
@@ -215,7 +213,7 @@ export default function WoView({ wo }) {
 
     <>
       <MainLayout>
-        <Head title={wo.order_id + ' | Techbook'} />
+        <Head title={wo?.order_id + ' | Techbook'} />
         <div className="container-fluid total-bg">
           <div className="row">
 
