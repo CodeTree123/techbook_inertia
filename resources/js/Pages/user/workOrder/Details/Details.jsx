@@ -32,7 +32,7 @@ const Details = ({id, details, onSuccessMessage, onErrorMessage}) => {
                     <Overview id={id} details={details} onSuccessMessage={onSuccessMessage}/>
                     <ScopeOfWork id={id} details={details} onSuccessMessage={onSuccessMessage}/>
                     <ToolRequired id={id} details={details} onSuccessMessage={onSuccessMessage}/>
-                    <TechProvidedPart id={id} details={details} onSuccessMessage={onSuccessMessage}/>
+                    <TechProvidedPart id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
                     <PartByTC/>
                     <Shipment id={id} details={details} onSuccessMessage={onSuccessMessage} />
                     <DocForTech id={id} details={details} onSuccessMessage={onSuccessMessage} />
