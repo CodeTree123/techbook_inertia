@@ -2655,7 +2655,7 @@ class UserController extends Controller
             }
         }
 
-        $oneMap = [
+        $timezoneMap = [
             'PT' => 'America/Los_Angeles',
             'MT' => 'America/Denver',
             'CT' => 'America/Chicago',
@@ -2739,7 +2739,14 @@ class UserController extends Controller
 
         $totalMinutes = $checkOutTime->diffInMinutes($checkInTime);
 
-        if ($totalMinutes <= 60) {
+        if($techId != null) {
+            $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)
+            ->first();
+        }else{
+            $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('check_out','!=', null)->first();
+        }
+
+        if ($totalMinutes <= 60 && !$firstCheckInOut) {
             $totalHours = 1;
         } else {
             $remainingMinutes = $totalMinutes - 60;

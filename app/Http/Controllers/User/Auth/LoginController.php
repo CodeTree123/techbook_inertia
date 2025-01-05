@@ -148,7 +148,7 @@ class LoginController extends Controller
         $userLogin->os = @$userAgent['os_platform'];
         $userLogin->save();
 
-        return to_route('user.home');
+        return to_route('user.work.order.list.inertia');
     }
 
 

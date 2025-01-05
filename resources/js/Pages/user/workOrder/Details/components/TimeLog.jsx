@@ -80,7 +80,7 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
                             'PT': 'America/Los_Angeles',
                             'MT': 'America/Denver',
                             'CT': 'America/Chicago',
-                            'ET': 'America/New_ York',
+                            'ET': 'America/New_York',
                             'AKT': 'America/Anchorage',
                             'HST': 'Pacific/Honolulu',
                         };
@@ -99,7 +99,7 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
                     };
 
                     // Example usage
-                    const timezoneKey = details.site.time_zone; // This is dynamically passed
+                    const timezoneKey = details?.site?.time_zone; // This is dynamically passed
                     const timeDifferenceNow = calculateTimeDifferenceNow(checkIn, timezoneKey);
 
 

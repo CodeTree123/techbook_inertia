@@ -14,8 +14,8 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
         'HST': 'Pacific/Honolulu',
     };
 
-    const selectedTimezone = timezoneMap[timezone] || 'America/Chicago'; 
-    
+    const selectedTimezone = timezoneMap[timezone] || 'America/Chicago';
+
     return (
         <div>
             <div className='bg-white border rounded py-3 px-3 row mb-3'>
@@ -38,18 +38,26 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
                                 </td>
                                 <td className='border-0 fw-bold'>{DateTime.fromISO(wo.created_at, { zone: selectedTimezone }).toFormat('M/d/yyyy')} at {DateTime.fromISO(wo.created_at, { zone: selectedTimezone }).toFormat('HH:mma')} ({timezone})</td>
                                 <td
-                                    className="border-0 fw-bold"
-                                    style={{
-                                        whiteSpace: 'nowrap',   // Prevent wrapping
-                                        overflow: 'hidden',     // Hide overflowing content
-                                        textOverflow: 'ellipsis', // Show ellipsis for overflowed text
-                                        maxWidth: '400px',      // Or set an appropriate width
-                                    }}
-                                    title={wo?.scope_work ?? wo?.scope_work?.replace(/<[^>]*>/g, '')} // Tooltip on hover showing the full content
-                                    data-bs-toggle="tooltip" // Enables the tooltip
+                                    className="border-0 fw-bold position-relative tooltip-trig"
+
                                 >
-                                    {wo?.scope_work ?? wo?.scope_work?.replace(/<[^>]*>/g, '')}
+                                    <div style={{
+                                        whiteSpace: 'nowrap',    // Prevent wrapping
+                                        overflow: 'hidden',      // Hide overflowing content
+                                        textOverflow: 'ellipsis', // Show ellipsis for overflowed text
+                                        maxWidth: '400px',       // Set an appropriate max width
+                                    }}>
+                                        {wo?.scope_work ? wo.scope_work.replace(/<[^>]*>/g, '') : ''}
+                                    </div>
+                                    {
+                                        wo?.scope_work &&
+                                        <div className='position-absolute p-2 border rounded shadow bg-white w-100 tooltip-custom' style={{ bottom: '50px' }}>
+                                            {wo?.scope_work ? wo.scope_work.replace(/<[^>]*>/g, '') : ''}
+                                        </div>
+                                    }
+
                                 </td>
+
                                 <td className='border-0 fw-bold'>#595</td>
                                 <td className='border-0 fw-bold' style={{ borderRadius: '0 10px 10px 0' }}>#59552</td>
                             </tr>

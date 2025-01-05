@@ -10,47 +10,34 @@ import SearchTechnicianModal from './FieldTech/SearchTechnicianModal';
 import ZipSearchModal from './FieldTech/ZipSearchModal';
 import ImportSite from './Site/ImportSite';
 import DistanceSearchModal from './FieldTech/DistanceSearchModal';
+import { Dropdown } from 'react-bootstrap';
 
-const Header = ({onSuccessMessage, onErrorMessage}) => {
+const Header = ({ onSuccessMessage, onErrorMessage }) => {
     const { user } = usePage().props;
     return (
         <header className="fixed-top">
             <div className="p-1 d-flex justify-content-end" style={{ background: "#AFE1AF", position: "relative" }}>
-                <div className="dropdown">
-                    <button
-                        className="btn btn-outline-light shadow-circle text-dark"
-                        style={{ marginLeft: "10px" }}
-                        data-bs-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
+                <Dropdown>
+                    <Dropdown.Toggle variant="outline-light" id="dropdown-basic" className='shadow-circle text-dark'>
                         <i className="fas fa-user-circle text-success" style={{ marginRight: "10px" }}></i>
                         {/** Authenticated User Fullname */}
                         {user ? user.firstname + ' ' + user.lastname : "User"}
-                    </button>
-                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><Link className="dropdown-item" to="/user/profile/setting">Profile Setting</Link></li>
-                        <li><Link className="dropdown-item mt-3" to="/user/twofactor">2FA Security</Link></li>
-                        <li><Link className="dropdown-item mt-3" to="/user/change/password">Change Password</Link></li>
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                        <Dropdown.Item href="/user/profile-setting" className='mb-3'>Profile Setting</Dropdown.Item>
+                        <Dropdown.Item href="/user/change-password" className='mb-3'>Change Password</Dropdown.Item>
                         <hr />
-                        <li>
-                            <a
-                                className="dropdown-item mt-3 text-danger"
-                                href="/user/logout"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    document.getElementById('logout-form').submit();
-                                }}
-                            >
-                                Logout
-                            </a>
-                            <form id="logout-form" action="/user/logout" method="get" className="d-none">
-                                {/* CSRF Token */}
-                                <input type="hidden" name="_token" value={window.CSRFToken} />
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+                        <Dropdown.Item href="/user/logout" className='text-danger mt-3' onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById('logout-form').submit();
+                        }}>Logout</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+                <form id="logout-form" action="/user/logout" method="get" className="d-none">
+                    {/* CSRF Token */}
+                    <input type="hidden" name="_token" value={window.CSRFToken} />
+                </form>
             </div>
 
             <div className="header-main shadow bg-white">
@@ -87,17 +74,17 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                                         <li>
                                             <a href="#">Site</a>
                                             <ul>
-                                                <CreateSiteModal onSuccessMessage={onSuccessMessage}/>
-                                                <SearchSiteModal onSuccessMessage={onSuccessMessage}/>
-                                                <ImportSite onSuccessMessage={onSuccessMessage}/>
+                                                <CreateSiteModal onSuccessMessage={onSuccessMessage} />
+                                                <SearchSiteModal onSuccessMessage={onSuccessMessage} />
+                                                <ImportSite onSuccessMessage={onSuccessMessage} />
                                             </ul>
                                         </li>
                                         <li><a href="#">Field Techs</a>
                                             <ul>
-                                                <CreateTechModal onSuccessMessage={onSuccessMessage}/>
-                                                <SearchTechnicianModal onSuccessMessage={onSuccessMessage}/>
-                                                <ZipSearchModal onSuccessMessage={onSuccessMessage}/>
-                                                <DistanceSearchModal onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
+                                                <CreateTechModal onSuccessMessage={onSuccessMessage} />
+                                                <SearchTechnicianModal onSuccessMessage={onSuccessMessage} />
+                                                <ZipSearchModal onSuccessMessage={onSuccessMessage} />
+                                                <DistanceSearchModal onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
                                             </ul>
                                         </li>
                                         <li><a href="#">Create Sub Ticket</a>
@@ -120,8 +107,8 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                                         </li>
                                         <li><a href="#">Customer</a>
                                             <ul>
-                                                <CreateCustomerModal onSuccessMessage={onSuccessMessage}/>
-                                                <SearchCustomerModal onSuccessMessage={onSuccessMessage}/>
+                                                <CreateCustomerModal onSuccessMessage={onSuccessMessage} />
+                                                <SearchCustomerModal onSuccessMessage={onSuccessMessage} />
                                             </ul>
                                         </li>
                                         <li><a href="#">Quotes</a>

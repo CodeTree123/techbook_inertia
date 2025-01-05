@@ -57,7 +57,7 @@ const NoteList = ({ id, details, timezone, addNote, setAddNote, onSuccessMessage
                         </div>
                     </div>
                     <div className='px-2 py-1' style={{ backgroundColor: '#D9D9D9', fontSize: '12px' }}>
-                        Shared with Developer team
+                        {details.note_type == 'general_notes' ? 'General Notes': details.note_type == 'dispatch_notes' ? 'Dispatch Notes': details.note_type == 'billing_notes' ? 'Billing Notes': details.note_type == 'tech_support_notes' ? 'Tech Support Notes': details.note_type == 'close_out_notes' ? 'Close Out Notes':''}
                     </div>
 
                     {
