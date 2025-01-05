@@ -70,22 +70,21 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     const [responseData, setResponseData] = useState(null);
     const [responseError, setResponseErrors] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
-    const [clickCount, setClickCount] = useState(0);
-    const [currentPageGoogle, setCurrentPageGoogle] = useState(1);
+    const [radius, setRadius] = useState(150); // Initial radius is 150 miles
     
-    const closestTech = async (destination, cnt) => {
+    const closestTech = async (destination, direction) => {
         setLoaderVisible(true);
     
-        const newPage = currentPageGoogle + cnt;
-        if (newPage < 1) {
+        // Update radius based on the direction (next/previous)
+        const newRadius = direction > 0 ? radius + 50 : Math.max(150, radius - 50);
+    
+        if (newRadius < 150) {
+            // Prevent radius from going below the initial 150 miles
             setLoaderVisible(false);
             return;
         }
     
-        setClickCount(clickCount + cnt);
-        setCurrentPageGoogle(newPage);
-    
-        const radiusValue = clickCount === 0 ? null : clickCount * 50;
+        setRadius(newRadius); // Update radius state
     
         try {
             const response = await fetch(`/user/find/tech/for/work/worder`, {
@@ -96,38 +95,36 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                 },
                 body: JSON.stringify({
                     destination,
-                    radiusValue,
-                    page: newPage,
+                    radiusValue: newRadius,
                     limit: 10, // Adjust limit as needed
                 }),
             });
     
             if (!response.ok) {
                 const errorData = await response.json();
-                onErrorMessage(errorData?.errors);
+                setResponseErrors(errorData?.errors);
                 setLoaderVisible(false);
                 return;
             }
     
             const responseData = await response.json();
-            setLoaderVisible(false);
             setResponseData(responseData);
-    
             sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
         } catch (error) {
             console.error('Error fetching closest techs:', error);
+            setResponseErrors('Failed to fetch technicians. Please try again.');
+        } finally {
             setLoaderVisible(false);
         }
     };
     
-
-
     useEffect(() => {
         const storedData = sessionStorage.getItem(`workOrder_${id}`);
         if (storedData) {
             setResponseData(JSON.parse(storedData));
         }
     }, [id]);
+    
 
     // Modal
 
@@ -376,7 +373,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                     Previous
                                                 </button>
                                                 <button
-                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, 1)}
+                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, +1)}
                                                     className='btn btn-outline-primary'
                                                 >
                                                     Next

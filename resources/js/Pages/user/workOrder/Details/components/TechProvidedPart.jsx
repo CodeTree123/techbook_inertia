@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import TechProvidedPartsTable from './TechProvidedPartsTable';
 
-const TechProvidedPart = ({ id, details, onSuccessMessage }) => {
+const TechProvidedPart = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     const [newItem, setNewItem] = useState(false);
 
     const handleNewItem = (e) => {
@@ -19,14 +19,18 @@ const TechProvidedPart = ({ id, details, onSuccessMessage }) => {
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('user.wo.storeTechPart', id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                onSuccessMessage('Parts Information Added');
-                setNewItem(false);
-            }
-        });
+        if(details.ftech_id){
+            post(route('user.wo.storeTechPart', id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    onSuccessMessage('Parts Information Added');
+                    setNewItem(false);
+                },
+            });
+        }else{
+            onErrorMessage('Assign a tech first')
+        }
+        
     };
 
 

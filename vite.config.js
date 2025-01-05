@@ -8,7 +8,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/js/app.jsx',
-                'resources/js/Pages/user/workOrder/AllWorkOrder.jsx',
+                'resources/js/Pages/user/allWorkOrder/AllWorkOrder.jsx',
                 'resources/js/Pages/user/workOrder/WoView.jsx',
             ],
             refresh: true,
