@@ -358,7 +358,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                             responseData && responseData?.technicians?.length != 0 &&
                                             <div className="pagination justify-content-end align-items-center gap-1">
                                                 <button
-                                                    disabled={radius == 150}
+                                                    disabled={clickCount == 0}
                                                     onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, -1)}
                                                     className='btn btn-outline-primary'
                                                 >
