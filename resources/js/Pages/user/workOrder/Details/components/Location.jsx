@@ -66,7 +66,7 @@ const Location = ({ id, details, onSuccessMessage }) => {
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Location</h3>
                 <div className="d-flex action-group gap-2">
                     {
-                        !editable &&
+                        !editable && details?.site &&
                         <button type='button' onClick={(e) => handleEdit(e)} className="btn edit-btn">
                             <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                         </button>
@@ -97,26 +97,37 @@ const Location = ({ id, details, onSuccessMessage }) => {
                                 cacheOptions
                                 loadOptions={loadSiteOptions}
                                 defaultOptions
-                                defaultValue={{ label: details.site.location, value: details.site_id }}
+                                defaultValue={{ label: details?.site?.location, value: details?.site_id }}
                                 placeholder="Search and select sites"
                                 onChange={(selectedOption) => setData({ ...data, site_id: selectedOption?.value })}
                             />
                         </div>
                     }
 
+                    {
+                        !details?.site && !editable &&
+                        <button className='btn btn-outline-dark' onClick={(e)=>setEditable(true)}>+ Add Site</button>
+                    }
+
                 </div>
-                <p className="mb-0">{details?.site?.location} &amp;
-                    {details?.site?.address_1},</p>
-                <p className="mb-0">{details?.site?.city}, {details?.site?.state}, </p>
-                <p className="mb-0">{details?.site?.zipcode}</p>
-                <iframe
-                    src={mapUrl}
-                    width="100%"
-                    height="450"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                ></iframe>
+                {
+                    details?.site &&
+                    <>
+                        <p className="mb-0">{details?.site?.location} &amp;
+                            {details?.site?.address_1},</p>
+                        <p className="mb-0">{details?.site?.city}, {details?.site?.state}, </p>
+                        <p className="mb-0">{details?.site?.zipcode}</p>
+                        <iframe
+                            src={mapUrl}
+                            width="100%"
+                            height="450"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                        ></iframe>
+                    </>
+                }
+
             </div>
         </form>
 

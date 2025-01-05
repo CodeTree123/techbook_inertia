@@ -68,47 +68,58 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
     // google api
     const [responseData, setResponseData] = useState(null);
-    const [responseError, setResponseErros] = useState(null);
+    const [responseError, setResponseErrors] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
     const [clickCount, setClickCount] = useState(0);
-
-
+    const [currentPageGoogle, setCurrentPageGoogle] = useState(1);
+    
     const closestTech = async (destination, cnt) => {
         setLoaderVisible(true);
-        setClickCount(clickCount + cnt)
-
-        const radiusValue = clickCount == 0 ? null : clickCount * 50
-        console.log(radiusValue);
+    
+        const newPage = currentPageGoogle + cnt;
+        if (newPage < 1) {
+            setLoaderVisible(false);
+            return;
+        }
+    
+        setClickCount(clickCount + cnt);
+        setCurrentPageGoogle(newPage);
+    
+        const radiusValue = clickCount === 0 ? null : clickCount * 50;
+    
         try {
             const response = await fetch(`/user/find/tech/for/work/worder`, {
-                method: "POST",
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 },
                 body: JSON.stringify({
                     destination,
-                    radiusValue
+                    radiusValue,
+                    page: newPage,
+                    limit: 10, // Adjust limit as needed
                 }),
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 onErrorMessage(errorData?.errors);
                 setLoaderVisible(false);
                 return;
             }
-
+    
             const responseData = await response.json();
             setLoaderVisible(false);
             setResponseData(responseData);
-
+    
             sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
         } catch (error) {
             console.error('Error fetching closest techs:', error);
             setLoaderVisible(false);
         }
     };
+    
 
 
     useEffect(() => {

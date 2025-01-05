@@ -96,7 +96,7 @@ class ForgotPasswordController extends Controller
         //     $notify[] = ['error','Oops! session expired'];
         //     return to_route('admin.password.reset')->withNotify($notify);
         // }
-        return view('admin.auth.passwords.code_verify', compact('pageTitle','email'));
+        return view('admin.auth.passwords.code_verify', compact('pageTitle'));
     }
 
     public function verifyCode(Request $request)

@@ -762,10 +762,10 @@ class CustomerController extends Controller
             $endStdTime = Carbon::create($checkIn->year, $checkIn->month, $checkIn->day, 18, 0, 0); // 6 PM
 
             // Get technician's rates
-            $stdRate = $wp->technician->rate['STD'];
-            $emRate = $wp->technician->rate['EM'];
-            $shRate = $wp->technician->rate['SH'];
-            $otRate = $wp->technician->rate['OT'];
+            $stdRate = @$wp->technician->rate['STD'];
+            $emRate = @$wp->technician->rate['EM'];
+            $shRate = @$wp->technician->rate['SH'];
+            $otRate = @$wp->technician->rate['OT'];
 
             // Determine the rate based on the time and day
             if ($dayOfWeek == 5) { // Friday (Special Hours)

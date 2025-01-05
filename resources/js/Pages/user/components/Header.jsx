@@ -73,9 +73,11 @@ const Header = ({onSuccessMessage, onErrorMessage}) => {
                                                 <li>
                                                     <a href="#">New</a>
                                                     <ul>
-                                                        <li><a href="#" data-action="service">Service</a></li>
-                                                        <li><a href="#" data-action="project">Project</a></li>
-                                                        <li><a href="#" data-action="install">Install</a></li>
+                                                        <li>
+                                                            <Link href={`/user/work/order/new/${1}`} data-action="service">Service</Link>
+                                                        </li>
+                                                        <li><Link href={`/user/work/order/new/${2}`} data-action="project">Project</Link></li>
+                                                        <li><Link href={`/user/work/order/new/${3}`} data-action="install">Install</Link></li>
                                                     </ul>
                                                 </li>
                                                 <li><Link href="/user/work/order/view/pdf/user/inertia/dashboard">Search</Link></li>

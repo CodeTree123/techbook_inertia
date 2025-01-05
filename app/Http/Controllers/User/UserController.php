@@ -1482,8 +1482,11 @@ class UserController extends Controller
             'zip_code' => $request->zip_code
         ];
 
+
+
         $skillsIds = $request->skill_id;
         $technician = new Technician();
+
         $technician->company_name = $request->company_name;
         $technician->address_data = $addressData;
         $technician->email = $request->email;
@@ -1536,6 +1539,7 @@ class UserController extends Controller
         $review->technician_id = $technician->id;
         $review->save();
         $technician->skills()->attach($skillsIds);
+        
         return redirect()->back();
     }
 
@@ -1788,6 +1792,10 @@ class UserController extends Controller
             ? $request->input('respondedTechnicians', [])
             : json_decode($request->input('respondedTechnicians', '[]'), true);
     
+        $page = $request->input('page', 1);
+        $limit = $request->input('limit', 10);
+        $offset = ($page - 1) * $limit;
+    
         $data = $request->all();
         $rules = [
             'destination' => 'required',
@@ -1812,17 +1820,16 @@ class UserController extends Controller
     
         $destination_latitude = $coordinate['geometry']['location']['lat'];
         $destination_longitude = $coordinate['geometry']['location']['lng'];
-        $destination = $destination_latitude . ',' . $destination_longitude;
+    
+        $destination_obj = new LatLong();
+        $destination_obj->setLatitude($destination_latitude);
+        $destination_obj->setLongitude($destination_longitude);
     
         $locations = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as latitude'),
             DB::raw('ST_Y(co_ordinates) as longitude')
         )->whereNotIn('id', $respondedTechnicians)->get();
-    
-        $destination_obj = new LatLong();
-        $destination_obj->setLatitude($destination_latitude);
-        $destination_obj->setLongitude($destination_longitude);
     
         $manual_distances = [];
         foreach ($locations as $location) {
@@ -1847,102 +1854,38 @@ class UserController extends Controller
         }
     
         asort($filteredArray);
-        $manualClosestDistances = Technician::select(
-            'id',
-            DB::raw('ST_X(co_ordinates) as longitude'),
-            DB::raw('ST_Y(co_ordinates) as latitude')
-        )->whereIn('id', array_slice(array_keys($filteredArray), 0, 10))->get();
+        $filteredIds = array_slice(array_keys($filteredArray), $offset, $limit);
     
-        $technicians = [];
-        foreach ($manualClosestDistances as $manualClosestDistance) {
-            $technicians[] = Technician::availableFtech()
-                ->select('id', 'address_data')
-                ->where('id', $manualClosestDistance->id)
-                ->get();
-        }
+        $technicians = Technician::whereIn('id', $filteredIds)
+            ->with('skills')
+            ->get();
     
-        $mergedTechnicians = collect($technicians)->flatten();
-    
-        $origins = [];
-        foreach ($mergedTechnicians as $technician) {
-            $addressData = isset($technician->address_data) ? (array) $technician->address_data : [];
-            $formattedOrigin = implode(', ', [
-                $addressData['country'] ?? '',
-                $addressData['city'] ?? '',
-                $addressData['state'] ?? '',
-                $addressData['zip_code'] ?? ''
-            ]);
-    
-            $origins[] = [
-                'technician_id' => $technician->id,
-                'origin' => $formattedOrigin,
+        $response = $technicians->map(function ($tech) use ($manual_distances) {
+            return [
+                'id' => $tech->id,
+                'technician_id' => $tech->technician_id,
+                'email' => $tech->email,
+                'phone' => $tech->phone,
+                'company_name' => $tech->company_name,
+                'distance' => round($manual_distances[$tech->id] ?? 0, 2) . ' mi',
+                'status' => $tech->status,
+                'rate' => $tech->rate,
+                'travel_fee' => $tech->travel_fee ?? '',
+                'preference' => $tech->preference ?? '',
+                'skills' => $tech->skills->pluck('skill_name')->toArray(),
             ];
-        }
+        });
     
-        $originsString = implode('|', array_column($origins, 'origin'));
-    
-        $distances = new DistanceMatrixService();
-        $data = $distances->getDistance($originsString, $destination);
-    
-        $completeInfo = [];
-        $techniciansFound = false;
-        $rows = isset($data['rows']) && is_array($data['rows']) ? $data['rows'] : [];
-    
-        foreach ($rows as $index => $row) {
-            if (isset($row['elements'][0]) && $row['elements'][0]['status'] === "OK") {
-                $technicianId = $origins[$index]['technician_id'];
-                $distanceText = $row['elements'][0]['distance']['text'];
-                $durationText = $row['elements'][0]['duration']['text'];
-    
-                $ftech = Technician::with('skills')->findOrFail($technicianId);
-                if ($ftech) {
-                    $distanceTextKm = str_replace([' km', ' ', ','], '', $distanceText);
-                    $distanceTextKm = (float) $distanceTextKm;
-                    $distanceTextMiles = $distanceTextKm * 0.621371;
-    
-                    if ($distanceTextMiles <= $radius) {
-                        $isWithinRadius = $ftech->radius > $distanceTextMiles ? "Yes" : "No";
-    
-                        $rateString = isset($ftech->rate) ? implode(", ", array_map(
-                            fn($key, $value) => "$key: $value",
-                            array_keys((array) $ftech->rate),
-                            array_values((array) $ftech->rate)
-                        )) : "";
-    
-                        $completeInfo[] = [
-                            'id' => $ftech->id,
-                            'technician_id' => $ftech->technician_id,
-                            'email' => $ftech->email,
-                            'phone' => $ftech->phone,
-                            'company_name' => $ftech->company_name,
-                            'distance' => $distanceTextMiles,
-                            'status' => $ftech->status,
-                            'rate' => $ftech->rate,
-                            'travel_fee' => $ftech->travel_fee ?? "",
-                            'preference' => $ftech->preference ?? "",
-                            'duration' => $durationText,
-                            'radius' => $isWithinRadius,
-                            'skills' => $ftech->skills->pluck('skill_name')->toArray(),
-                        ];
-    
-                        $techniciansFound = true;
-                    }
-                }
-            }
-        }
-    
-        if (!$techniciansFound) {
-            return response()->json(['errors' => 'No technicians found in 150 miles radius.'], 404);
-        }
-    
-        usort($completeInfo, fn($a, $b) => $a['distance'] <=> $b['distance']);
-    
-        foreach ($completeInfo as &$info) {
-            $info['distance'] = number_format($info['distance'], 2) . ' mi';
-        }
-    
-        return response()->json(['technicians' => $completeInfo], 200);
+        return response()->json([
+            'technicians' => $response,
+            'pagination' => [
+                'current_page' => $page,
+                'limit' => $limit,
+                'total' => count($filteredArray),
+            ],
+        ]);
     }
+    
 
     public function assignTech(Request $request)
     {
@@ -2032,9 +1975,62 @@ class UserController extends Controller
 
     // New functions
 
-    public function allWoList(Request $request)
+    public function newWo($type)
     {
-        return Inertia::render('user/workOrder/AllWorkOrder', []);
+        return Inertia::render('user/createWorkOrder/CreateWorkOrder', [
+            'type' => $type
+        ]);
+    }
+
+    public function storeWo(Request $request)
+    {
+        $orderId = WorkOrder::orderBy('id', 'desc')->first();
+        $rand = rand(10, 99);
+
+        if ($orderId == null) {
+            $id = 0;
+            $f = $id + 1;
+        } else {
+            $p = $orderId->id;
+            $f = $p + 1;
+        }
+        $date = date('mdy');
+        $id = $date . $rand;
+        
+        $wo = new WorkOrder();
+
+        $wo->auth_id = Auth::user()->id;
+
+        if($request->order_type == 1)
+        {
+            $wo->order_id = "S1" . $id . $f;
+        }elseif($request->order_type == 2){
+            $wo->order_id = "P1" . $id . $f;
+        }elseif($request->order_type == 3){
+            $wo->order_id = "I1" . $id . $f;
+        }
+        
+        $wo->em_id = $request->wo_manager;
+        $wo->priority = $request->priority;
+        $wo->requested_by = $request->requested_by;
+        $wo->order_type = $request->order_type;
+        $wo->scope_work = $request->scope_work;
+        $wo->r_tools = $request->r_tools;
+        $wo->status = 1;
+        $wo->stage = Status::STAGE_NEW;
+        $wo->save();
+
+        $invoice = new CustomerInvoice();
+        $invoice->invoice_number = getNumber();
+        $invoice->work_order_id = $wo->id;
+        $invoice->save();
+
+        return redirect()->route('user.work.order.view.inertia', $wo->id);
+    }
+
+    public function allWoList()
+    {
+        return Inertia::render('user/allWorkOrder/AllWorkOrder', []);
     }
 
     public function userInertiaLayout($id)

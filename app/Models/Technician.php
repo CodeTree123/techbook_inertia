@@ -22,7 +22,7 @@ class Technician extends Model
 
     public function skills()
     {
-        return $this->hasMany(TechnicianSkill::class,  'technician_id');
+        return $this->belongsToMany(SkillCategory::class, 'technician_skills', 'technician_id', 'skill_id');
     }
 
     public function review()
