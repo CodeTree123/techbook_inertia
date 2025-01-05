@@ -68,52 +68,44 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
     // google api
     const [responseData, setResponseData] = useState(null);
-    const [responseError, setResponseErrors] = useState(null);
+    const [responseError, setResponseErros] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
-    const [radius, setRadius] = useState(150); // Initial radius is 150 miles
-    
-    const closestTech = async (destination, direction) => {
+    const [clickCount, setClickCount] = useState(0);
+
+
+    const closestTech = async (destination, cnt) => {
         setLoaderVisible(true);
-    
-        // Update radius based on the direction (next/previous)
-        const newRadius = direction > 0 ? radius + 50 : Math.max(150, radius - 50);
-    
-        if (newRadius < 150) {
-            // Prevent radius from going below the initial 150 miles
-            setLoaderVisible(false);
-            return;
-        }
-    
-        setRadius(newRadius); // Update radius state
-    
+        setClickCount(clickCount + cnt)
+
+        const radiusValue = clickCount == 0 ? null : clickCount * 50
+
         try {
-            const response = await fetch(`/user/find/tech/for/work/worder`, {
-                method: 'POST',
+            const response = await fetch(/user/find/tech/for/work/worder, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 },
                 body: JSON.stringify({
                     destination,
-                    radiusValue: newRadius,
-                    limit: 10, // Adjust limit as needed
+                    radiusValue
                 }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
-                setResponseErrors(errorData?.errors);
+                onErrorMessage(errorData?.errors);
                 setLoaderVisible(false);
                 return;
             }
-    
+
             const responseData = await response.json();
+            setLoaderVisible(false);
             setResponseData(responseData);
-            sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
+
+            sessionStorage.setItem(workOrder_${id}, JSON.stringify(responseData));
         } catch (error) {
             console.error('Error fetching closest techs:', error);
-            setResponseErrors('Failed to fetch technicians. Please try again.');
-        } finally {
             setLoaderVisible(false);
         }
     };
@@ -366,7 +358,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                             responseData && responseData?.technicians?.length != 0 &&
                                             <div className="pagination justify-content-end align-items-center gap-1">
                                                 <button
-                                                    disabled={clickCount == 0}
+                                                    disabled={radius == 150}
                                                     onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, -1)}
                                                     className='btn btn-outline-primary'
                                                 >
