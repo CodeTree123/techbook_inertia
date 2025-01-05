@@ -80,7 +80,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
         const radiusValue = clickCount == 0 ? null : clickCount * 50
 
         try {
-            const response = await fetch(/user/find/tech/for/work/worder, {
+            const response = await fetch(`/user/find/tech/for/work/worder`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -103,7 +103,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
             setLoaderVisible(false);
             setResponseData(responseData);
 
-            sessionStorage.setItem(workOrder_${id}, JSON.stringify(responseData));
+            sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
         } catch (error) {
             console.error('Error fetching closest techs:', error);
             setLoaderVisible(false);
