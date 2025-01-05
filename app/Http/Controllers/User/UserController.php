@@ -1916,7 +1916,15 @@ class UserController extends Controller
     
                 $ftech = Technician::with('skills')->find($technicianId);
                 if ($ftech) {
-                    $distanceTextMiles = str_replace([' km', ' ', ','], '', $distanceText) * 0.621371;
+                    $distanceTextMiles = null; // Initialize to handle invalid input
+                    $cleanDistanceText = preg_replace('/[^0-9.]/', '', $distanceText); // Remove all non-numeric and non-decimal characters
+                    
+                    if (is_numeric($cleanDistanceText)) {
+                        $distanceTextMiles = $cleanDistanceText * 0.621371; // Convert km to miles
+                    } else {
+                        // Handle the case where the value is invalid
+                        error_log("Invalid distance text: {$distanceText}");
+                    }
     
                     if ($distanceTextMiles <= $radius) {
                         $completeInfo[] = [
