@@ -148,6 +148,7 @@
             </div>
 
     </div>
+    @if($imageFileNames != null)
     @foreach (@$imageFileNames as $imageName)
         @php
             $filePath = public_path($imageName);
@@ -196,7 +197,7 @@
         </div>
         @endif
     @endforeach
-    
+    @endif
     
     <div class="container" style="min-height: 1200px; position: relative">
         <div class="row mb-1">

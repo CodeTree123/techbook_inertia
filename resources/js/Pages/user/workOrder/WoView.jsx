@@ -22,7 +22,7 @@ export default function WoView({ wo }) {
   const hasRun = useRef(false);
 
   useEffect(()=>{
-    if (!hasRun.current && wo.stage == 3) {
+    if (!hasRun.current) {
       post(route('user.wo.goAtRisk', wo.id), {
         preserveScroll: true,
         onSuccess: () => {
