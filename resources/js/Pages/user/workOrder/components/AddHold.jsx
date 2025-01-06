@@ -29,7 +29,7 @@ const AddHold = ({ id, stage, onSuccessMessage  }) => {
 
     return (
         <>
-            <Button variant="outline-dark" onClick={handleShowHold}>
+            <Button variant="outline-dark" style={{height: 'max-content'}} onClick={handleShowHold}>
                 {stage ? 'Remove Hold' : "Add Hold"}
             </Button>
 

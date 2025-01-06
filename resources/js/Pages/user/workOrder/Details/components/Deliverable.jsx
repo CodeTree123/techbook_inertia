@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import React from 'react'
 
 const Deliverable = ({ id, details, onSuccessMessage }) => {
@@ -86,11 +86,11 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
 
             // Create a FormData object
             const formData = new FormData();
-            formData.append('file', file); // Append the selected file to FormData
+            formData.append('file', file);
 
             try {
                 // Send the request using Fetch API or Axios
-                const response = await fetch(route('user.wo.uploadMoreFilePhoto', description), {
+                const response = await fetch(route('user.wo.uploadMoreFilePhoto',[id, description]), {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, // Include CSRF token
@@ -102,6 +102,7 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
                     const result = await response.json();
                     console.log('File Uploaded Successfully', result);
                     onSuccessMessage('File Uploaded Successfully');
+                    router.reload();
                 } else {
                     console.error('File Upload Failed:', response.statusText);
                     onSuccessMessage('File upload failed.');

@@ -200,6 +200,8 @@ class WorkOrder extends Model
     {
         return $query->where('stage', Status::STAGE_BILLING);
     }
+
+    
     //type
     public function scopeService($query)
     {

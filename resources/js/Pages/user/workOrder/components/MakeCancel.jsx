@@ -26,7 +26,7 @@ const MakeCancel = ({id, is_cancelled, onSuccessMessage}) => {
 
     return (
         <>
-            <Button variant="danger" onClick={handleShowCancel} disabled={is_cancelled == 7}>
+            <Button variant="danger" style={{height: 'max-content'}} onClick={handleShowCancel} disabled={is_cancelled == 7}>
                 {is_cancelled != 7 ? 'Cancel' : 'Cancelled'}
             </Button>
 
