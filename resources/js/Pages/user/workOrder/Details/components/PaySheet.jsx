@@ -119,12 +119,15 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                     <div className='row'>
                         <div className='col-4'>
                             <input type="text" className='border-bottom w-100' placeholder='Item Description' onChange={(e) => setData({ ...data, description: e.target.value })} />
+                            {errors.description && <p className='text-danger'>{errors.description}</p>}
                         </div>
                         <div className='col-4'>
                             <input type="text" className='border-bottom w-100' placeholder='Item Price' onChange={(e) => setData({ ...data, price: e.target.value })} />
+                            {errors.price && <p className='text-danger'>{errors.price}</p>}
                         </div>
                         <div className='col-4'>
                             <input type="text" className='border-bottom w-100' placeholder='Item Quantity' onChange={(e) => setData({ ...data, quantity: e.target.value })} />
+                            {errors.quantity && <p className='text-danger'>{errors.quantity}</p>}
                         </div>
                         <div className='col-12 d-flex mt-2 gap-2 justify-content-end'>
                             <button onClick={(e) => updateExpense(e)} className='btn-success btn'>

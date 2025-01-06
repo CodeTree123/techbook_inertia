@@ -81,16 +81,25 @@
 
             #scope_work {
                 display: none;
+                line-height: 20px !important;
+            }
+
+            #scope_work p{
+                font-family: 'CustomFont' !important;
+                margin: 0 !important;
+                line-height: 20px !important;
             }
 
             .inv_note {
                 display: none;
-                font-family: 'CustomFont' !important
+                font-family: 'CustomFont' !important;
+                line-height: 20px !important;
             }
 
             .inv_note p {
                 font-family: 'CustomFont' !important;
                 margin: 0 !important;
+                line-height: 20px !important;
             }
 
             .inv_note span {
