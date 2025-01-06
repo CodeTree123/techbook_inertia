@@ -3675,6 +3675,18 @@ class UserController extends Controller
 
     public function addExpenses(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'description' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'nullable|integer|min:1',
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $otherExpense = new OtherExpense();
         $otherExpense->wo_id = $id;
         $otherExpense->description = $request->description;
