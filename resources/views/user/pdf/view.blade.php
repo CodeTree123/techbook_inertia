@@ -49,10 +49,11 @@
 </style>
 
 <body>
-    <div class="container">
+    <div class="container" style="min-height: 1200px; position: relative">
         <div class="row mb-5">
             <div class="col-md-8">
-                <img style="width: 250px;  margin-left:-15px; " src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('assetsNew/dist/img/mainlogo.png')) }}">
+                <img style="width: 250px;  margin-left:-15px; "
+                    src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('assetsNew/dist/img/mainlogo.png')) }}">
             </div>
             <div class="col-md-4">
                 <p class="header-text text-nowrap" style="font-size:18px;color:black;">1905 Marketview Dr.<br>Suite 226
@@ -65,15 +66,16 @@
 
             <tbody>
                 <tr class="headerline">
-                    <th class="header-cell" id="work-order" style="background-color:#1e90ff;font-size:35px;font-weight:bold;">Tech Yeah Work Order #:
+                    <th class="header-cell" id="work-order"
+                        style="background-color:#1e90ff;font-size:35px;font-weight:bold;">Tech Yeah Work Order #:
                         {{ $views->order_id }}
                     </th>
                 </tr>
                 <tr>
-                    <th><b>Scheduled date: </b> {{ @$scheduled->on_site_by }}</th>
+                    <th><b>Scheduled date: </b> {{ Carbon\Carbon::parse(@$scheduled->on_site_by)->format('m/d/y') }}</th>
                 </tr>
                 <tr>
-                    <th><b>Scheduled time: </b> {{ @$scheduled->scheduled_time }}</th>
+                    <th><b>Scheduled time: </b> {{ Carbon\Carbon::parse(@$scheduled->scheduled_time)->format('h:i a') }}</th>
                 </tr>
                 <tr>
                     <th><b>Location Name: </b> {{ @$views->site->location }}
@@ -104,19 +106,20 @@
             </div>
 
             <div class="my-4">
-                <p>Contact Tech Yeah upon arrival at the site to check-in and upon work completion to check-out or your payment may be forfeited.</p>
+                <p>Contact Tech Yeah upon arrival at the site to check-in and upon work completion to check-out or your
+                    payment may be forfeited.</p>
                 <h5>{{ @$views->a_instruction }}</h5>
                 <!-- <div>
                     @if (@$views->e_checkin == null)
-                    <h5>Earliest Check-in: N/A</h5>
-                    @else
-                    <h4>Earliest Check-in: {{ @$views->e_checkin }}</h4>
-                    @endif
+<h5>Earliest Check-in: N/A</h5>
+@else
+<h4>Earliest Check-in: {{ @$views->e_checkin }}</h4>
+@endif
                     @if (@$views->l_checkin == null)
-                    <h5>Latest Check-in: N/A</h5>
-                    @else
-                    <h5>Latest Check-in: {{ @$views->l_checkin }}</h5>
-                    @endif
+<h5>Latest Check-in: N/A</h5>
+@else
+<h5>Latest Check-in: {{ @$views->l_checkin }}</h5>
+@endif
                 </div> -->
                 <hr>
                 <div class="">
@@ -145,66 +148,61 @@
             </div>
 
     </div>
-    @if ($imageFileNames)
-    <div class="container">
-        <div class="row mb-1">
-            <div class="col-md-8">
-                <img style="width: 250px;  margin-left:-15px; " src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('assetsNew/dist/img/mainlogo.png')) }}">
-            </div>
-
-            <div class="col-md-4">
-                <p class="header-text text-nowrap" style="font-size:18px;color:black;">1905 Marketview Dr.<br>Suite 226
-                    <br>Yorkville, IL 60560
-                </p>
-                <p style="font-size:18px;" class="header-text"><u>www.techyeahinc.com</u></p>
-            </div>
-        </div>
-        <div class="mt-5">
-            <div style="text-align: center;">
-                @foreach (@$imageFileNames as $imageName)
-                @php
-                $filePath = public_path('imgs/' . $imageName);
-                if (file_exists($filePath)) {
+    @foreach (@$imageFileNames as $imageName)
+        @php
+            $filePath = public_path($imageName);
+            if (file_exists($filePath)) {
                 @$imageData = base64_encode(file_get_contents($filePath));
-                } else {
+            } else {
                 \Log::error('File not found: ' . $filePath);
                 @$imageData = null;
-                }
-                @endphp
+            }
+        @endphp
 
-                @if (@$imageData)
-                <div style="display: inline-block; margin: 5px;">
-                    <img src="data:image/jpeg;base64,{{ $imageData }}" alt="Image" style="border: 1px solid #555; width: 100%; height: 100%;">
-                    <form action="{{ route('work.order.image.delete') }}" method="POST" style="margin-top: 5px;">
-                        @csrf
-                        @method('DELETE')
-                        <input type="hidden" name="imageName" value="{{ $imageName }}">
-                        <input type="hidden" name="workOrderId" value="{{ $views->id }}"> <!-- Pass the workOrderId -->
-                        <button type="submit" style="background-color: red; color: white; border: none; padding: 5px; cursor: pointer;">
-                            Delete
-                        </button>
-                    </form>
+        @if (@$imageData)
+        <div class="container" style="min-height: 1200px; position: relative">
+            <div class="row mb-1">
+                <div class="col-md-8">
+                    <img style="width: 250px;  margin-left:-15px; "
+                        src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('assetsNew/dist/img/mainlogo.png')) }}">
                 </div>
-                @endif
-                @endforeach
-            </div>
-        </div>
 
-        <!-- footer -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top:60px">
-            <div>
-                <b>Tech Yeah</b>
+                <div class="col-md-4">
+                    <p class="header-text text-nowrap" style="font-size:18px;color:black;">1905 Marketview Dr.<br>Suite
+                        226
+                        <br>Yorkville, IL 60560
+                    </p>
+                    <p style="font-size:18px;" class="header-text"><u>www.techyeahinc.com</u></p>
+                </div>
             </div>
-            <div>
-                <b>2024</b>
+            <div class="h-100 d-flex flex-column justify-content-center">
+                <div style="text-align: center;">
+                    <div style="display: block; margin: 5px;">
+                        <img src="data:image/jpeg;base64,{{ $imageData }}" alt="Image"
+                            style="border: 1px solid #555; width: 100%; height: auto;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- footer -->
+            <div style="display: flex; justify-content: space-between; align-items: center; position: absolute; bottom: 10px; width: 750px">
+                <div>
+                    <b>Tech Yeah</b>
+                </div>
+                <div>
+                    <b>2024</b>
+                </div>
             </div>
         </div>
-    </div>
-    @endif
-    <div class="container">
+        @endif
+    @endforeach
+    
+    
+    <div class="container" style="min-height: 1200px; position: relative">
         <div class="row mb-1">
             <div class="col-md-8">
-                <img style="width: 250px;  margin-left:-15px; " src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('assetsNew/dist/img/mainlogo.png')) }}">
+                <img style="width: 250px;  margin-left:-15px; "
+                    src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('assetsNew/dist/img/mainlogo.png')) }}">
             </div>
 
             <div class="col-md-4">
@@ -217,11 +215,16 @@
         <div class="mt-5">
             <h5>Description of Work Performed (Please list by date):</h5>
             <div class="mt-4">
-                <input type="text" class="lineInput" style=" border: none; border-bottom: 1px solid black;width:770px"><br>
-                <input type="text" class="lineInput" style=" border: none; border-bottom: 1px solid black;width:770px"><br>
-                <input type="text" class="lineInput" style=" border: none; border-bottom: 1px solid black;width:770px"><br>
-                <input type="text" class="lineInput" style=" border: none; border-bottom: 1px solid black;width:770px"><br>
-                <input type="text" class="lineInput" style=" border: none; border-bottom: 1px solid black;width:770px"><br>
+                <input type="text" class="lineInput"
+                    style=" border: none; border-bottom: 1px solid black;width:770px"><br>
+                <input type="text" class="lineInput"
+                    style=" border: none; border-bottom: 1px solid black;width:770px"><br>
+                <input type="text" class="lineInput"
+                    style=" border: none; border-bottom: 1px solid black;width:770px"><br>
+                <input type="text" class="lineInput"
+                    style=" border: none; border-bottom: 1px solid black;width:770px"><br>
+                <input type="text" class="lineInput"
+                    style=" border: none; border-bottom: 1px solid black;width:770px"><br>
             </div>
         </div>
 
@@ -274,7 +277,7 @@
             </div>
         </div>
         @php
-        $date = date('d-m-y');
+            $date = date('d-m-y');
         @endphp
         <p class="form-label mt-1">Date:</p>
         <input type="text" class="form-input" value="{{ $date }}" style="width:250px">
@@ -283,7 +286,7 @@
                 Tech Yeah at (833) 832-4002</b></h6>
 
         <!-- footer -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top:60px">
+        <div style="display: flex; justify-content: space-between; align-items: center; position: absolute; bottom: 10px; width: 750px">
             <div>
                 <b>Tech Yeah</b>
             </div>

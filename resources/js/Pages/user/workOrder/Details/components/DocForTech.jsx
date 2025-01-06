@@ -1,23 +1,47 @@
-import { useForm } from '@inertiajs/react';
-import React from 'react'
+import { router, useForm } from '@inertiajs/react';
+import React, { useState } from 'react'
 
 const DocForTech = ({ id, details, onSuccessMessage }) => {
     const { data, setData, delete: deleteItem, post, errors, processing, recentlySuccessful } = useForm({
-        'file': [],
     });
 
-    const submit = (e) => {
-        if (e) e.preventDefault();
+    const [file, setFile] = useState([]);
 
-        post(route('user.wo.uploadDocForTech', id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                onSuccessMessage('Documents Uploaded Successfully');
-            },
-            onError: (e) => {
-                onSuccessMessage(e);
+    const handleUpload = async (e) => {
+        // Check if a file was selected
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+
+            // Create a FormData object
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Send the request using Fetch API or Axios
+                const response = await fetch(route('user.wo.uploadDocForTech', id), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, // Include CSRF token
+                    },
+                    body: formData, // Use FormData as the request body
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('File Uploaded Successfully', result);
+                    onSuccessMessage('File Uploaded Successfully');
+                    router.reload();
+                } else {
+                    console.error('File Upload Failed:', response.statusText);
+                    onSuccessMessage('File upload failed.');
+                }
+            } catch (error) {
+                console.error('Upload Error:', error);
+                onSuccessMessage('File upload failed.');
             }
-        });
+        } else {
+            console.log('No file selected.');
+        }
     };
 
     const deleteDoc = (e, docID) => {
@@ -32,13 +56,6 @@ const DocForTech = ({ id, details, onSuccessMessage }) => {
                 onSuccessMessage(e);
             }
         });
-    };
-
-    const handleUpload = (e) => {
-        e.preventDefault();
-
-        setData('file', [...e.target.files]);
-        submit();
     };
 
 
@@ -70,7 +87,7 @@ const DocForTech = ({ id, details, onSuccessMessage }) => {
                                             // If it's a PDF
                                             return (
                                                 <div>
-                                                    <i className="fa fa-file-pdf preview-pdf text-danger" style={{fontSize: '90px !important'}} aria-hidden="true" />
+                                                    <i className="fa fa-file-pdf preview-pdf text-danger" style={{ fontSize: '90px !important' }} aria-hidden="true" />
                                                     <a href={`${window.location.protocol}//${window.location.host}/docs/technician/${doc.name}`} download={doc.name}>
                                                         <p className="file-name">{doc.name}</p>
                                                     </a>
@@ -80,7 +97,7 @@ const DocForTech = ({ id, details, onSuccessMessage }) => {
                                             // For other file types
                                             return (
                                                 <div>
-                                                    <i className="fa fa-file preview-pdf" aria-hidden="true" style={{fontSize: '90px !important'}} />
+                                                    <i className="fa fa-file preview-pdf" aria-hidden="true" style={{ fontSize: '90px !important' }} />
                                                     <a href={`${window.location.protocol}//${window.location.host}/docs/technician/${doc.name}`} download={doc.name}>
                                                         <p className="file-name">{doc.name}</p>
                                                     </a>
@@ -101,7 +118,7 @@ const DocForTech = ({ id, details, onSuccessMessage }) => {
                 <div className="w-100 py-3">
                     <form encType="multipart/form-data">
                         <label htmlFor="technicianDoc" className="btn btn-outline-dark">Add File</label>
-                        <input id='technicianDoc' accept=".jpg, .jpeg, .png, .pdf, .doc, .docx, .xlsx, .txt" onChange={(e) => handleUpload(e)} name="file[]" className="invisible" type="file" multiple />
+                        <input id='technicianDoc' accept=".jpg, .jpeg, .png, .pdf, .doc, .docx, .xlsx, .txt" onChange={handleUpload} name="file" className="invisible" type="file" />
                     </form>
                 </div>
             </div>

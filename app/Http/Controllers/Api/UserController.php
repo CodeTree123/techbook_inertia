@@ -365,7 +365,7 @@ class UserController extends Controller
                 $query->where('stage', $stage);
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(50);  // Pagination still works here for both search results and all records
+            ->paginate(50);
     
         return response()->json([
             'w_orders' => $w_orders

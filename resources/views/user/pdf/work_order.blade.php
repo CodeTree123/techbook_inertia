@@ -176,10 +176,10 @@
                     </th>
                 </tr>
                 <tr>
-                    <th><b>Scheduled date: </b> {{ @$scheduled->on_site_by }}</th>
+                    <th><b>Scheduled date: </b> {{ Carbon\Carbon::parse(@$scheduled->on_site_by)->format('m/d/y') }}</th>
                 </tr>
                 <tr>
-                    <th><b>Scheduled time: </b> {{ @$scheduled->scheduled_time }}</th>
+                    <th><b>Scheduled time: </b> {{ Carbon\Carbon::parse(@$scheduled->scheduled_time)->format('h:i a') }}</th>
                 </tr>
                 <tr>
                     <th><b>Location Name: </b> {{ @$views->site->location }}
@@ -259,7 +259,7 @@
         @foreach ($imageFileNames as $imageName)
         <div class="third-page-content" style="position: relative; height: 980px">
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center">
-                <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents('imgs/' . $imageName)) }}" alt="Random Image" style="border: 2px solid #555; width: 100%; height: auto; object-fit: contain;">
+                <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents( $imageName)) }}" alt="Random Image" style="border: 2px solid #555; width: 100%; height: auto; object-fit: contain;">
             </div>
         </div>
         @endforeach

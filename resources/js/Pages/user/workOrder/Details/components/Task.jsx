@@ -1,11 +1,10 @@
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
-import { Button, Modal } from 'react-bootstrap'
 import TaskModal from './TaskModal';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-const Task = ({ id, details, onSuccessMessage }) => {
-    const { data, setData, post, delete:deleteItem, errors, processing, recentlySuccessful } = useForm({
+const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
+    const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         type: '',
         reason: '',
         desc: '',
@@ -190,7 +189,6 @@ const Task = ({ id, details, onSuccessMessage }) => {
 
     };
 
-
     const addFilePhoto = async (e, taskId) => {
         // Check if a file was selected
         if (e.target.files && e.target.files.length > 0) {
@@ -212,15 +210,16 @@ const Task = ({ id, details, onSuccessMessage }) => {
 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('File Uploaded Successfully', result);
                     onSuccessMessage('File Uploaded Successfully');
+                    // Inertia.visit(`/user/work/order/view/layout/user/dashboard/inertia/28/${id}`);
+                    router.reload()
                 } else {
                     console.error('File Upload Failed:', response.statusText);
-                    onSuccessMessage('File upload failed.');
+                    onErrorMessage('File upload failed.');
                 }
             } catch (error) {
                 console.error('Upload Error:', error);
-                onSuccessMessage('File upload failed.');
+                onErrorMessage('File upload failed.');
             }
         } else {
             console.log('No file selected.');
@@ -320,7 +319,7 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                     {...provided.dragHandleProps} key={task.id} className="px-4 py-3 mb-4 d-flex justify-content-between action-cards" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }} draggable >
                                                     <div className="d-flex">
                                                         {
-                                                            (task.type === 'upload_file' || task.type === 'upload_photo') && !task.file ? (
+                                                            (task.type === 'upload_file' || task.type === 'upload_photo') && task.file == '[]' ? (
                                                                 <form id="completeTaskForm" className="me-2">
                                                                     <label
                                                                         htmlFor={`completeTaskFileUpload-${task.id}`}
@@ -351,8 +350,6 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                                 </form>
                                                             )
                                                         }
-
-
 
                                                         <label className="form-check-label">
                                                             <form onSubmit={(e) => submit(e, task.id)}>
@@ -685,9 +682,38 @@ const Task = ({ id, details, onSuccessMessage }) => {
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps} className="px-4 py-3 mb-4 d-flex justify-content-between action-cards" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }} draggable>
                                                             <div className="d-flex">
-                                                                <form id="completeTaskForm" className='me-2' onSubmit={(e) => completeTaskForm(e, task.id, task.is_completed)}>
-                                                                    <input type="checkbox" id="completeTaskCheckbox" onChange={(e) => completeTaskForm(e, task.id, task.is_completed)} checked={task.is_completed} />
-                                                                </form>
+                                                                {
+                                                                    (task.type === 'upload_file' || task.type === 'upload_photo') && task.file == '[]' ? (
+                                                                        <form id="completeTaskForm" className="me-2">
+                                                                            <label
+                                                                                htmlFor={`completeTaskFileUpload-${task.id}`}
+                                                                                className="border bg-white rounded"
+                                                                                style={{ width: '16px', height: '16px' }}
+                                                                            >
+                                                                                {/* Optional: Add an icon or text inside the label for accessibility */}
+                                                                            </label>
+                                                                            <input
+                                                                                type="file"
+                                                                                id={`completeTaskFileUpload-${task.id}`}
+                                                                                className="invisible"
+                                                                                onChange={(e) => addFilePhoto(e, task.id)}
+                                                                            />
+                                                                        </form>
+                                                                    ) : (
+                                                                        <form
+                                                                            id="completeTaskForm"
+                                                                            className="me-2"
+                                                                            onSubmit={(e) => completeTaskForm(e, task.id, task.is_completed)}
+                                                                        >
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                id={`completeTaskCheckbox-${task.id}`}
+                                                                                onChange={(e) => completeTaskForm(e, task.id, task.is_completed)}
+                                                                                checked={!!task.is_completed}
+                                                                            />
+                                                                        </form>
+                                                                    )
+                                                                }
 
                                                                 <label className="form-check-label">
                                                                     <form onSubmit={(e) => submit(e, task.id)}>

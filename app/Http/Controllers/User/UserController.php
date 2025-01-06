@@ -2135,7 +2135,6 @@ class UserController extends Controller
             'notes.user:id,firstname,lastname',
             'notes.subNotes'
         ])->find($id);
-    
         // Check if technician data exists
         if ($wo && $wo->technician) {
             // Check if the address_data and rate are already decoded (i.e., not strings)
@@ -2582,37 +2581,64 @@ class UserController extends Controller
 
     public function uploadDocForTech(Request $request, $id)
     {
-        $rules = [
-            'file.*' => 'required|file|mimes:jpeg,png,pdf,doc,docx,xlsx|max:2024',
-        ];
-
-        $messages = [
-            'file.*.required' => 'Select files first',
-            'file.*.mimes' => 'Only JPEG, PNG, PDF, XLSX, DOC, and DOCX files are allowed',
-            'file.*.max' => 'Maximum file size is 2MB',
-        ];
-
-        $validated = $request->validate($rules, $messages);
-
-        if ($request->hasFile('file')) {
-            foreach ($request->file('file') as $file) {
+        try {
+            // Validation rules for files
+            $rules = [
+                'file' => 'required|file|mimes:jpeg,png,pdf,doc,docx,xlsx|max:2048', // 2MB
+            ];
+    
+            $messages = [
+                'file.required' => 'Select files first.',
+                'file.mimes' => 'Only JPEG, PNG, PDF, XLSX, DOC, and DOCX files are allowed.',
+                'file.max' => 'Maximum file size is 2MB.',
+            ];
+    
+            // Validate the incoming request
+            $validated = $request->validate($rules, $messages);
+    
+            // Check if there is a file in the request
+            if ($request->hasFile('file')) {
+                // Get the uploaded file
+                $file = $request->file('file'); // Single file, no need for foreach
+                
+                // Generate a unique file name
                 $originalName = $file->getClientOriginalName();
                 $fileName = time() . '_' . $file->getClientOriginalName();
+                
+                // Move the file to the public directory
                 $file->move(public_path('docs/technician'), $fileName);
-
-                // Create a new instance per file
+    
+                // Create a new document entry for the file
                 $doc = new DocForTechnician();
                 $wo = WorkOrder::find($id);
+    
+                // Handle the case where WorkOrder might not exist
+                if (!$wo) {
+                    return response()->json(['message' => 'Work order not found'], 404);
+                }
+    
+                // Assign properties to the document record
                 $doc->wo_id = $id;
                 $doc->technician_id = $wo->ftech_id;
                 $doc->file = 'docs/technician/' . $fileName;
                 $doc->name = $originalName;
+    
+                // Save the document record
                 $doc->save();
+    
+                // Return a success response
+                return response()->json(['message' => 'Document uploaded successfully.']);
             }
+    
+            // If no files were uploaded
+            return response()->json(['message' => 'No file uploaded.'], 400);
+    
+        } catch (\Throwable $th) {
+            // Catch any errors and return the error message
+            return response()->json(['message' => $th->getMessage()], 500);
         }
-
     }
-
+    
     public function deleteDocForTech($id)
     {
         $doc = DocForTechnician::find($id);
@@ -2677,7 +2703,7 @@ class UserController extends Controller
         $newCheckInOut = new CheckInOut();
         $newCheckInOut->work_order_id = $wo->id;
         $newCheckInOut->tech_id = $techId;
-        $newCheckInOut->company_name = $wo->customer->company_name;
+        $newCheckInOut->company_name = $wo->technician->company_name;
         $newCheckInOut->date = Carbon::now()->format('m/d/y');
         $newCheckInOut->check_in = Carbon::now($mappedTimezone)->format('H:i:s');
         $newCheckInOut->time_zone = $wo->site->time_zone;
@@ -2740,7 +2766,7 @@ class UserController extends Controller
         $totalMinutes = $checkOutTime->diffInMinutes($checkInTime);
 
         if($techId != null) {
-            $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)
+            $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)->where('check_out','!=', null)
             ->first();
         }else{
             $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('check_out','!=', null)->first();
@@ -3064,37 +3090,71 @@ class UserController extends Controller
         ]);
     
         $task = Task::find($id);
-    
+        $wo = WorkOrder::find($task->wo_id);
+
         if (!$task) {
             return response()->json([
                 'success' => false,
                 'message' => 'Task not found.',
             ], 404);
         }
-    
+
         $fileList = [];
-    
+        $pictures = [];
+
         if ($task->file) {
             $fileList = json_decode($task->file, true) ?? [];
         }
-    
+
+        if ($wo->pictures) {
+            $pictures = json_decode($wo->pictures, true) ?? [];
+        }
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('docs/tasks'), $filename);
-    
-            $fileList[] = [
-                'name' => $file->getClientOriginalName(),
-                'path' => 'docs/tasks/' . $filename,
-                'uploaded_at' => now()->toDateTimeString(),
-            ];
+
+            // Ensure the file is valid
+            if ($file->isValid()) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $filePath = 'docs/tasks/' . $filename;
+
+                // Move the file to the desired directory immediately after validation
+                $file->move(public_path('docs/tasks'), $filename);
+
+                // Check file extension to determine if it's an image
+                $extension = strtolower($file->getClientOriginalExtension());
+                $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                if (in_array($extension, $imageExtensions)) {
+                    $pictures[] = $filePath;
+                }
+
+                // Add the file to the file list (non-image files are also added)
+                $fileList[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'path' => $filePath,
+                    'uploaded_at' => now()->toDateTimeString(),
+                ];
+            } else {
+                // If the file is invalid, return an error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The uploaded file is invalid or corrupted.',
+                ], 400);
+            }
         }
-    
+
+        // Update task with the file list and save
         $task->file = json_encode($fileList);
-    
+
+        // Update work order's pictures field with image paths and save
+        $wo->pictures = json_encode($pictures);
+
+        // Toggle the completion status of the task
         $task->is_completed = !$task->is_completed;
         $task->save();
-    
+        $wo->save();
+
         return response()->json([
             'success' => true,
             'message' => 'File uploaded successfully.',
@@ -3102,11 +3162,10 @@ class UserController extends Controller
         ]);
     }
     
-    public function uploadMoreFilePhoto(Request $request, $description)
+    public function uploadMoreFilePhoto(Request $request, $id, $description)
     {
         $maxFileSize = 1024;
-    
-        // Check if file is an image to increase the file size limit
+
         if ($request->hasFile('file')) {
             $fileMime = $request->file('file')->getMimeType();
             if (str_starts_with($fileMime, 'image/')) {
@@ -3125,8 +3184,8 @@ class UserController extends Controller
         ]);
     
         // Find the task by description (case-insensitive)
-        $task = Task::whereRaw('LOWER(description) = ?', [strtolower($description)])->first();
-    
+        $task = Task::where('wo_id',$id)->whereRaw('LOWER(description) = ?', [strtolower($description)])->first();
+        $wo = WorkOrder::find($id);
         // If no task is found, return error
         if (!$task) {
             return response()->json([
@@ -3137,7 +3196,7 @@ class UserController extends Controller
     
         // Decode the existing file list, if any
         $fileList = $task->file ? json_decode($task->file, true) : [];
-    
+        $pictures = $wo->pictures ? json_decode($wo->pictures, true) : [];
         // Handle new file upload if present
         if ($request->hasFile('file')) {
             $file = $request->file('file');
@@ -3153,15 +3212,23 @@ class UserController extends Controller
                 'path' => 'docs/tasks/' . $filename,
                 'uploaded_at' => now()->toDateTimeString(),
             ];
+
+            $extension = strtolower($file->getClientOriginalExtension());
+            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+            if (in_array($extension, $imageExtensions)) {
+                // Append the new image path to the existing pictures array
+                $pictures[] = 'docs/tasks/'.$filename;
+            }
         }
     
         // Update the task's file field with the new file list
         $task->file = json_encode($fileList);
-    
+        $wo->pictures = json_encode($pictures);
         // Toggle the task completion status
         $task->is_completed = !$task->is_completed;
         $task->save();
-    
+        $wo->save();
         // Return success response with the updated task
         return response()->json([
             'success' => true,
@@ -3173,19 +3240,13 @@ class UserController extends Controller
     public function deleteFilePhoto(Request $request, $id, $url)
     {
         $task = Task::find($id);
-    
-        // If no task is found, return error
-        if (!$task) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Task not found.',
-            ], 404);
-        }
-    
+        $wo = WorkOrder::find($task->wo_id);
+
         // Decode the existing file list, if any
         $fileList = $task->file ? json_decode($task->file, true) : [];
-    
-        // Find the file by URL in the list
+        $pictureList = $wo->pictures ? json_decode($wo->pictures, true) : [];
+
+        // Remove file from the task's file list based on the URL
         $fileToDelete = null;
         foreach ($fileList as $index => $file) {
             if ($file['uploaded_at'] === $url) {
@@ -3194,33 +3255,32 @@ class UserController extends Controller
                 break;
             }
         }
-    
-        // If file not found, return error
-        if (!$fileToDelete) {
-            return response()->json([
-                'success' => false,
-                'message' => 'File not found.',
-            ], 404);
+        
+        // Remove picture from the work order's pictures list based on the URL
+        foreach ($pictureList as $index => $picture) {
+            if ($picture == $fileToDelete['path']) {
+                
+                unset($pictureList[$index]); // Corrected: remove the picture from the list
+                break;
+            }
         }
-    
+
         // Delete the file from public storage (if it exists)
         $filePath = public_path($fileToDelete['path']);
         if (file_exists($filePath)) {
             unlink($filePath); // Remove the file from the public directory
         }
-    
+
         // Update the task's file field with the new file list (after removal)
-        $task->file = json_encode(array_values($fileList)); // Re-index the array after unsetting the file
+        $task->file = json_encode(array_values($fileList));
+        
+        // Update the work order's pictures field with the new picture list (after removal)
+        $wo->pictures = json_encode(array_values($pictureList));
+        
+        // Save the task and work order after updating
         $task->save();
-    
-        // Return success response with the updated task
-        // return response()->json([
-        //     'success' => true,
-        //     'message' => 'File deleted successfully.',
-        //     'task' => $task,
-        // ]);
+        $wo->save();
     }
-    
 
     public function editTask(Request $request, $id)
     {

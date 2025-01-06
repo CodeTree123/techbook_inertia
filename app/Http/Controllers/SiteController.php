@@ -133,7 +133,7 @@ class SiteController extends Controller
         $views = WorkOrder::with('site', 'customer', 'employee','schedules')->find($id);
         $scheduled = $views->schedules()->latest()->first();
         $imageFileNames = $views->pictures ? json_decode($views->pictures) : [];
-        $pdf = PDF::loadView('user.pdf.work_order', compact('pageTitle', 'views', 'imageFileNames'))->setOptions(['defaultFont' => 'sans-serif']);
+        $pdf = PDF::loadView('user.pdf.work_order', compact('pageTitle', 'views', 'imageFileNames', 'scheduled'))->setOptions(['defaultFont' => 'sans-serif']);
         $pdf->setPaper('A4', 'portrait');
         $customerCompanyName = @$views->customer->company_name;
         $fileName = $customerCompanyName . '_Work_Order.pdf';
@@ -146,8 +146,9 @@ class SiteController extends Controller
         $pageTitle = "View Pdf";
         $views = WorkOrder::with('site', 'customer', 'employee','schedules')->find($id);
         $scheduled = $views->schedules()->latest()->first();
+
         $imageFileNames = json_decode($views->pictures);
-        return view('user.pdf.view', compact('pageTitle', 'views', 'imageFileNames'));
+        return view('user.pdf.view', compact('pageTitle', 'views', 'scheduled', 'imageFileNames'));
     }
 
     public function deleteImage(Request $request)

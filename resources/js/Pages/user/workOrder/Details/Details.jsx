@@ -37,7 +37,7 @@ const Details = ({id, details, onSuccessMessage, onErrorMessage}) => {
                     <Shipment id={id} details={details} onSuccessMessage={onSuccessMessage} />
                     <DocForTech id={id} details={details} onSuccessMessage={onSuccessMessage} />
                     <Dispatched id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <Task id={id} details={details} onSuccessMessage={onSuccessMessage} />
+                    <Task id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
                     <Deliverable id={id} details={details} onSuccessMessage={onSuccessMessage} />
                 </div>
                 <div className='col-5'>
