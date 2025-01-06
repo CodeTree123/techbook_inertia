@@ -2794,10 +2794,10 @@ class UserController extends Controller
     {
         $wo = WorkOrder::find($id);
 
-        if($request->atRisk){
+        if($request->atRisk && $wo->stage = 3){
             $wo->stage = Status::STAGE_DISPATCH;
             $wo->status = Status::AT_RISK;
-        }else{
+        }elseif($wo->status == Status::AT_RISK){
             $wo->status = null;
         }
         
