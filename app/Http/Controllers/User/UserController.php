@@ -2881,8 +2881,15 @@ class UserController extends Controller
     
             // Calculate total minutes and total hours
             $totalMinutes = $checkOutTime->diffInMinutes($checkInTime);
-    
-            if ($totalMinutes <= 60) {
+
+            if($checkInOut->tech_id != null) {
+                $firstCheckInOut = CheckInOut::where('work_order_id', $checkInOut->work_order_id)->where('tech_id', $checkInOut->tech_id)->where('check_out','!=', null)
+                ->first();
+            }else{
+                $firstCheckInOut = CheckInOut::where('work_order_id', $checkInOut->work_order_id)->where('check_out','!=', null)->first();
+            }
+
+            if ($totalMinutes <= 60 && !$firstCheckInOut) {
                 $totalHours = 1;
             } else {
                 $remainingMinutes = $totalMinutes - 60;
