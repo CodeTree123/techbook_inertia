@@ -18,7 +18,7 @@ const SearchSiteModal = ({ onSuccessMessage }) => {
 
     const handleSelect = async (selectedOption) => {
         setSelectedSite(selectedOption?.value);
-
+        
         try {
             const response = await fetch(`/api/single-site/${selectedOption?.value}`);
             const json = await response.json();
@@ -42,15 +42,15 @@ const SearchSiteModal = ({ onSuccessMessage }) => {
             const json = await response.json();
 
             if (json.success && json.data) {
-                return json.data.map(employee => ({
-                    value: employee.id,
-                    label: employee.site_id + ' ' + employee.location,
+                return json.data.map(site => ({
+                    value: site.id,
+                    label: site.site_id + ' ' + site.location,
                 }));
             }
 
             return []; // Return an empty array if no data is available
         } catch (error) {
-            console.error('Error fetching employees:', error);
+            console.error('Error fetching sites:', error);
             return [];
         }
     };

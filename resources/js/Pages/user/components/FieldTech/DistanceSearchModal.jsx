@@ -14,6 +14,7 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
     const [autoComplete, setAutoComplete] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
+    const [clickCount, setClickCount] = useState(0);
 
     const [responseData, setResponseData] = useState(null);
     const [responseError, setResponseErrors] = useState(null);
@@ -59,14 +60,24 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
         }
     };
 
-    console.log(selectedOption);
-
-
     const handleSelect = async (selectedOption) => {
         setSelectedOption(selectedOption);
     };
 
-    const googleSearch = async () => {
+    const findMore = async (cnt) => {
+        setIsLoading(true);
+    
+        // Use prevCount to calculate both clickCount and radiusValue
+        setClickCount(prevCount => {
+            const updatedCount = prevCount === 0 ? cnt : prevCount + cnt;
+            const radiusValue = updatedCount * 50;
+    
+            googleSearch(radiusValue);
+            return updatedCount;
+        });
+    };
+
+    const googleSearch = async (radiusValue) => {
         if (selectedOption) {
             const destination = selectedOption.label;
             const latitude = selectedOption.lat;
@@ -74,6 +85,7 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
 
             setData((prevData) => ({
                 ...prevData,
+                radiusValue,
                 destination,
                 latitude,
                 longitude,
@@ -89,6 +101,7 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                     },
                     body: JSON.stringify({
                         destination,
+                        radiusValue,
                         latitude,
                         longitude,
                     }),
@@ -115,18 +128,15 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
     }
 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            const initialData = await loadOptions('');
-            setAutoComplete(initialData);
-            setIsLoading(false);
-        };
-        fetchData();
-    }, []);
-
-    console.log(responseData);
-
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         setIsLoading(true);
+    //         const initialData = await loadOptions('');
+    //         setAutoComplete(initialData);
+    //         setIsLoading(false);
+    //     };
+    //     fetchData();
+    // }, []);
 
     return (
         <>
@@ -162,8 +172,8 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                         <div className='col-12'>
                             {loaderVisible ? 'loading...' :
                                 responseData?.technicians?.map((tech) => (
-                                    <div className='d-flex'>
-                                        <h2 className='mb-2'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '14px' }}>({tech.distance} ~ {tech.duration})</span></h2>
+                                    <div className='py-3 border-bottom'>
+                                        <h5 className='mb-2'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '14px' }}>({tech.distance} ~ {tech.duration})</span></h5>
                                         <div className='d-flex gap-2 justify-contetn-start align-items-center'>
                                             {
                                                 tech.email &&
@@ -211,6 +221,14 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                                         </div>
                                     </div>
                                 ))
+                            }
+                            {
+                                responseData && <div className='d-flex justify-content-end align-items-center mt-4 gap-2'>
+                                    <p className='mb-0'>{responseData.radiusMessage}</p>
+                                    <button className='btn btn-outline-primary' disabled={responseData.radiusMessage == 'Showing result for 0-150 miles distance'} onClick={()=>findMore(-1)}>Previous 50 miles</button>
+
+                                    <button className='btn btn-outline-primary' disabled={responseData.radiusMessage == 'Showing result for 450-500 miles distance'} onClick={()=>findMore(1)}>Next 50 miles</button>
+                                </div>
                             }
                         </div>
                     </div>
