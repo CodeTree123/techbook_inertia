@@ -295,12 +295,40 @@ class UserController extends Controller
     {
         $search = $request->query('search', '');
 
-        $sites = CustomerSite::select('id', 'site_id','location')
+        $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
             ->when($search, function ($query, $search) {
                 $query->where('site_id', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")->orWhere('address_1', 'like', "%{$search}%")->orWhere('city', 'like', "%{$search}%")->orWhere('state', 'like', "%{$search}%")->orWhere('zipcode', 'like', "%{$search}%");
             })
             ->orderBy('site_id', 'asc')
             ->paginate(10); // Limit results to avoid overloading data
+
+        return response()->json([
+            'success' => true,
+            'data' => $sites->items(), // Extract only items for the dropdown
+            'message' => 'Sites fetched successfully'
+        ]);
+    }
+
+    public function customerSites(Request $request, $id)
+    {
+        $search = $request->query('search', '');
+
+        $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
+    ->where('customer_id', $id)
+    ->when($search, function ($query, $search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('site_id', 'like', "%{$search}%")
+              ->orWhere('location', 'like', "%{$search}%")
+              ->orWhere('address_1', 'like', "%{$search}%")
+              ->orWhere('city', 'like', "%{$search}%")
+              ->orWhere('state', 'like', "%{$search}%")
+              ->orWhere('zipcode', 'like', "%{$search}%");
+        });
+    })
+    ->orderBy('site_id', 'asc')
+    ->paginate(10);
+
+     // Limit results to avoid overloading data
 
         return response()->json([
             'success' => true,

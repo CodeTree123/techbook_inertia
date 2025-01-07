@@ -43,7 +43,7 @@ const Details = ({id, details, onSuccessMessage, onErrorMessage}) => {
                 <div className='col-5'>
                     <Contact id={id} details={details} onSuccessMessage={onSuccessMessage} />
                     <Schedule id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <Location id={id} details={details} onSuccessMessage={onSuccessMessage} />
+                    <Location id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
                     <PaySheet id={id} details={details} onSuccessMessage={onSuccessMessage} />
                     <ProfitSheet/>
                     <TimeLog id={id} details={details} onSuccessMessage={onSuccessMessage} />

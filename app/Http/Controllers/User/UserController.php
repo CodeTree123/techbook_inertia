@@ -2075,6 +2075,7 @@ class UserController extends Controller
             $wo->order_id = "I1" . $id . $f;
         }
         
+        $wo->slug = $request->cus_id;
         $wo->em_id = $request->wo_manager;
         $wo->priority = $request->priority;
         $wo->requested_by = $request->requested_by;
@@ -2700,7 +2701,7 @@ class UserController extends Controller
         $newCheckInOut = new CheckInOut();
         $newCheckInOut->work_order_id = $wo->id;
         $newCheckInOut->tech_id = $techId;
-        $newCheckInOut->company_name = $wo->technician->company_name;
+        $newCheckInOut->company_name = @$wo->technician->company_name;
         $newCheckInOut->date = Carbon::now()->format('m/d/y');
         $newCheckInOut->check_in = Carbon::now($mappedTimezone)->format('H:i:s');
         $newCheckInOut->time_zone = $wo->site->time_zone;
@@ -2708,7 +2709,7 @@ class UserController extends Controller
         $newCheckInOut->save();
 
         $preLog = WorkOrderTimeLog::where('column_name', 'check_in')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('check_in_outs','check_in', $newCheckInOut->work_order_id, $newCheckInOut->updated_at, $preLog, '<p>time: '.$newCheckInOut->date.' at '.$newCheckInOut->check_in.' ('.$newCheckInOut->time_zone.') </p><br/><p>note: '.$newCheckInOut->checkin_note.'</p>', '', 'html_text', $techId ? $newCheckInOut->engineer->name.' Checked In':$wo->technician->company_name. ' Checked In', $techId);
+            $this->createWorkOrderTimeLog('check_in_outs','check_in', $newCheckInOut->work_order_id, $newCheckInOut->updated_at, $preLog, '<p>time: '.$newCheckInOut->date.' at '.$newCheckInOut->check_in.' ('.$newCheckInOut->time_zone.') </p><br/><p>note: '.$newCheckInOut->checkin_note.'</p>', '', 'html_text', $techId ? $newCheckInOut->engineer->name.' Checked In':@$wo->technician->company_name. ' Checked In', $techId);
     }
 
 
@@ -2784,7 +2785,7 @@ class UserController extends Controller
         $checkInOut->save();
 
         $preLog = WorkOrderTimeLog::where('column_name', 'check_out')->orderBy('id', 'desc')->first();
-        $this->createWorkOrderTimeLog('check_in_outs','check_out', $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p>time: '.Carbon::now()->format('m/d/y').' at '.$checkInOut->check_out.' ('.$checkInOut->time_zone.') </p><br/><p>total hours: '.$checkInOut->total_hours.'</p>', '', 'html_text', $techId ? $checkInOut->engineer->name.' Checked Out':$wo->technician->company_name. ' Checked Out', $techId);
+        $this->createWorkOrderTimeLog('check_in_outs','check_out', $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p>time: '.Carbon::now()->format('m/d/y').' at '.$checkInOut->check_out.' ('.$checkInOut->time_zone.') </p><br/><p>total hours: '.$checkInOut->total_hours.'</p>', '', 'html_text', $techId ? $checkInOut->engineer->name.' Checked Out':@$wo->technician->company_name. ' Checked Out', $techId);
     }
 
     public function goAtRisk($id, Request $request)
@@ -2964,31 +2965,31 @@ class UserController extends Controller
         $task->save();
 
         if ($request->type = 'call') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Phone: '.$task->phone.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Phone: '.$task->phone.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
 
         elseif ($request->type = 'collect_signature') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Signature from: '.$task->from.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Signature from: '.$task->from.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
 
         elseif ($request->type = 'custom_task') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
 
         elseif ($request->type = 'shipping_details') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Item: '.$task->item.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Item: '.$task->item.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
 
         elseif ($request->type = 'send_email') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Email: '.$task->email.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Email: '.$task->email.'</p><br/><p> Reason: '.$task->reason.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
 
         elseif ($request->type = 'upload_file') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
 
         elseif ($request->type = 'upload_photo') {
-            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: $wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks','', $task->wo_id, $task->updated_at, '', '<p> Description: '.$task->description.'</p>', $task->tech ? $task->tech->name: @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For '.$task->tech->name : 'Task Added', $id);
         }
     }
 
