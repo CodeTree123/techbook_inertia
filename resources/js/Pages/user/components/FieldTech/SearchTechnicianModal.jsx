@@ -224,7 +224,7 @@ const SearchTechnicianModal = () => {
                             <div className='col-12 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Skillsets:</h6>
                                 <h6 className='mb-0'>
-                                    {techData?.skills?.map(skill => skill.skill.skill_name).join(', ')}
+                                    {/* {techData?.skills?.map(skill => skill.skill.skill_name).join(', ')} */}
                                 </h6>
 
                             </div>

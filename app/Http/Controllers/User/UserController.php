@@ -1783,25 +1783,34 @@ class UserController extends Controller
 
     public function distanceResponse(Request $request)
     {
-        $defaultRadius = 150; // Initial radius
-        $increment = 50; // Increment value for the radius
-        $maxRadius = 500; // Maximum allowable radius
-    
-        // Determine the current radius
-        $radius = $request->input('currentRadius', $defaultRadius);
-    
-        if ($request->has('nextRadius') && $request->nextRadius) {
-            $radius += $increment;
+        $prevRadius = 0;
+        $radius = 150;
+        
+        if ($request->has('radiusValue') && $request->radiusValue == 50) {
+            $prevRadius = $radius;
+            $radius += $request->radiusValue;
+        }elseif($request->radiusValue == 100){
+            $prevRadius = 200;
+            $radius += $request->radiusValue;
+        }elseif($request->radiusValue == 150){
+            $prevRadius = 250;
+            $radius += $request->radiusValue;
+        }elseif($request->radiusValue == 200){
+            $prevRadius = 300;
+            $radius += $request->radiusValue;
+        }elseif($request->radiusValue == 250){
+            $prevRadius = 350;
+            $radius += $request->radiusValue;
+        }elseif($request->radiusValue == 300){
+            $prevRadius = 400;
+            $radius += $request->radiusValue;
+        }elseif($request->radiusValue == 350){
+            $prevRadius = 450;
+            $radius += $request->radiusValue;
         }
-    
-        if ($radius > $maxRadius) {
-            return response()->json(['errors' => 'Exceeded maximum search radius of 500 miles.'], 422);
-        }
-    
-        $respondedTechnicians = is_array($request->input('respondedTechnicians', []))
-            ? $request->input('respondedTechnicians', [])
-            : json_decode($request->input('respondedTechnicians', '[]'), true);
-    
+        
+        $respondedTechnicians = $request->input('respondedTechnicians', []);
+        
         $data = $request->all();
         $rules = [
             'destination' => 'required',
@@ -1813,147 +1822,135 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-    
-        // Check if technicians are available
         $technicians_available = Technician::AvailableFtech()->get(['id', 'address_data']);
         if ($technicians_available->isEmpty()) {
             return response()->json(['errors' => "No available technicians found!"], 404);
         }
-    
-        // Geocode destination
         $coordinate = $this->geocodingService->geocodeAddress($request->destination);
         if ($coordinate == null) {
-            return response()->json(['geocodeError' => 'Invalid site address. Unable to retrieve coordinates.'], 503);
+            return response()->json(['geocodeError' => 'Invalid site address cannot get the address co-ordinate.'], 503);
         }
-    
+        // dd($coordinate);
         $destination_latitude = $coordinate['geometry']['location']['lat'];
         $destination_longitude = $coordinate['geometry']['location']['lng'];
         $destination = $destination_latitude . ',' . $destination_longitude;
-    
-        // Fetch locations and calculate distances
+
         $locations = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as latitude'),
             DB::raw('ST_Y(co_ordinates) as longitude')
         )->whereNotIn('id', $respondedTechnicians)->get();
-    
+
         $destination_obj = new LatLong();
         $destination_obj->setLatitude($destination_latitude);
         $destination_obj->setLongitude($destination_longitude);
-    
         $manual_distances = [];
         foreach ($locations as $location) {
             if (is_null($location->latitude) || is_null($location->longitude)) {
-                return response()->json(['error' => 'Technician has missing address data.'], 400);
+                return response()->json(['error' => 'Non converted address is found for the technician.'], 400);
             }
-    
+            // $manual_distance = $location->greatCircleDistance($destination_latitude, $destination_longitude);
+            // $manual_distances[$location->id] = $manual_distance * 0.621371;
             $origin_obj = new LatLong();
             $origin_obj->setLatitude($location->latitude);
             $origin_obj->setLongitude($location->longitude);
-    
             $haverSine = new HaversineFormula($origin_obj, $destination_obj);
             $haverSine->setUnit(new Mile);
             $manual_distances[$location->id] = $haverSine->getDistance();
         }
-    
-        // Filter technicians within the radius
-        $filteredArray = array_filter($manual_distances, fn($value) => $value <= $radius);
-        asort($filteredArray);
-    
-        if (empty($filteredArray)) {
-            return response()->json(['errors' => "No technicians found in $radius miles radius."], 404);
+        $filteredArray = [];
+        foreach ($manual_distances as $key => $value) {
+            if ($value >= $prevRadius && $value <= $radius) {
+                $filteredArray[$key] = $value;
+            }
         }
-    
-        // Fetch closest technicians
+        asort($filteredArray);
         $manualClosestDistances = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as longitude'),
             DB::raw('ST_Y(co_ordinates) as latitude')
-        )->whereIn('id', array_slice(array_keys($filteredArray), 0, 10))->get();
-    
+        )->whereIn('id', array_slice(array_keys($filteredArray), 0, 25))->get();
+
         $technicians = [];
         foreach ($manualClosestDistances as $manualClosestDistance) {
-            $technicians[] = Technician::availableFtech()
-                ->select('id', 'address_data')
-                ->where('id', $manualClosestDistance->id)
-                ->get();
+            $technicians[] = Technician::availableFtech()->select('id', 'address_data')
+                ->where('id', $manualClosestDistance->id)->get();
         }
-    
         $mergedTechnicians = collect($technicians)->flatten();
-    
-        // Prepare origins for Distance Matrix
         $origins = [];
+        // processing the origin data as acceptable format for api
         foreach ($mergedTechnicians as $technician) {
-            $addressData = isset($technician->address_data) ? (array)$technician->address_data : [];
+            $addressData['country'] = $technician->address_data->country;
+            $addressData['city'] = $technician->address_data->city;
+            $addressData['state'] = $technician->address_data->state;
+            $addressData['zip_code'] = $technician->address_data->zip_code;
             $formattedOrigin = implode(', ', [
-                $addressData['country'] ?? '',
-                $addressData['city'] ?? '',
-                $addressData['state'] ?? '',
-                $addressData['zip_code'] ?? ''
+                $addressData['country'],
+                $addressData['city'],
+                $addressData['state'],
+                $addressData['zip_code']
             ]);
-    
             $origins[] = [
                 'technician_id' => $technician->id,
                 'origin' => $formattedOrigin,
             ];
         }
-    
         $originsString = implode('|', array_column($origins, 'origin'));
-    
-        // Fetch distance matrix
         $distances = new DistanceMatrixService();
         $data = $distances->getDistance($originsString, $destination);
-    
-        // Compile response
         $completeInfo = [];
-        $rows = isset($data['rows']) && is_array($data['rows']) ? $data['rows'] : [];
-    
-        foreach ($rows as $index => $row) {
-            if (isset($row['elements'][0]) && $row['elements'][0]['status'] === "OK") {
+        $techniciansFound = false;
+        foreach ($data['rows'] as $index => $row) {
+            if ($row['elements'][0]['status'] === "OK") {
                 $technicianId = $origins[$index]['technician_id'];
                 $distanceText = $row['elements'][0]['distance']['text'];
                 $durationText = $row['elements'][0]['duration']['text'];
-    
-                $ftech = Technician::with('skills')->find($technicianId);
+                $ftech = Technician::with('skills')->findOrFail($technicianId);
                 if ($ftech) {
-                    $distanceTextMiles = null; // Initialize to handle invalid input
-                    $cleanDistanceText = preg_replace('/[^0-9.]/', '', $distanceText); // Remove all non-numeric and non-decimal characters
-                    
-                    if (is_numeric($cleanDistanceText)) {
-                        $distanceTextMiles = $cleanDistanceText * 0.621371; // Convert km to miles
-                    } else {
-                        // Handle the case where the value is invalid
-                        error_log("Invalid distance text: {$distanceText}");
-                    }
-    
+                    $distanceTextKm = str_replace([' km', ' ', ','], '', $distanceText);
+                    $distanceTextKm = (float)$distanceTextKm;
+                    $distanceTextMiles = $distanceTextKm * 0.621371;
                     if ($distanceTextMiles <= $radius) {
+                        $isWithinRadius = $ftech->radius > $distanceTextMiles;
+                        if ($isWithinRadius) {
+                            $isWithinRadius = "Yes";
+                        } else {
+                            $isWithinRadius = "No";
+                        }
                         $completeInfo[] = [
                             'id' => $ftech->id,
                             'technician_id' => $ftech->technician_id,
                             'email' => $ftech->email,
                             'phone' => $ftech->phone,
                             'company_name' => $ftech->company_name,
-                            'distance' => number_format($distanceTextMiles, 2) . ' mi',
+                            'distance' => $distanceTextMiles,
                             'status' => $ftech->status,
                             'rate' => $ftech->rate,
-                            'travel_fee' => $ftech->travel_fee ?? "",
-                            'preference' => $ftech->preference ?? "",
+                            'travel_fee' => isset($ftech->travel_fee) ? $ftech->travel_fee : "",
+                            'preference' => isset($ftech->preference) ? $ftech->preference : "",
                             'duration' => $durationText,
+                            'radius' => $isWithinRadius,
                             'skills' => $ftech->skills->pluck('skill_name')->toArray(),
                         ];
+                        $techniciansFound = true;
                     }
                 }
             }
         }
-    
-        if (empty($completeInfo)) {
-            return response()->json(['errors' => "No technicians found in $radius miles radius."], 404);
+        if (!$techniciansFound) {
+            return response()->json(['errors' => 'No technicians found in '. $prevRadius.' to '.$radius.' miles radius.'], 404);
         }
-    
-        return response()->json(['technicians' => $completeInfo, 'currentRadius' => $radius], 200);
+        usort($completeInfo, function ($a, $b) {
+            return $a['distance'] <=> $b['distance'];
+        });
+        foreach ($completeInfo as &$info) {
+            $info['distance'] = number_format($info['distance'], 2) . ' mi';
+        }
+        return response()->json([
+            'technicians' => $completeInfo,
+            'radiusMessage' => 'Showing result for '.$prevRadius.'-'.$radius.' miles distance'
+        ], 200);
     }
-    
-    
 
     public function assignTech(Request $request)
     {

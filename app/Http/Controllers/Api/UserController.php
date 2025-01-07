@@ -297,7 +297,7 @@ class UserController extends Controller
 
         $sites = CustomerSite::select('id', 'site_id','location')
             ->when($search, function ($query, $search) {
-                $query->where('site_id', 'like', "%{$search}%");
+                $query->where('site_id', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")->orWhere('address_1', 'like', "%{$search}%")->orWhere('city', 'like', "%{$search}%")->orWhere('state', 'like', "%{$search}%")->orWhere('zipcode', 'like', "%{$search}%");
             })
             ->orderBy('site_id', 'asc')
             ->paginate(10); // Limit results to avoid overloading data
@@ -374,10 +374,10 @@ class UserController extends Controller
     
     public function singleSite($id)
     {
-        $site = CustomerSite::find($id)
-    ->select('id', 'address_1', 'city', 'state', 'zipcode', 'time_zone', 'customer_id')
+        $site = CustomerSite::select('id', 'address_1', 'city', 'state', 'zipcode', 'time_zone', 'customer_id')
     ->with('customer:id,company_name')
-    ->first(); 
+    ->where('id', $id)
+    ->first();
 
         return response()->json([
             'success' => true,
@@ -399,7 +399,7 @@ class UserController extends Controller
 
     public function singleTech($id)
     {
-        $technician = Technician::with(['skills.skill:id,skill_name'])->find($id);
+        $technician = Technician::with(['skills'])->find($id);
 
         if ($technician) {
             unset($technician['co_ordinates']);
