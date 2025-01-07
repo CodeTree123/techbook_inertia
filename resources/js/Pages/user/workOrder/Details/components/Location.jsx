@@ -2,11 +2,11 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async'
 
-const Location = ({ id, details, onSuccessMessage }) => {
+const Location = ({ id, details, onSuccessMessage ,onErrorMessage}) => {
 
     const loadSiteOptions = async (inputValue) => {
         try {
-            const response = await fetch(`/api/all-sites?search=${inputValue}`);
+            const response = await fetch(`/api/customer-sites/${details.slug}?search=${inputValue}`);
             const json = await response.json();
 
             if (json.success && json.data) {
@@ -27,7 +27,12 @@ const Location = ({ id, details, onSuccessMessage }) => {
 
     const handleEdit = (e) => {
         e.preventDefault();
-        setEditable(true);
+        if(!details.slug){
+            onErrorMessage('Add Customer First')
+        }else{
+            setEditable(true);
+        }
+        
     }
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -106,7 +111,7 @@ const Location = ({ id, details, onSuccessMessage }) => {
 
                     {
                         !details?.site && !editable &&
-                        <button className='btn btn-outline-dark' onClick={(e)=>setEditable(true)}>+ Add Site</button>
+                        <button className='btn btn-outline-dark' onClick={(e) => handleEdit(e)}>+ Add Site</button>
                     }
 
                 </div>

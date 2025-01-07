@@ -23,6 +23,7 @@ Route::namespace('Api')->name('api.')->group(function(){
     Route::get('/single-customer/{id}',[UserController::class, 'singleCustomer']);
     Route::get('/all-employees',[UserController::class, 'allEmployees']);
     Route::get('/all-sites',[UserController::class, 'allSites']);
+    Route::get('/customer-sites/{id}',[UserController::class, 'customerSites']);
     Route::get('/single-site/{id}',[UserController::class, 'singleSite']);
     Route::get('/all-techs',[UserController::class, 'allFieldTech']);
     Route::get('/single-tech/{id}',[UserController::class, 'singleTech']);
