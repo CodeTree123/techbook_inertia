@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import OtherExpenses from './OtherExpenses';
 
 const PaySheet = ({ id, details, onSuccessMessage }) => {
+    
     const rate = details?.technician?.rate?.['STD'] || 0;
     const totalHours = details?.check_in_out.reduce((sum, item) => {
         const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number

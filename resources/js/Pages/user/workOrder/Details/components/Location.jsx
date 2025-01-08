@@ -50,6 +50,7 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage}) => {
             }
         });
     };
+    
 
     let latitude = 34.9776679; // Default latitude
     let longitude = -120.4379281; // Default longitude

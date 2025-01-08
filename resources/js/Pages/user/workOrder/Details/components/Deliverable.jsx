@@ -17,7 +17,7 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
         });
     };
 
-    const groupedTasks = details?.tasks?.reduce((acc, task) => {
+    const groupedTasks = details?.reduce((acc, task) => {
         if (task.description) {
             const normalizedDescription = task.description.toUpperCase();
             if (!acc[normalizedDescription]) {

@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
 const ContactTable = ({ details, onSuccessMessage }) => {
+    
     const [editableRow, setEditableRow] = useState(null);
 
     const { data, setData, post, delete:deleteItem, errors, processing, recentlySuccessful } = useForm({
@@ -49,7 +50,7 @@ const ContactTable = ({ details, onSuccessMessage }) => {
     return (
         <>
             {
-                details?.contacts?.map((contact, index) => (
+                details?.map((contact, index) => (
                     <form onSubmit={(e) => submitContact(e, contact.id)} className="py-3 d-flex justify-content-between border-bottom">
                         <div>
                             {

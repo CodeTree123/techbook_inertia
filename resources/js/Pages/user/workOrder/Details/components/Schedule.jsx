@@ -5,6 +5,7 @@ import { Dropdown } from 'react-bootstrap';
 import { DateTime } from 'luxon';
 
 const Schedule = ({ id, details, onSuccessMessage }) => {
+    
     const [addSchedule, setAddSchedule] = useState(false);
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -105,7 +106,7 @@ const Schedule = ({ id, details, onSuccessMessage }) => {
                                 </button>
                             </div>
                         </form> :
-                        <button type='button' onClick={() => setAddSchedule(true)} className="btn btn-outline-dark addSchedule" style={{ display: 'block' }} disabled={details.schedule_type == 'single' && details.schedules.length == 1}>+ Add Schedule</button>
+                        <button type='button' onClick={() => setAddSchedule(true)} className="btn btn-outline-dark addSchedule" style={{ display: 'block' }} disabled={details.schedule_type == 'single' && details?.schedules.length == 1}>+ Add Schedule</button>
                 }
 
             </div>

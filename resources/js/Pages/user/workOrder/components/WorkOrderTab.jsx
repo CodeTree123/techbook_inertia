@@ -37,7 +37,23 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                 <Details id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>
             <TabPanel>
-                <FieldTech id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
+                <FieldTech id={id} details={{
+                    stage: details?.stage,
+                    site: {
+                        address_1: details?.site?.address_1,
+                        city: details?.site?.city,
+                        co_ordinates: details?.site?.co_ordinates,
+                        id: details?.site?.id,
+                        location: details?.site?.location,
+                        state: details?.site?.state,
+                        time_zone: details?.site?.time_zone,
+                        zipcode: details?.site?.zipcode
+                    },
+                    check_in_out: details?.check_in_out,
+                    ftech_id: details?.ftech_id,
+                    tech_remove_reasons: details?.tech_remove_reasons,
+                    technician: details?.technician
+                }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
             </TabPanel>
             <TabPanel>
                 <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>

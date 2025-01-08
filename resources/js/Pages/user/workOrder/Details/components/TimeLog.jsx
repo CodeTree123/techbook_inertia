@@ -2,8 +2,8 @@ import { useForm } from '@inertiajs/react';
 import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 
-const TimeLog = ({ id, details, onSuccessMessage }) => {
-
+const TimeLog = ({ details, onSuccessMessage }) => {
+    
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         'check_in': '',
         'check_out': '',
@@ -56,7 +56,7 @@ const TimeLog = ({ id, details, onSuccessMessage }) => {
                 <h3 style={{ fontSize: "20px", fontWeight: 600 }}>Time log</h3>
             </div>
             <div className="card-body bg-white">
-                {details.check_in_out.map((check, index) => {
+                {details?.check_in_out?.map((check, index) => {
                     const checkIn = check.check_in; // Example: "03:11:07"
                     const checkOut = check.check_out; // Example: "05:15:09" or null
 

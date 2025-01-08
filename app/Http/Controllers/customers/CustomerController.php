@@ -887,7 +887,7 @@ class CustomerController extends Controller
         // Fetch the last 10 sites with missing coordinates
         $sites = CustomerSite::whereRaw("ST_X(co_ordinates) IS NULL OR ST_Y(co_ordinates) IS NULL")
             ->latest('id') // Assuming 'id' is an auto-incrementing primary key
-            ->take(10)
+            ->take(500)
             ->get(['id', 'address_1', 'location', 'zipcode', 'state', 'city']);
 
         $address_array = [];
@@ -895,12 +895,13 @@ class CustomerController extends Controller
         if ($sites->isNotEmpty()) {
             foreach ($sites as $site) {
                 $address = [
+                    'location' => $site->location,
+                    'address_1' => $site->address_1,
+                    'address_2' => $site->address_2 ?? '', 
                     'city' => $site->city,
                     'state' => $site->state,
                     'zipcode' => $site->zipcode,
-                    'location' => $site->location,
-                    'address_1' => $site->address_1,
-                    'address_2' => $site->address_2 ?? '', // Handle null
+                    
                 ];
                 $address_string = implode(", ", $address);
                 $address_array[] = [

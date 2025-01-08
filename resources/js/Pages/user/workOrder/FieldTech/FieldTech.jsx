@@ -71,26 +71,34 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     const [responseError, setResponseErros] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
     const [clickCount, setClickCount] = useState(0);
+    const [perPage, setPerPage] = useState(1)
+
+    
+    const handleGooglePagination = (cnt) => {
+        setPerPage(perPage + cnt)
+        closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, clickCount)
+    }
+
 
     const closestTech = async (destination, cnt) => {
         setLoaderVisible(true);
-    
+
         // Use prevCount to calculate both clickCount and radiusValue
         setClickCount(prevCount => {
             const updatedCount = prevCount === 0 ? cnt : prevCount + cnt;
             const radiusValue = updatedCount * 50; // Calculate based on updatedCount
-    
+
             // Fetch technicians after setting the clickCount
             fetchTechnicians(destination, radiusValue);
             return updatedCount; // Update clickCount
         });
     };
-    
+
     const fetchTechnicians = async (destination, radiusValue) => {
         const respondedTechnicians = responseData ? responseData?.technicians.map(technician => technician.id) : [];
-    
+
         try {
-            const response = await fetch(`/user/find/tech/for/work/worder`, {
+            const response = await fetch(`/user/find/tech/for/work/worder?page=${perPage}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -102,25 +110,25 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                     respondedTechnicians,
                 }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 onErrorMessage(errorData?.errors);
                 setLoaderVisible(false);
                 return;
             }
-    
+
             const responseData = await response.json();
             setLoaderVisible(false);
             setResponseData(responseData);
-    
+
             sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
         } catch (error) {
             console.error("Error fetching closest techs:", error);
             setLoaderVisible(false);
         }
     };
-    
+
 
     useEffect(() => {
         const storedData = sessionStorage.getItem(`workOrder_${id}`);
@@ -375,6 +383,23 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                 {
                                                     responseData && <p className='mb-0'>{responseData.radiusMessage}</p>
                                                 }
+                                                {
+                                                    responseData && <p className='mb-0 text-success'>({responseData.techCount} technician found)</p>
+                                                }
+                                                <button
+                                                    onClick={() =>handleGooglePagination(-1)}
+                                                    className="btn btn-outline-primary"
+                                                    disabled={perPage <= 1} // Optional: Disable the button when `perPage` is 1
+                                                >
+                                                    Previous Page
+                                                </button>
+                                                <button
+                                                    onClick={() => handleGooglePagination(1)}
+                                                    className="btn btn-outline-primary"
+                                                >
+                                                    Next Page
+                                                </button>
+
                                                 <button
                                                     disabled={responseData.radiusMessage == 'Showing result for 0-150 miles distance'}
                                                     onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, -1)}

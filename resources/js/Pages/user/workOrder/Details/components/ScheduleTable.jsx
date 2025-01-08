@@ -36,8 +36,6 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
         'h_operation': '',
         'estimated_time': '',
     });
-
-    console.log(data);
     
 
     const submit = (e, id) => {
@@ -204,7 +202,7 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                                     editableRow === index &&
                                     <input type="text" name="h_operation" placeholder='Estimated hours' className="mb-2 border-bottom fw-bold" defaultValue={schedule?.estimated_time} onChange={(e) => setData({ ...data, estimated_time: e.target.value })} />
                                 }
-                                <p>Updated by {details?.employee.name} <span className='mx-1'>on</span>
+                                <p>Updated by {details?.employee?.name} <span className='mx-1'>on</span>
                                     {formatDate(details?.updated_at)}  <span className='mx-1'>at</span>
                                     {new Date(details?.updated_at).toLocaleTimeString('en-US', {
                                         hour: '2-digit',

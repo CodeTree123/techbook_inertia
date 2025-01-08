@@ -16,7 +16,7 @@ import Task from './components/Task'
 import TimeLog from './components/TimeLog'
 import Deliverable from './components/Deliverable'
 
-const Details = ({id, details, onSuccessMessage, onErrorMessage}) => {
+const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     return (
         <div>
             <div className="mb-4">
@@ -29,24 +29,87 @@ const Details = ({id, details, onSuccessMessage, onErrorMessage}) => {
 
             <div className='row'>
                 <div className='col-7'>
-                    <Overview id={id} details={details} onSuccessMessage={onSuccessMessage}/>
-                    <ScopeOfWork id={id} details={details} onSuccessMessage={onSuccessMessage}/>
-                    <ToolRequired id={id} details={details} onSuccessMessage={onSuccessMessage}/>
-                    <TechProvidedPart id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
-                    <PartByTC/>
-                    <Shipment id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <DocForTech id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <Dispatched id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <Task id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
-                    <Deliverable id={id} details={details} onSuccessMessage={onSuccessMessage} />
+                    <Overview id={id} details={{
+                        company_name: details?.customer?.company_name,
+                        priority: details?.priority,
+                        requested_by: details?.requested_by,
+                        employee_name: details?.employee?.name
+                    }} onSuccessMessage={onSuccessMessage} />
+
+                    <ScopeOfWork id={id} details={{ scope_work: details?.scope_work }} onSuccessMessage={onSuccessMessage} />
+                    <ToolRequired id={id} details={{ r_tools: details?.r_tools, }} onSuccessMessage={onSuccessMessage} />
+                    <TechProvidedPart id={id} details={{
+                        ftech_id: details?.ftech_id,
+                        tech_provided_parts: details?.tech_provided_parts
+                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
+                    <PartByTC />
+                    <Shipment id={id} details={{
+                        shipments: details?.shipments
+                    }} onSuccessMessage={onSuccessMessage} />
+                    <DocForTech id={id} details={{docs_for_tech: details?.docs_for_tech}} onSuccessMessage={onSuccessMessage} />
+                    <Dispatched id={id} details={{ instruction: details.instruction, }} onSuccessMessage={onSuccessMessage} />
+                    <Task id={id} details={{
+                        tasks: details?.tasks,
+                        ftech_id: details?.ftech_id,
+                        stage: details?.stage,
+                        check_in_out: details?.check_in_out,
+                        technician: {
+                            tech_type: details?.technician?.tech_type,
+                            company_name: details?.technician?.company_name
+                        },
+                        notes: details?.notes,
+                        assigned_tech: details?.assigned_tech
+                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
+                    <Deliverable id={id} details={details?.tasks} onSuccessMessage={onSuccessMessage} />
                 </div>
                 <div className='col-5'>
-                    <Contact id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <Schedule id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <Location id={id} details={details} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
-                    <PaySheet id={id} details={details} onSuccessMessage={onSuccessMessage} />
-                    <ProfitSheet/>
-                    <TimeLog id={id} details={details} onSuccessMessage={onSuccessMessage} />
+                    <Contact id={id} details={details?.contacts} onSuccessMessage={onSuccessMessage} />
+                    <Schedule id={id} details={{
+                        site: {
+                            time_zone: details?.site?.time_zone
+                        },
+                        schedule_type: details.schedule_type,
+                        updated_at: details.updated_at,
+                        employee: {
+                            name: details?.employee?.name
+                        },
+                        schedules: details?.schedules
+                    }} onSuccessMessage={onSuccessMessage} />
+                    <Location id={id} details={{
+                        slug: details.slug,
+                        site_id: details?.site_id,
+                        site: {
+                            address_1: details?.site?.address_1,
+                            city: details?.site?.city,
+                            co_ordinates: details?.site?.co_ordinates,
+                            id: details?.site?.id,
+                            location: details?.site?.location,
+                            state: details?.site?.state,
+                            time_zone: details?.site?.time_zone,
+                            zipcode: details?.site?.zipcode
+                        }
+                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
+                    <PaySheet id={id} details={{
+                        technician: {
+                            rate: details?.technician?.rate,
+                            terms: details?.technician?.terms,
+                        },
+                        check_in_out: details?.check_in_out?.map(item => ({ total_hours: item.total_hours })) || [],
+                        tech_provided_parts: details?.tech_provided_parts,
+                        other_expenses: details?.other_expenses,
+                        travel_cost: details?.travel_cost,
+                    }} onSuccessMessage={onSuccessMessage} />
+                    <ProfitSheet />
+                    <TimeLog details={{
+                        check_in_out: details?.check_in_out,
+                        site: {
+                            time_zone: details?.site?.time_zone
+                        },
+                        ftech_id: details?.ftech_id,
+                        technician: {
+                            company_name: details?.technician?.company_name
+                        }
+                    }} onSuccessMessage={onSuccessMessage} />
                 </div>
             </div>
         </div>

@@ -65,6 +65,7 @@ const Overview = ({ id, details, onSuccessMessage }) => {
             }
         });
     };
+    
 
     return (
         <form onSubmit={submit} className="card action-cards bg-white shadow border-0 mb-4">
@@ -98,7 +99,7 @@ const Overview = ({ id, details, onSuccessMessage }) => {
                                 {
                                     !editable ?
                                         <p className="mb-0 fw-bold">
-                                            {details?.customer?.company_name}
+                                            {details?.company_name}
                                         </p>
                                         :
                                         <AsyncSelect
@@ -167,7 +168,7 @@ const Overview = ({ id, details, onSuccessMessage }) => {
                                 <td style={{ fontWeight: 600 }}>WO Manager : </td>
                                 <td>
                                     {
-                                        !editable ? <p className="mb-0 fw-bold">{details?.employee?.name}</p> :
+                                        !editable ? <p className="mb-0 fw-bold">{details?.employee_name}</p> :
                                             <AsyncSelect
                                                 cacheOptions
                                                 loadOptions={loadEmployeeOptions}

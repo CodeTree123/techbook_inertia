@@ -1865,11 +1865,20 @@ class UserController extends Controller
             }
         }
         asort($filteredArray);
+        $perPage = 25;
+        $page = $request->get('page', 1); 
+
+        $offset = ($page - 1) * $perPage;
+        $limit = $perPage;
+
+        $selectedIds = array_keys($filteredArray); 
+        $selectedIds = array_slice($selectedIds, $offset, $limit); 
+
         $manualClosestDistances = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as longitude'),
             DB::raw('ST_Y(co_ordinates) as latitude')
-        )->whereIn('id', array_slice(array_keys($filteredArray), 0, 25))->get();
+        )->whereIn('id', $selectedIds)->get(); 
 
         $technicians = [];
         foreach ($manualClosestDistances as $manualClosestDistance) {
@@ -1948,7 +1957,9 @@ class UserController extends Controller
         }
         return response()->json([
             'technicians' => $completeInfo,
-            'radiusMessage' => 'Showing result for '.$prevRadius.'-'.$radius.' miles distance'
+            'radiusMessage' => 'Showing result for '.$prevRadius.'-'.$radius.' miles distance',
+            'techCount' => count($filteredArray),
+            'allTech' => $manualClosestDistances
         ], 200);
     }
 
