@@ -192,30 +192,30 @@ const DistanceSearchModal = ({ onSuccessMessage, onErrorMessage }) => {
                                             }
 
                                             {
-                                                tech.rate['STD'] &&
+                                                tech?.rate?.STD &&
                                                 <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                    <b>STD:</b> ${tech.rate['STD']}
+                                                    <b>STD:</b> ${tech?.rate?.STD}
                                                 </div>
                                             }
 
                                             {
-                                                tech.rate['EM'] &&
+                                                tech?.rate?.EM &&
                                                 <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                    <b>EM:</b> ${tech.rate['EM']}
+                                                    <b>EM:</b> ${tech?.rate?.EM}
                                                 </div>
                                             }
 
                                             {
-                                                tech.rate['OT'] &&
+                                                tech?.rate?.OT &&
                                                 <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                    <b>OT:</b> ${tech.rate['OT']}
+                                                    <b>OT:</b> ${tech?.rate?.OT}
                                                 </div>
                                             }
 
                                             {
-                                                tech.rate['SH'] &&
+                                                tech?.rate?.SH &&
                                                 <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                    <b>SH:</b> ${tech.rate['SH']}
+                                                    <b>SH:</b> ${tech?.rate?.SH}
                                                 </div>
                                             }
                                         </div>
