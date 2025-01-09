@@ -2060,6 +2060,17 @@ class UserController extends Controller
 
     public function storeWo(Request $request)
     {
+        $request->validate([
+            'order_type' => 'required|in:1,2,3',
+            'cus_id' => 'required|exists:customers,id',
+            'wo_manager' => 'required|exists:employees,id',
+            'priority' => 'required|integer|min:1|max:5',
+            'requested_by' => 'required|string|max:255',
+            'scope_work' => 'nullable|string',
+            'r_tools' => 'nullable|string',
+            'site_id' => 'required|exists:customer_sites,id',
+        ]);
+
         $orderId = WorkOrder::orderBy('id', 'desc')->first();
         $rand = rand(10, 99);
 
@@ -2095,6 +2106,7 @@ class UserController extends Controller
         $wo->r_tools = $request->r_tools;
         $wo->status = 1;
         $wo->stage = Status::STAGE_NEW;
+        $wo->site_id = $request->site_id;
         $wo->save();
 
         $invoice = new CustomerInvoice();

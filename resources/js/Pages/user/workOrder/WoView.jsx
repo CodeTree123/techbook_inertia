@@ -632,8 +632,8 @@ export default function WoView({ wo }) {
                 <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} aria-hidden="true" />
                 <h2 className="fw-bold" style={{ fontSize: 24 }}>Field Tech</h2>
               </div>
-              <p style={{ color: '#808080' }}>{wo?.technician?.company_name}; ID :
-                {wo?.technician?.technician_id}</p>
+              <p style={{ color: '#808080' }}>{wo?.technician && wo?.technician?.company_name+';'}
+                {wo?.technician && ' ID :'+wo?.technician?.technician_id}</p>
               {
                 wo?.technician?.phone && (
                   <a href={`callto:${wo?.technician?.phone}`}>
@@ -682,9 +682,9 @@ export default function WoView({ wo }) {
             <div className="col-4 border-end border-bottom px-3 py-2">
               <div className="d-flex justify-content-start align-items-center gap-2">
                 <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
-                <h2 className="fw-bold mb-0" style={{ fontSize: 16 }}>Location : {wo?.site?.location}</h2>
+                <h2 className="fw-bold mb-0" style={{ fontSize: 16 }}>Location : {wo?.site ? wo?.site?.location : <span className='fw-light'>No Location Added Yet</span>}</h2>
               </div>
-              <p style={{ color: '#808080' }}>Site: {wo?.site?.address_1}; {wo?.site?.city},
+              <p style={{ color: '#808080' }}>Site: {wo?.site && wo?.site?.address_1.AKT+';'} {wo?.site && wo?.site?.city+','}
                 {wo?.site?.state} {wo?.site?.zipcode}</p>
             </div>
 

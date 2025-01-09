@@ -4,6 +4,7 @@ import { Head, useForm } from '@inertiajs/react'
 import Overview from './components/Overview'
 import ScopeOfWork from './components/ScopeOfWork'
 import ToolRequired from './components/ToolRequired'
+import Location from './components/Location'
 
 const CreateWorkOrder = ({ type }) => {
 
@@ -15,12 +16,14 @@ const CreateWorkOrder = ({ type }) => {
         'order_type': type,
         'scope_work': '',
         'r_tools': '',
+        'site_id': ''
     });
 
     const overviewRef = useRef(null);
     const scopeRef = useRef(null);
     const toolRef = useRef(null);
     const contactRef = useRef(null);
+    const locationRef = useRef(null);
 
     const scrollToSection = (ref) => {
         ref.current.scrollIntoView({ behavior: "smooth" });
@@ -85,15 +88,16 @@ const CreateWorkOrder = ({ type }) => {
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Deliverables</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Contacts</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Schedule</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Location</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(locationRef)}>Location</li>
                                 <li className='fw-bold py-3 text-center' style={{ cursor: 'pointer' }}>Pay</li>
                             </ul>
                         </div>
                     </div>
                     <div className='w-75 px-0 mb-3'>
-                        <Overview data={data} setData={setData} overviewRef={overviewRef} />
+                        <Overview data={data} setData={setData} errors={errors} overviewRef={overviewRef} />
                         <ScopeOfWork data={data} setData={setData} scopeRef={scopeRef} />
-                        <ToolRequired data={data} setData={setData} toolRef={toolRef} />
+                        <ToolRequired data={data} setData={setData}toolRef={toolRef} />
+                        <Location data={data} setData={setData} errors={errors} locationRef={locationRef} />
                     </div>
                 </div>
             </div>

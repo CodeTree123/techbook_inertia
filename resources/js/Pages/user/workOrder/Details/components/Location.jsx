@@ -52,13 +52,13 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage}) => {
     };
     
 
-    let latitude = 34.9776679; // Default latitude
-    let longitude = -120.4379281; // Default longitude
+    let latitude = 34.9776679;
+    let longitude = -120.4379281;
     const coordinates = details?.site?.co_ordinates
     if (coordinates) {
         const cleanedCoordinates = coordinates
-            .replace(/POINT\(|\)/g, '') // Remove "POINT(" and ")"
-            .split(' '); // Split by space
+            .replace(/POINT\(|\)/g, '')
+            .split(' ');
 
         latitude = cleanedCoordinates[0] || latitude; // Fallback to default if undefined
         longitude = cleanedCoordinates[1] || longitude; // Fallback to default if undefined
@@ -111,17 +111,17 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage}) => {
                     }
 
                     {
-                        !details?.site && !editable &&
+                        !details?.site_id && !editable &&
                         <button className='btn btn-outline-dark' onClick={(e) => handleEdit(e)}>+ Add Site</button>
                     }
 
                 </div>
                 {
-                    details?.site &&
+                    details?.site_id != null &&
                     <>
                         <p className="mb-0">{details?.site?.location} &amp;
-                            {details?.site?.address_1},</p>
-                        <p className="mb-0">{details?.site?.city}, {details?.site?.state}, </p>
+                            {details?.site && details?.site?.address_1+','}</p>
+                        <p className="mb-0">{details?.site && details?.site?.city+','} {details?.site && details?.site?.state+','} </p>
                         <p className="mb-0">{details?.site?.zipcode}</p>
                         <iframe
                             src={mapUrl}

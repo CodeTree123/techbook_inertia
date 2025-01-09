@@ -402,7 +402,7 @@ class UserController extends Controller
     
     public function singleSite($id)
     {
-        $site = CustomerSite::select('id', 'address_1', 'city', 'state', 'zipcode', 'time_zone', 'customer_id')
+        $site = CustomerSite::select('id', 'location', 'address_1', 'city', 'state', 'zipcode', 'time_zone', 'customer_id')
     ->with('customer:id,company_name')
     ->where('id', $id)
     ->first();

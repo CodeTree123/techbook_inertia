@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async'
 
-const Overview = ({data, setData, overviewRef}) => {
+const Overview = ({data, setData, errors, overviewRef}) => {
 
     const loadOptions = async (inputValue) => {
         try {
@@ -64,6 +64,7 @@ const Overview = ({data, setData, overviewRef}) => {
                         onChange={(selectedOption) => setData({ ...data, cus_id: selectedOption?.value })}
                         className='mb-3'
                     />
+                    {errors.cus_id && <p className='text-danger mb-0' style={{marginTop: '-16px'}}>{errors.cus_id}</p>}
 
                     <h6 style={{ fontWeight: 600 }}>
                         Priority :
@@ -80,11 +81,13 @@ const Overview = ({data, setData, overviewRef}) => {
                         <option value={5} selected={data.priority == 5}>P5
                         </option>
                     </select>
+                    {errors.priority && <p className='text-danger mb-0' style={{marginTop: '-16px'}}>{errors.priority}</p>}
 
                     <h6 style={{ fontWeight: 600 }}>
                         Requested By :
                     </h6>
                     <input className="mb-0 fw-bold border p-2 rounded mb-3 w-100" name="requested_by" type="text" defaultValue={data.requested_by} onChange={(e) => setData({ ...data, requested_by: e.target.value })} />
+                    {errors.requested_by && <p className='text-danger mb-0' style={{marginTop: '-16px'}}>{errors.requested_by}</p>}
 
                     <h6 style={{ fontWeight: 600 }}>
                         Team :
@@ -101,6 +104,7 @@ const Overview = ({data, setData, overviewRef}) => {
                         placeholder="Search and select employees"
                         onChange={(selectedOption) => setData({ ...data, wo_manager: selectedOption?.value })}
                     />
+                    {errors.wo_manager && <p className='text-danger mb-0'>{errors.wo_manager}</p>}
                 </div>
             </div>
         </div>
