@@ -930,7 +930,7 @@ class CustomerController extends Controller
                         'co_ordinates' => DB::raw("ST_GeomFromText('POINT(" . $value['lat'] . " " . $value['lng'] . ")', 4326)"),
                     ]);
                 }
-                $notify[] = ['success', 'Coordinates added successfully to the last 10 sites'];
+                $notify[] = ['success', 'Coordinates added successfully'];
             } else {
                 $notify[] = ['error', 'Failed to fetch coordinates'];
             }

@@ -96,62 +96,6 @@ const CreateCustomerModal = ({ onSuccessMessage }) => {
                             {errors.phone && <p className='text-danger'>{errors.phone}</p>}
                         </div>
                         <div className="form-group col-4">
-                            <label htmlFor="s_rate">
-                                <h6>Standard First Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="s_rate_f" placeholder="Standard First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_f: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_s_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="s_rate">
-                                <h6>Standard Additional Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="s_rate_a" placeholder="Standard Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_a: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_s_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="e_rate">
-                                <h6>Emergency First Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="e_rate_f" placeholder="Enter Emergency First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, e_rate_f: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="e_rate">
-                                <h6>Emergency Additional Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="e_rate_a" placeholder="Enter Emergency Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, e_rate_a: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="e_rate">
-                                <h6>Weekend First Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="w_rate_f" placeholder="Enter Weekend First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, w_rate_f: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="e_rate">
-                                <h6>Weekend Additional Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="w_rate_a" placeholder="Enter Weekend Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, w_rate_a: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="e_rate">
-                                <h6>Sunday and Holiday First Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="sh_rate_f" placeholder="Enter Sunday And Holiday First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sh_rate_f: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="e_rate">
-                                <h6>Sunday and Holiday Additional Hour Rate</h6>
-                            </label>
-                            <input type="numeric" className="form-control" name="sh_rate_a" placeholder="Enter Sunday And Holiday Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sh_rate_a: e.target.value })} />
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
-                        </div>
-                        <div className="form-group col-4">
                             <label htmlFor="travel">
                                 <h6>Travel</h6>
                             </label>
@@ -210,21 +154,81 @@ const CreateCustomerModal = ({ onSuccessMessage }) => {
                             </select>
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_team_error" />
                         </div>
-                        <div className="form-group col-4">
+                        <div className="form-group col-2">
                             <label htmlFor="sales_person">
                                 <h6>Sales Person Assigned</h6>
                             </label>
                             <input type="text" className="form-control" name="sales_person" placeholder="Sales Person Assigned" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sales_person: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_sales_person" />
                         </div>
-                        <div className="form-group col-4">
+                        <div className="form-group col-2">
                             <label htmlFor="project_manager">
-                                <h6>Project Manager Assigned</h6>
+                                <h6>PM Assigned</h6>
                             </label>
                             <input type="text" className="form-control" name="project_manager" placeholder="Project Manager Assign" style={{ height: '36px' }} onChange={(e) => setData({ ...data, project_manager: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="project_manager" />
                         </div>
-                        <div className="billing-address my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
+                        <div className="rates my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
+                            Rates
+                        </div>
+
+                        <div className="form-group col-3">
+                            <label htmlFor="s_rate">
+                                <h6>Standard First Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="s_rate_f" placeholder="Standard First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_f: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_s_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="s_rate">
+                                <h6>Standard Additional Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="s_rate_a" placeholder="Standard Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_a: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_s_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="e_rate">
+                                <h6>Emergency First Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="e_rate_f" placeholder="Enter Emergency First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, e_rate_f: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="e_rate">
+                                <h6>Emergency Additional Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="e_rate_a" placeholder="Enter Emergency Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, e_rate_a: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="e_rate">
+                                <h6>Weekend First Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="w_rate_f" placeholder="Enter Weekend First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, w_rate_f: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="e_rate">
+                                <h6>Weekend Additional Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="w_rate_a" placeholder="Enter Weekend Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, w_rate_a: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="e_rate">
+                                <h6>S H First Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="sh_rate_f" placeholder="Enter Sunday And Holiday First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sh_rate_f: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="e_rate">
+                                <h6>SH Additional Hour Rate</h6>
+                            </label>
+                            <input type="numeric" className="form-control" name="sh_rate_a" placeholder="Enter Sunday And Holiday Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sh_rate_a: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
+                        </div>
+                        <div className="billing-address my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
                             Billing Address
                         </div>
 
@@ -270,8 +274,8 @@ const CreateCustomerModal = ({ onSuccessMessage }) => {
                             <input type="text" className="form-control" name="country" placeholder="Enter Country" defaultValue="United States" style={{ height: '36px' }} onChange={(e) => setData({ ...data, country: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_country_error" />
                         </div>
-                        <div className="billing-address my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
-                            Head Quater Address
+                        <div className="main_office-address my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
+                            Main office Address
                         </div>
 
                         <div className="form-group col-4">
