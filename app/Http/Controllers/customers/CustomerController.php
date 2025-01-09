@@ -204,9 +204,14 @@ class CustomerController extends Controller
             'country' => $request->country,
             'city' => $request->city,
             'state' => $request->state,
-            'zip_code' => $request->zip_code
+            'zip_code' => $request->zip_code,
+            'h_address' => $request->h_address,
+            'h_country' => $request->h_country,
+            'h_city' => $request->h_city,
+            'h_state' => $request->h_state,
+            'h_zip_code' => $request->h_zip_code
         ];
-
+        
         $customer = new Customer();
         $customer->company_name = $request->company_name;
         $customer->address = $addressData;
@@ -746,7 +751,12 @@ class CustomerController extends Controller
     {
         $pageTitle = "Customer Invoice";
         $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes')->find($id);
-        $wps = CheckInOut::where('work_order_id', $id)->with('technician')->get();
+        $attend = CheckInOut::where('work_order_id', $id)->with('technician');
+        $firstHour = $attend->first();
+        //dd($firstHour->work_order_id);
+        $wps= $attend->get();
+        $aRate = CheckInOut::where('work_order_id', $id)->sum('total_hours');
+        //dd($bataRate = $hours);
 
         // Initialize total price variable
         $totalPrice = 0;
@@ -787,9 +797,11 @@ class CustomerController extends Controller
             // Convert minutes to a fraction of an hour
             $totalHoursDecimal = $hours + ($minutes / 60);
 
-            // Calculate amount for the work process
-            $wp->amount = $wp->calculated_rate * $totalHoursDecimal;
+            $rate = WorkOrder::where('id', $wp->work_order_id)->first();
 
+            $additionalRate = $rate->customer->s_rate_a;
+            // Calculate amount for the work process
+            $wp->amount = $additionalRate * $totalHoursDecimal;
             // Add to total price
             $totalPrice += $wp->amount;
         }
@@ -797,7 +809,7 @@ class CustomerController extends Controller
         // Add a fixed amount (e.g., 0.26)
         $totalPrice += 0.26;
 
-        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice'));
+        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate'));
     }
 
 

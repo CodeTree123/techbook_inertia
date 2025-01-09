@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap';
 
-const CreateCustomerModal = ({onSuccessMessage}) => {
+const CreateCustomerModal = ({ onSuccessMessage }) => {
     const [showModal, setShowModal] = useState(false);
 
     const handleCloseModal = () => setShowModal(false);
@@ -53,6 +53,7 @@ const CreateCustomerModal = ({onSuccessMessage}) => {
         });
     };
 
+
     return (
         <>
             <li><a href="#" onClick={handleShowModal}>New Customer</a></li>
@@ -81,80 +82,38 @@ const CreateCustomerModal = ({onSuccessMessage}) => {
                             {errors.customer_type && <p className='text-danger'>{errors.customer_type}</p>}
                         </div>
                         <div className="form-group col-4">
-                            <label htmlFor="address">
-                                <h6>Address</h6>
-                            </label>
-                            <input type="text" className="form-control" name="address" placeholder="Enter Address" style={{ height: '36px' }} onChange={(e) => setData({ ...data, address: e.target.value })}/>
-                            {errors.address && <p className='text-danger'>{errors.address}</p>}
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="address2">
-                                <h6>Address 2</h6>
-                            </label>
-                            <input type="text" className="form-control" name="address2" placeholder="Enter Address 2" style={{ height: '36px' }} onChange={(e) => setData({ ...data, address2: e.target.value })}/>
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_address2_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="country">
-                                <h6>Country</h6>
-                            </label>
-                            <input type="text" className="form-control" name="country" placeholder="Enter Country" defaultValue="United States" style={{ height: '36px' }} onChange={(e) => setData({ ...data, country: e.target.value })}/>
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_country_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="city">
-                                <h6>City</h6>
-                            </label>
-                            <input type="text" className="form-control" name="city" placeholder="Enter City" style={{ height: '36px' }} onChange={(e) => setData({ ...data, city: e.target.value })}/>
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_city_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="state">
-                                <h6>State</h6>
-                            </label>
-                            <input id="state" type="text" className="form-control" name="state" placeholder="Enter State" style={{ height: '36px' }} onChange={(e) => setData({ ...data, state: e.target.value })}/>
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_state_error" />
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="zip_code">
-                                <h6>Zip Code</h6>
-                            </label>
-                            <input type="text" className="form-control" name="zip_code" placeholder="Enter Zipcode" style={{ height: '36px' }} onChange={(e) => setData({ ...data, zip_code: e.target.value })}/>
-                            <span style={{ color: 'red', fontSize: 14 }} id="cus_zip_code_error" />
-                        </div>
-                        <div className="form-group col-4">
                             <label htmlFor="email">
                                 <h6>Email</h6>
                             </label>
-                            <input type="text" className="form-control" name="email" placeholder="Enter Email" style={{ height: '36px' }} onChange={(e) => setData({ ...data, email: e.target.value })}/>
+                            <input type="text" className="form-control" name="email" placeholder="Enter Email" style={{ height: '36px' }} onChange={(e) => setData({ ...data, email: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_zip_code_error" />
                         </div>
                         <div className="form-group col-4">
                             <label htmlFor="phone">
                                 <h6>Phone</h6>
                             </label>
-                            <input type="number" className="form-control" name="phone" placeholder="Enter Phone" style={{ height: '36px' }} onChange={(e) => setData({ ...data, phone: e.target.value })}/>
+                            <input type="number" className="form-control" name="phone" placeholder="Enter Phone" style={{ height: '36px' }} onChange={(e) => setData({ ...data, phone: e.target.value })} />
                             {errors.phone && <p className='text-danger'>{errors.phone}</p>}
                         </div>
                         <div className="form-group col-4">
                             <label htmlFor="s_rate">
                                 <h6>Standard First Hour Rate</h6>
                             </label>
-                            <input type="numeric" className="form-control" name="s_rate_f" placeholder="Standard First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_f: e.target.value })}/>
+                            <input type="numeric" className="form-control" name="s_rate_f" placeholder="Standard First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_f: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_s_rate_error" />
                         </div>
                         <div className="form-group col-4">
                             <label htmlFor="s_rate">
                                 <h6>Standard Additional Hour Rate</h6>
                             </label>
-                            <input type="numeric" className="form-control" name="s_rate_a" placeholder="Standard Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_a: e.target.value })}/>
+                            <input type="numeric" className="form-control" name="s_rate_a" placeholder="Standard Additional Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, s_rate_a: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_s_rate_error" />
                         </div>
                         <div className="form-group col-4">
                             <label htmlFor="e_rate">
                                 <h6>Emergency First Hour Rate</h6>
                             </label>
-                            <input type="numeric" className="form-control" name="e_rate_f" placeholder="Enter Emergency First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, e_rate_f: e.target.value })}/>
+                            <input type="numeric" className="form-control" name="e_rate_f" placeholder="Enter Emergency First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, e_rate_f: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
                         </div>
                         <div className="form-group col-4">
@@ -182,7 +141,7 @@ const CreateCustomerModal = ({onSuccessMessage}) => {
                             <label htmlFor="e_rate">
                                 <h6>Sunday and Holiday First Hour Rate</h6>
                             </label>
-                            <input type="numeric" className="form-control" name="sh_rate_f" placeholder="Enter Sunday And Holiday First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sh_rate_f: e.target.value })}/>
+                            <input type="numeric" className="form-control" name="sh_rate_f" placeholder="Enter Sunday And Holiday First Hour Rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, sh_rate_f: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_e_rate_error" />
                         </div>
                         <div className="form-group col-4">
@@ -196,7 +155,7 @@ const CreateCustomerModal = ({onSuccessMessage}) => {
                             <label htmlFor="travel">
                                 <h6>Travel</h6>
                             </label>
-                            <input type="number" className="form-control" name="travel" placeholder="Enter Travel"  style={{ height: '36px' }} onChange={(e) => setData({ ...data, travel: e.target.value })}/>
+                            <input type="number" className="form-control" name="travel" placeholder="Enter Travel" style={{ height: '36px' }} onChange={(e) => setData({ ...data, travel: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_travel_error" />
                         </div>
                         <div className="form-group col-4">
@@ -215,7 +174,7 @@ const CreateCustomerModal = ({onSuccessMessage}) => {
                             <label htmlFor="type_phone">
                                 <h6>Type Of Phone System</h6>
                             </label>
-                            <input type="text" className="form-control" name="type_phone" placeholder="Type Of Phone System" style={{ height: '36px' }} onChange={(e) => setData({ ...data, type_phone: e.target.value })}/>
+                            <input type="text" className="form-control" name="type_phone" placeholder="Type Of Phone System" style={{ height: '36px' }} onChange={(e) => setData({ ...data, type_phone: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="cus_type_phone" />
                         </div>
                         <div className="form-group col-4">
@@ -264,6 +223,98 @@ const CreateCustomerModal = ({onSuccessMessage}) => {
                             </label>
                             <input type="text" className="form-control" name="project_manager" placeholder="Project Manager Assign" style={{ height: '36px' }} onChange={(e) => setData({ ...data, project_manager: e.target.value })} />
                             <span style={{ color: 'red', fontSize: 14 }} id="project_manager" />
+                        </div>
+                        <div className="billing-address my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
+                            Billing Address
+                        </div>
+
+                        <div className="form-group col-4">
+                            <label htmlFor="address">
+                                <h6>Address</h6>
+                            </label>
+                            <input type="text" className="form-control" name="address" placeholder="Enter Address" style={{ height: '36px' }} onChange={(e) => setData({ ...data, address: e.target.value })} />
+                            {errors.address && <p className='text-danger'>{errors.address}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="address2">
+                                <h6>Address 2</h6>
+                            </label>
+                            <input type="text" className="form-control" name="address2" placeholder="Enter Address 2" style={{ height: '36px' }} onChange={(e) => setData({ ...data, address2: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_address2_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="city">
+                                <h6>City</h6>
+                            </label>
+                            <input type="text" className="form-control" name="city" placeholder="Enter City" style={{ height: '36px' }} onChange={(e) => setData({ ...data, city: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_city_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="state">
+                                <h6>State</h6>
+                            </label>
+                            <input id="state" type="text" className="form-control" name="state" placeholder="Enter State" style={{ height: '36px' }} onChange={(e) => setData({ ...data, state: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_state_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="zip_code">
+                                <h6>Zip Code</h6>
+                            </label>
+                            <input type="text" className="form-control" name="zip_code" placeholder="Enter Zipcode" style={{ height: '36px' }} onChange={(e) => setData({ ...data, zip_code: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_zip_code_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="country">
+                                <h6>Country</h6>
+                            </label>
+                            <input type="text" className="form-control" name="country" placeholder="Enter Country" defaultValue="United States" style={{ height: '36px' }} onChange={(e) => setData({ ...data, country: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_country_error" />
+                        </div>
+                        <div className="billing-address my-3" style={{ padding: '10px 20px', backgroundColor: 'black', color: 'white', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
+                            Head Quater Address
+                        </div>
+
+                        <div className="form-group col-4">
+                            <label htmlFor="address">
+                                <h6>Address</h6>
+                            </label>
+                            <input type="text" className="form-control" name="h_address" placeholder="Enter Address" style={{ height: '36px' }} onChange={(e) => setData({ ...data, h_address: e.target.value })} />
+                            {errors.h_address && <p className='text-danger'>{errors.h_address}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="address2">
+                                <h6>Address 2</h6>
+                            </label>
+                            <input type="text" className="form-control" name="h_address2" placeholder="Enter Address 2" style={{ height: '36px' }} onChange={(e) => setData({ ...data, h_address2: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_address2_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="city">
+                                <h6>City</h6>
+                            </label>
+                            <input type="text" className="form-control" name="city" placeholder="Enter City" style={{ height: '36px' }} onChange={(e) => setData({ ...data, h_city: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_city_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="state">
+                                <h6>State</h6>
+                            </label>
+                            <input id="state" type="text" className="form-control" name="h_state" placeholder="Enter State" style={{ height: '36px' }} onChange={(e) => setData({ ...data, h_state: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_state_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="zip_code">
+                                <h6>Zip Code</h6>
+                            </label>
+                            <input type="text" className="form-control" name="h_zip_code" placeholder="Enter Zipcode" style={{ height: '36px' }} onChange={(e) => setData({ ...data, h_zip_code: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_zip_code_error" />
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="country">
+                                <h6>Country</h6>
+                            </label>
+                            <input type="text" className="form-control" name="h_country" placeholder="Enter Country" defaultValue="United States" style={{ height: '36px' }} onChange={(e) => setData({ ...data, h_country: e.target.value })} />
+                            <span style={{ color: 'red', fontSize: 14 }} id="cus_country_error" />
                         </div>
                     </div>
 
