@@ -67,13 +67,14 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
 
     // google api
+    const [oldResponseData, setOldResponseData] = useState([]);
     const [responseData, setResponseData] = useState(null);
     const [responseError, setResponseErros] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
     const [clickCount, setClickCount] = useState(0);
     const [perPage, setPerPage] = useState(1)
 
-    
+
     const handleGooglePagination = (cnt) => {
         setPerPage(perPage + cnt)
         closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, clickCount)
@@ -95,7 +96,8 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     };
 
     const fetchTechnicians = async (destination, radiusValue) => {
-        const respondedTechnicians = responseData ? responseData?.technicians.map(technician => technician.id) : [];
+        const respondedTechnicians = oldResponseData ? oldResponseData?.map(technician => technician.id) : [];
+        console.log(respondedTechnicians);
 
         try {
             const response = await fetch(`/user/find/tech/for/work/worder?page=${perPage}`, {
@@ -120,6 +122,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
             const responseData = await response.json();
             setLoaderVisible(false);
+            setOldResponseData([...oldResponseData, ...responseData.technicians]);
             setResponseData(responseData);
 
             sessionStorage.setItem(`workOrder_${id}`, JSON.stringify(responseData));
@@ -212,30 +215,30 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                     }
 
                                                     {
-                                                        tech.rate['STD'] &&
+                                                        tech?.rate?.STD &&
                                                         <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                            <b>STD:</b> ${tech.rate['STD']}
+                                                            <b>STD:</b> ${tech?.rate?.STD}
                                                         </div>
                                                     }
 
                                                     {
-                                                        tech.rate['EM'] &&
+                                                        tech?.rate?.EM &&
                                                         <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                            <b>EM:</b> ${tech.rate['EM']}
+                                                            <b>EM:</b> ${tech?.rate?.EM}
                                                         </div>
                                                     }
 
                                                     {
-                                                        tech.rate['OT'] &&
+                                                        tech?.rate?.OT &&
                                                         <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                            <b>OT:</b> ${tech.rate['OT']}
+                                                            <b>OT:</b> ${tech.rate.OT}
                                                         </div>
                                                     }
 
                                                     {
-                                                        tech.rate['SH'] &&
+                                                        tech?.rate?.SH &&
                                                         <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                            <b>SH:</b> ${tech.rate['SH']}
+                                                            <b>SH:</b> ${tech?.rate?.SH}
                                                         </div>
                                                     }
 
@@ -334,30 +337,30 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                         }
 
                                                         {
-                                                            tech.rate['STD'] &&
+                                                            tech?.rate?.STD &&
                                                             <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                                <b>STD:</b> ${tech.rate['STD']}
+                                                                <b>STD:</b> ${tech?.rate?.STD}
                                                             </div>
                                                         }
 
                                                         {
-                                                            tech.rate['EM'] &&
+                                                            tech?.rate?.EM &&
                                                             <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                                <b>EM:</b> ${tech.rate['EM']}
+                                                                <b>EM:</b> ${tech?.rate?.EM}
                                                             </div>
                                                         }
 
                                                         {
-                                                            tech.rate['OT'] &&
+                                                            tech?.rate?.OT &&
                                                             <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                                <b>OT:</b> ${tech.rate['OT']}
+                                                                <b>OT:</b> ${tech?.rate?.OT}
                                                             </div>
                                                         }
 
                                                         {
-                                                            tech.rate['SH'] &&
+                                                            tech?.rate?.SH &&
                                                             <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
-                                                                <b>SH:</b> ${tech.rate['SH']}
+                                                                <b>SH:</b> ${tech?.rate?.SH}
                                                             </div>
                                                         }
 
@@ -387,7 +390,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                     responseData && <p className='mb-0 text-success'>({responseData.techCount} technician found)</p>
                                                 }
                                                 <button
-                                                    onClick={() =>handleGooglePagination(-1)}
+                                                    onClick={() => handleGooglePagination(-1)}
                                                     className="btn btn-outline-primary"
                                                     disabled={perPage <= 1} // Optional: Disable the button when `perPage` is 1
                                                 >

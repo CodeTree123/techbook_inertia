@@ -325,19 +325,19 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                                 <tbody>
                                     <tr>
                                         <td>Standard rate</td>
-                                        <td>${techData.rate['STD'] ?? 0}</td>
+                                        <td>${techData?.rate?.STD ?? 0}</td>
                                     </tr>
                                     <tr>
                                         <td>Emergency rate</td>
-                                        <td>${techData.rate['EM'] ?? 0}</td>
+                                        <td>${techData?.rate?.EM ?? 0}</td>
                                     </tr>
                                     <tr>
                                         <td>OT</td>
-                                        <td>${techData.rate['OT'] ?? 0}</td>
+                                        <td>${techData.rate?.OT ?? 0}</td>
                                     </tr>
                                     <tr>
                                         <td>SH</td>
-                                        <td>${techData.rate['SH'] ?? 0}</td>
+                                        <td>${techData.rate?.SH ?? 0}</td>
                                     </tr>
                                     <tr>
                                         <td>Travel fee</td>

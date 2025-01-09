@@ -141,7 +141,7 @@ const SearchTechnicianModal = () => {
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Rate:</h6>
-                                <h6 className='mb-0'>STD: ${techData?.rate.STD}, EM: ${techData?.rate.EM}, OT: ${techData?.rate.OT}, SH: ${techData?.rate.SH}</h6>
+                                <h6 className='mb-0'>STD: ${techData?.rate?.STD}, EM: ${techData?.rate?.EM}, OT: ${techData?.rate?.OT}, SH: ${techData?.rate?.SH}</h6>
                             </div>
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
@@ -162,7 +162,7 @@ const SearchTechnicianModal = () => {
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>WorkOrder Count:</h6>
-                                <h6 className='mb-0'>${techData?.wo_ct}</h6>
+                                <h6 className='mb-0'>{techData?.wo_ct}</h6>
                             </div>
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
