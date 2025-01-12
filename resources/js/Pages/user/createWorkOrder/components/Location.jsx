@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AsyncSelect from 'react-select/async';
 
 const Location = ({ data, setData, errors, locationRef }) => {
@@ -24,39 +24,47 @@ const Location = ({ data, setData, errors, locationRef }) => {
     };
     
     const [siteData, setSiteData] = useState(null);
+    const [mapUrl, setMapUrl] = useState('');
+
+    const defaultLatitude = 34.9776679;
+    const defaultLongitude = -120.4379281;
 
     const handleSelect = async (selectedOption) => {
-        setData({ ...data, site_id: selectedOption })
-        
+        setData({ ...data, site_id: selectedOption });
+
         try {
             const response = await fetch(`/api/single-site/${selectedOption}`);
             const json = await response.json();
-            
-            if (json.success && json.data) {
-                setSiteData(json.data)
-            }
 
-            return [];
+            if (json.success && json.data) {
+                setSiteData(json.data);
+            } else {
+                setSiteData(null); // Reset siteData if no data
+            }
         } catch (error) {
             console.error('Error fetching employees:', error);
-            return [];
+            setSiteData(null); // Reset siteData on error
         }
-    }
-    
-    let latitude = 34.9776679;
-    let longitude = -120.4379281;
-    const coordinates = siteData?.co_ordinates
-    if (coordinates) {
-        const cleanedCoordinates = coordinates
-            .replace(/POINT\(|\)/g, '')
-            .split(' ');
+    };
 
-        latitude = cleanedCoordinates[0] || latitude;
-        longitude = cleanedCoordinates[1] || longitude;
-    }
+    useEffect(() => {
+        let latitude = defaultLatitude;
+        let longitude = defaultLongitude;
 
-    const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyCZQq1GlPJb8PrwOkCiihS-tAq0qS-O1j8&q=${latitude},${longitude}`;
-    
+        if (siteData?.co_ordinates) {
+            const coordinates = siteData.co_ordinates
+                .replace(/POINT\(|\)/g, '')
+                .split(' ');
+
+            latitude = coordinates[0] || defaultLatitude;
+            longitude = coordinates[1] || defaultLongitude;
+        }
+
+        const newMapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyCZQq1GlPJb8PrwOkCiihS-tAq0qS-O1j8&q=${latitude},${longitude}`;
+        setMapUrl(newMapUrl);
+    }, [siteData]);
+console.log(siteData);
+
 
     return (
         <div ref={locationRef} className="card bg-white shadow border-0 mb-4">
@@ -85,14 +93,14 @@ const Location = ({ data, setData, errors, locationRef }) => {
                     <>
                         <p className="mb-3">{siteData && siteData?.location+'; '}
                             {siteData && siteData?.address_1 + ', '}{siteData && siteData?.city + ', '} {siteData && siteData?.state + ', '} {siteData?.zipcode}</p>
-                        <iframe
+                        {/* <iframe
                             src={mapUrl}
                             width="100%"
                             height="450"
                             style={{ border: 0 }}
                             allowFullScreen
                             loading="lazy"
-                        ></iframe>
+                        ></iframe> */}
                     </>
                 }
 

@@ -1,4 +1,4 @@
-.btn{
+.btn {
     cursor: pointer !important;
 }
 
@@ -248,16 +248,28 @@ textarea {
     white-space: nowrap;
 }
 
-.tooltip-custom{
+.tooltip-custom {
     z-index: -1;
     opacity: 0;
     transition: 0.3s;
     transform: translateY(20px);
 }
 
-.tooltip-trig:hover .tooltip-custom{
+.tooltip-trig:hover .tooltip-custom {
     z-index: 99999;
     overflow: unset !important;
     opacity: 1;
     transform: translateY(0);
+}
+
+.sticky-sidebar {
+    position: relative;
+}
+
+.sticky-sidebar.sticky {
+    position: sticky;
+    top: 0;
+    padding-top: 150px !important;
+    padding: 10px;
+    z-index: 1;
 }

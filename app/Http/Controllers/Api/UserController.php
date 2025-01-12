@@ -414,6 +414,7 @@ class UserController extends Controller
         ]);
     }
 
+
     public function singleCustomer($id)
     {
         $customer = Customer::find($id); 
