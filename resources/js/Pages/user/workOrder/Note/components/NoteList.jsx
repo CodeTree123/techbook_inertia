@@ -2,7 +2,8 @@ import { useForm } from '@inertiajs/react';
 import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
-const NoteList = ({ id, details, timezone, addNote, setAddNote, onSuccessMessage, onErrorMessage }) => {
+const NoteList = ({ id, details, addNote, setAddNote, onSuccessMessage, onErrorMessage }) => {
+    const timezone = 'CT'
     const timezoneMap = {
         'PT': 'America/Los_Angeles',
         'MT': 'America/Denver',

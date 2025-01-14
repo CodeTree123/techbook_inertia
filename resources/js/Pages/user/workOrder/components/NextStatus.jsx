@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React from 'react'
 import { Button } from 'react-bootstrap';
 
-const NextStatus = ({id, onSuccessMessage, onErrorMessage, status, is_ftech}) => {
+const NextStatus = ({id, onSuccessMessage, onErrorMessage, status, is_ftech, is_cancelled}) => {
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
     });
@@ -25,7 +25,7 @@ const NextStatus = ({id, onSuccessMessage, onErrorMessage, status, is_ftech}) =>
     return (
         <>
             <form onSubmit={submit}>
-                <Button variant='outline-primary' type="submit" disabled={status == 15}
+                <Button variant='outline-primary' type="submit" disabled={status == 15 || is_cancelled}
                 >
                     Next
                 </Button>

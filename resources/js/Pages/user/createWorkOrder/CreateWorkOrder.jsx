@@ -8,6 +8,8 @@ import Location from './components/Location'
 import TechProvidedPart from './components/TechProvidedPart'
 import Shipment from './components/Shipment'
 import DispatchInstruction from './components/DispatchInstruction'
+import Contact from './components/Contact'
+import Schedule from './components/Schedule'
 
 const CreateWorkOrder = ({ type }) => {
 
@@ -23,6 +25,9 @@ const CreateWorkOrder = ({ type }) => {
         'techProvidedParts': [],
         'shipments': [],
         'instruction': '',
+        'contacts': [],
+        'schedule_type': 'single',
+        'schedules': [],
     });
 
     console.log(data);
@@ -36,6 +41,7 @@ const CreateWorkOrder = ({ type }) => {
     const shipmentRef = useRef(null);
     const instructionRef = useRef(null);
     const contactRef = useRef(null);
+    const scheduleRef = useRef(null);
     const locationRef = useRef(null);
 
     const scrollToSection = (ref) => {
@@ -76,18 +82,29 @@ const CreateWorkOrder = ({ type }) => {
 
     useEffect(() => {
         const handleScroll = () => {
-          const sidebar = sidebarRef.current;
-          if (!sidebar) return;
-    
-          const scrollTop = window.scrollY;
-          const sidebarTop = sidebar.getBoundingClientRect().top;
-    
-          setIsSticky(scrollTop > 150 && sidebarTop < 150); 
+            const sidebar = sidebarRef.current;
+            if (!sidebar) return;
+
+            const scrollTop = window.scrollY;
+            const sidebarTop = sidebar.getBoundingClientRect().top;
+
+            setIsSticky(scrollTop > 150 && sidebarTop < 150);
         };
-    
+
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-      }, []);
+    }, []);
+
+    // useEffect(() => {
+    //     const storedData = sessionStorage.getItem('formData');
+    //     if (storedData) {
+    //         setData(JSON.parse(storedData));
+    //     }
+    // }, []);
+    
+    // useEffect(() => {
+    //     sessionStorage.setItem('formData', JSON.stringify(data));
+    // }, [data]);
 
     return (
         <MainLayout>
@@ -114,8 +131,8 @@ const CreateWorkOrder = ({ type }) => {
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(instructionRef)}>Dispatch Instructions</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Tasks</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Deliverables</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Contacts</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Schedule</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(contactRef)}>Contacts</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(scheduleRef)}>Schedule</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(locationRef)}>Location</li>
                                 <li className='fw-bold py-3 text-center' style={{ cursor: 'pointer' }}>Pay</li>
                             </ul>
@@ -128,6 +145,8 @@ const CreateWorkOrder = ({ type }) => {
                         <TechProvidedPart data={data} setData={setData} techPartRef={techPartRef} />
                         <Shipment data={data} setData={setData} shipmentRef={shipmentRef} />
                         <DispatchInstruction data={data} setData={setData} instructionRef={instructionRef} />
+                        <Contact data={data} setData={setData} contactRef={contactRef} />
+                        <Schedule data={data} setData={setData} scheduleRef={scheduleRef} />
                         <Location data={data} setData={setData} errors={errors} locationRef={locationRef} />
                     </div>
                 </div>

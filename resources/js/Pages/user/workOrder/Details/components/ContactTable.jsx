@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
-const ContactTable = ({ details, onSuccessMessage }) => {
+const ContactTable = ({ details, onSuccessMessage, is_cancelled }) => {
     
     const [editableRow, setEditableRow] = useState(null);
 
@@ -74,13 +74,13 @@ const ContactTable = ({ details, onSuccessMessage }) => {
                         <div className="d-flex action-group gap-2">
                             {
                                 editableRow != index &&
-                                <button type='button' onClick={() => handleEdit(index)} className="btn edit-btn" style={{ height: 'max-content' }}>
+                                <button type='button' onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editableRow == index &&
-                                <button type='submit' className="btn btn-success fw-bold" style={{ height: 'max-content' }}>
+                                <button type='submit' className="btn btn-success fw-bold" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     Save
                                 </button>
                             }
@@ -90,7 +90,7 @@ const ContactTable = ({ details, onSuccessMessage }) => {
                                     Cancel
                                 </button>
                             }
-                            <button onClick={(e)=>deleteContact(e,contact.id)} type="button" className="btn" style={{ height: 'max-content' }}>
+                            <button onClick={(e)=>deleteContact(e,contact.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                 <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                             </button>
 

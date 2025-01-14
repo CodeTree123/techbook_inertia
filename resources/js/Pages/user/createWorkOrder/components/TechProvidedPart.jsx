@@ -112,7 +112,7 @@ const TechProvidedPart = ({ data, setData, techPartRef }) => {
 
 
     return (
-        <div ref={techPartRef} className="card bg-white shadow border-0 mb-4">
+        <div ref={techPartRef} className="card bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Technician Provided Parts </h3>
             </div>

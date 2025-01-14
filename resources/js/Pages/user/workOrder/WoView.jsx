@@ -785,13 +785,6 @@ export default function WoView({ wo }) {
               )}
 
               {
-                wo.stage == 7 &&
-                <div className="alert alert-danger mb-0" style={{ paddingTop: '0.375rem', paddingBottom: '0.375rem' }} role="alert">
-                  <i>Note: {wo?.cancelling_note}</i>
-                </div>
-              }
-
-              {
                 wo.stage == 7 && wo.holding_note &&
                 <div className="alert alert-dark mb-0 mt-2" style={{ paddingTop: '0.375rem', paddingBottom: '0.375rem' }} role="alert">
                   <i>Note: xcfvbxcxcv</i>
@@ -804,8 +797,8 @@ export default function WoView({ wo }) {
               <a target='_blank' href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/${wo.id}`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
                 <i className="fa fa-eye" aria-hidden="true" />
               </a>
-              <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} />
-              <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} />
+              <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id}  is_cancelled={wo.stage == 7}/>
+              <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7}/>
             </div>
 
             {
