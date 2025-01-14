@@ -692,7 +692,7 @@ export default function WoView({ wo }) {
               wo.schedule_type == 'single' ?
 
                 <div className="col-3 border-end border-bottom px-3 py-2">
-                  <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Scheduled Time</p>
+                  <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Schedule</p>
                   {wo.schedules[0] ? (
                     <p>{
                       DateTime.fromISO(wo.schedules[0].on_site_by).toFormat('MM-dd-yy')

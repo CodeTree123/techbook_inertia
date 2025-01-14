@@ -21,7 +21,7 @@ const TechProvidedPart = ({ data, setData, techPartRef }) => {
         // Update the techProvidedParts array
         setData({
             ...data,
-            techProvidedParts: [...data.techProvidedParts, newPart],
+            techProvidedParts: [...data?.techProvidedParts, newPart],
             part_name: '',
             parts_number: '',
             quantity: '',

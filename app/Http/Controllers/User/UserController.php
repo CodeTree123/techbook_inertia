@@ -2066,7 +2066,8 @@ class UserController extends Controller
             'wo_manager' => 'required|exists:employees,id',
             'priority' => 'required|integer|min:1|max:5',
             'requested_by' => 'required|string|max:255',
-            'scope_work' => 'nullable|string',
+            'wo_requested' => 'required|string',
+            'scope_work' => 'required|string',
             'r_tools' => 'nullable|string',
             'site_id' => 'required|exists:customer_sites,id',
         ]);
@@ -2104,15 +2105,98 @@ class UserController extends Controller
         $wo->order_type = $request->order_type;
         $wo->scope_work = $request->scope_work;
         $wo->r_tools = $request->r_tools;
+        $wo->instruction = $request->instruction;
         $wo->status = 1;
         $wo->stage = Status::STAGE_NEW;
         $wo->site_id = $request->site_id;
+        $wo->wo_requested = $request->wo_requested;
+        $wo->requested_date = $request->requested_date;
+        $wo->request_type = $request->request_type;
+        $wo->schedule_type = $request->schedule_type ?? 'single';
+        $wo->travel_cost = $request->travel_cost ?? 0;
         $wo->save();
 
         $invoice = new CustomerInvoice();
         $invoice->invoice_number = getNumber();
         $invoice->work_order_id = $wo->id;
         $invoice->save();
+
+        foreach($request->techProvidedParts as $part) {
+            $techPart = new TechProvidedPart();
+
+            $techPart->wo_id = $wo->id;
+            $techPart->part_name = $part['part_name'];
+            $techPart->parts_number = $part['parts_number'];
+            $techPart->quantity = $part['quantity'];
+            $techPart->price = $part['price'];
+            $techPart->amount = $part['quantity'] * $part['price'];
+
+            $techPart->save();
+        }
+
+        foreach($request->shipments as $ship) {
+            $shipment = new OrderShipment();
+
+            $shipment->wo_id = $wo->id;
+            $shipment->associate = $ship['associate'];
+            $shipment->tracking_number = $ship['tracking_number'];
+            $shipment->shipment_from = $ship['shipment_from'];
+            $shipment->shipment_to = $ship['shipment_to'];
+            $shipment->created_at = $ship['created_at'];
+
+            $shipment->save();
+        }
+
+        foreach($request->contacts as $cnt){
+            $contact = new Contact();
+
+            $contact->wo_id = $wo->id;
+            $contact->title = $cnt['contact_title'];
+            $contact->name = $cnt['contact_name'];
+            $contact->phone = $cnt['contact_phone'];
+
+            $contact->save();
+        }
+
+        foreach($request->schedules as $sch){
+            $schdule = new WorkOrderSchedule();
+
+            $schdule->wo_id = $wo->id;
+            $schdule->on_site_by = $sch['on_site_by'];
+            $schdule->scheduled_time = $sch['scheduled_time'];
+            $schdule->h_operation = $sch['h_operation'];
+            $schdule->estimated_time = $sch['estimated_time'];
+    
+            $schdule->save();
+        }
+
+        foreach($request->otherExpenses as $other){
+            $otherExpense = new OtherExpense();
+
+            $otherExpense->wo_id = $wo->id;
+            $otherExpense->description = $other['other_description'];
+            $otherExpense->price = $other['other_price'];
+            $otherExpense->quantity = $other['other_quantity'] ?? 1;
+            $otherExpense->amount = $other['other_price'] * ($other['other_quantity'] ?? 1);
+
+            $otherExpense->save();
+        }
+
+        foreach($request->tasks as $tsk){
+            $task = new Task();
+    
+            $task->wo_id = $wo->id;
+            $task->type = $tsk['type'];
+            $task->reason = $tsk['reason'];
+            $task->description = $tsk['desc'];
+            $task->email = $tsk['email'];
+            $task->phone = $tsk['phone'];
+            $task->from = $tsk['from'];
+            $task->item = $tsk['item'];
+
+    
+            $task->save();
+        }
 
         return redirect()->route('user.work.order.view.inertia', $wo->id);
     }

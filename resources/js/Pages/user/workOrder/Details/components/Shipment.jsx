@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import ShipmentTable from './ShipmentTable';
 
-const Shipment = ({ id, details, onSuccessMessage }) => {
+const Shipment = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const [addShipment, setAddShipment] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'associate': 'fedex',
@@ -29,7 +29,7 @@ const Shipment = ({ id, details, onSuccessMessage }) => {
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Shipments</h3>
             </div>
             <div className="card-body bg-white">
-                <ShipmentTable details={details} onSuccessMessage={onSuccessMessage}/>
+                <ShipmentTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
 
                 {
                     addShipment &&
@@ -65,7 +65,7 @@ const Shipment = ({ id, details, onSuccessMessage }) => {
                 {
                     !addShipment &&
                     <div className="w-100 py-3">
-                        <button type="button" onClick={() => setAddShipment(true)} className="btn btn-outline-dark addShipment">+ Add
+                        <button type="button" onClick={() => setAddShipment(true)} className="btn btn-outline-dark addShipment" disabled={is_cancelled}>+ Add
                             Shipment</button>
                     </div>
                 }

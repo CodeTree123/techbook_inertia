@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap';
 import Select from "react-select";
 
-const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedEng, setTechnicians }) => {
+const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedEng, setTechnicians, is_cancelled }) => {
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         reason: '',
@@ -138,7 +138,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
         <div className='bg-white border rounded-3 p-3 position-relative'>
             <div className='position-absolute' style={{ top: '10px', right: '10px' }}>
                 {
-                    !editable && <button className='btn btn-outline-primary me-2' onClick={() => handleEdit()}>Edit Tech</button>
+                    !editable && <button className='btn btn-outline-primary me-2' onClick={() => handleEdit()} disabled={is_cancelled}>Edit Tech</button>
 
                 }
 
@@ -152,7 +152,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
 
                 }
 
-                <button onClick={handleShowModal} className='btn btn-outline-danger'  disabled={stage != 3}>Remove Tech</button>
+                <button onClick={handleShowModal} className='btn btn-outline-danger'  disabled={stage != 3 || is_cancelled}>Remove Tech</button>
             </div>
             <div className='mb-3 row'>
                 <div className='col-md-8 pe-5'>
@@ -172,7 +172,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
 
                     <div className='d-flex justify-content-start gap-3 mt-3'>
                         {
-                            techData.email &&
+                            techData.email && !editable &&
                             <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`mailto:${techData.email}`}>
                                 <i class="fa-regular fa-envelope"></i>
                                 {techData.email}
@@ -180,7 +180,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                         }
 
                         {
-                            techData.phone &&
+                            techData.phone && !editable &&
                             <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`callto:${techData.phone}`}>
                                 <i class="fa-solid fa-phone"></i>
                                 {techData.phone}
@@ -218,7 +218,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                     {
                         techData.tech_type == 'company' &&
                         <div>
-                            <button className='btn btn-outline-dark mt-4' onClick={handleShowAssignModal}>+ Add Technician</button>
+                            <button className='btn btn-outline-dark mt-4' onClick={handleShowAssignModal} disabled={is_cancelled}>+ Add Technician</button>
 
                             <div className='mt-4 ms-1 row gap-3'>
                                 {
@@ -288,11 +288,11 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                                             <div className='position-absolute end-0'>
                                                 {
                                                     assigneeEditable != index &&
-                                                    <span className='text-primary mx-2' style={{ cursor: 'pointer' }} onClick={() => handleAssigneeEdit(index)}><i class="fa-solid fa-pen"></i></span>
+                                                    <button className='text-primary mx-2 border-0 bg-transparent' style={{ cursor: 'pointer' }} onClick={() => handleAssigneeEdit(index)} disabled={is_cancelled}><i class="fa-solid fa-pen"></i></button>
                                                 }
                                                 {
                                                     assigneeEditable != index &&
-                                                    <span className='text-danger mx-2' style={{ cursor: 'pointer' }} onClick={(e) => deleteAssignees(e, eng.id)}><i class="fa-solid fa-trash"></i></span>
+                                                    <button className='text-danger mx-2 border-0 bg-transparent' style={{ cursor: 'pointer' }} onClick={(e) => deleteAssignees(e, eng.id)} disabled={is_cancelled}><i class="fa-solid fa-trash"></i></button>
                                                 }
                                                 {
                                                     assigneeEditable == index &&

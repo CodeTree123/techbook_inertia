@@ -57,6 +57,43 @@ const Schedule = ({ data, setData, scheduleRef }) => {
     };
 
     const [editableRow, setEditableRow] = useState(null);
+    const handleEdit = (index) => {
+        setEditableRow(index);
+    }
+
+    const handleCancel = () => {
+        setEditableRow(null);
+    }
+
+    const handleUpdate = (e, scheduleindex) => {
+        e.preventDefault();
+        
+        const updatedSchedule = data.schedules.map((schedule, index) =>
+            index === scheduleindex
+                ? {
+                      ...schedule,
+                      on_site_by: data.on_site_by || schedule.on_site_by,
+                      scheduled_time: data.scheduled_time || schedule.scheduled_time,
+                      h_operation: data.h_operation || schedule.h_operation,
+                      estimated_time: data.estimated_time || schedule.estimated_time,
+                  }
+                : schedule
+        );
+    
+        // Update the state
+        setData({
+            ...data,
+            schedules: updatedSchedule,
+            on_site_by: '',
+            scheduled_time: '',
+            h_operation: '',
+            estimated_time: '',
+        });
+    
+        // Exit edit mode
+        setEditableRow(null);
+    };
+
 
     return (
         <div ref={scheduleRef} className="card bg-white border mb-4">
@@ -78,7 +115,7 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                 {data?.schedules?.length > 0 && (
                     data?.schedule_type === 'single' ? (
                         // Render a single schedule if there's exactly one schedule
-                        <form onSubmit={(e) => submit(e, data?.schedules[0]?.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
+                        <form onSubmit={(e) => handleUpdate(e, 0)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
                             <p>Start at a specific date and time</p>
                             <b>
                                 {new Date(data?.schedules[0]?.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
@@ -151,7 +188,7 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                     ) : (
                         // Render all schedules if it's not a single schedule or there are multiple schedules
                         data?.schedules?.map((schedule, index) => (
-                            <form onSubmit={(e) => submit(e, schedule.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }} key={schedule.id}>
+                            <form onSubmit={(e) => handleUpdate(e, index)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }} key={schedule.id}>
                                 <p>Start at a specific date and time</p>
                                 <b>
                                     {new Date(schedule.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},

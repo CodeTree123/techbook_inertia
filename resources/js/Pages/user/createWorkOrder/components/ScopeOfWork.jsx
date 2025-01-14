@@ -5,6 +5,8 @@ const ScopeOfWork = ({ data, setData, scopeRef }) => {
     const editor = useRef(null);
 
     const config = {
+        enablePasteFilter: false,
+        defaultActionOnPaste: "insert_as_html",
         readonly: false,
         toolbarButtonSize: 'small',
         placeholder: 'Start typing here...',
@@ -17,7 +19,6 @@ const ScopeOfWork = ({ data, setData, scopeRef }) => {
             <div className="card-body bg-white">
                 <div
                     id="scopeForm"
-
                 >
                     <JoditEditor
                         ref={editor}

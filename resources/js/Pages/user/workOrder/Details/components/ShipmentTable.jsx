@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
-const ShipmentTable = ({ details, onSuccessMessage }) => {
+const ShipmentTable = ({ details, onSuccessMessage, is_cancelled }) => {
     const [editingRow, setEditingRow] = useState(null);
 
     const handleEdit = (index) => {
@@ -123,28 +123,28 @@ const ShipmentTable = ({ details, onSuccessMessage }) => {
                         <div className="d-flex action-group gap-2">
                             {
                                 editingRow != index &&
-                                <button type='button' onClick={() => handleEdit(index)} className="btn edit-btn" style={{ height: 'max-content' }}>
+                                <button type='button' onClick={() => handleEdit(index)} className="btn border-0 edit-btn" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                 </button>
                             }
 
                             {
                                 editingRow == index &&
-                                <button type='submit' className="btn btn-success fw-bold" style={{ height: 'max-content' }}>
+                                <button type='submit' className="btn btn-success fw-bold border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     Save
                                 </button>
                             }
                             {
                                 editingRow == index &&
-                                <button onClick={handleCancel} type='button' className="btn btn-danger fw-bold" style={{ height: 'max-content' }}>
+                                <button onClick={handleCancel} type='button' className="btn btn-danger fw-bold border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     Cancel
                                 </button>
                             }
                             {
                                 editingRow != index &&
-                                <a onClick={(e) => deleteShipment(e, shipment.id)} className="btn" style={{ height: 'max-content' }}>
+                                <button type='button' onClick={(e) => deleteShipment(e, shipment.id)} className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
-                                </a>
+                                </button>
                             }
 
                         </div>

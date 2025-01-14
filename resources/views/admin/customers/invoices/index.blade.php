@@ -489,7 +489,7 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                        @if($firstHour->work_order_id == $invoice->id)
+                        @if(@$firstHour->work_order_id == $invoice->id)
                             <tr class="calc-tr">
                                 <td>
                                     <input type="text" class="total-hours p-2"

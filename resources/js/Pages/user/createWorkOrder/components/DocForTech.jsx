@@ -1,12 +1,6 @@
-import { router, useForm } from '@inertiajs/react';
-import React, { useState } from 'react'
+import React from 'react'
 
-const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
-    const { data, setData, delete: deleteItem, post, errors, processing, recentlySuccessful } = useForm({
-    });
-
-    const [file, setFile] = useState([]);
-
+const DocForTech = ({ data, setData, docTechRef }) => {
     const handleUpload = async (e) => {
         // Check if a file was selected
         if (e.target.files && e.target.files.length > 0) {
@@ -57,10 +51,8 @@ const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
             }
         });
     };
-
-
     return (
-        <div className="card action-cards bg-white shadow border-0 mb-4">
+        <div ref={docTechRef} className="card action-cards bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tech Yeah Documents For Technicians
                 </h3>
@@ -68,7 +60,7 @@ const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
             <div className="card-body bg-white">
                 <div id="technicianDocCont" className="d-flex gap-2">
                     {
-                        details?.docs_for_tech?.map((doc) => (
+                        data?.techDocs?.map((doc) => (
                             <div className="file-preview">
                                 <div className="file-content">
                                     {(() => {
@@ -114,21 +106,15 @@ const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
                     }
 
                 </div>
-                {errors.file && <p className='text-danger'>{errors.file}</p>}
                 <div className="w-100 py-3">
                     <form encType="multipart/form-data">
-                        {
-                            is_cancelled ?
-                                <button className="btn btn-outline-dark" disabled>Add File</button> :
-                                <label htmlFor="technicianDoc" className="btn btn-outline-dark">Add File</label>
-                        }
+                        <label htmlFor="technicianDoc" className="btn btn-outline-dark">Add File</label>
 
                         <input id='technicianDoc' accept=".jpg, .jpeg, .png, .pdf, .doc, .docx, .xlsx, .txt" onChange={handleUpload} name="file" className="invisible" type="file" />
                     </form>
                 </div>
             </div>
         </div>
-
     )
 }
 

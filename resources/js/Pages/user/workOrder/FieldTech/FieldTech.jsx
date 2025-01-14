@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import TechData from './components/TechData';
 import { Modal } from 'react-bootstrap';
 
-const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
+const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
 
     const [search, setSearch] = useState('');
     const [technicians, setTechnicians] = useState([]);
@@ -171,7 +171,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         <div className='row justify-content-end'>
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
-                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1' style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null)}>
+                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null)}>
                                     <i className="fa-brands fa-google" style={{ fontSize: 16 }} aria-hidden="true" />
                                     Find Tech
                                 </button>
@@ -246,11 +246,11 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                 <div className='col-4 d-flex gap-2 justify-content-end'>
                                                     {
                                                         !details.ftech_id ?
-                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3}>Assign</button> :
+                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled}>Assign</button> :
                                                             <button className='btn btn-light border' disabled>Assigned</button>
                                                     }
 
-                                                    <button className='btn btn-dark'>Contact</button>
+                                                    <button className='btn btn-dark' disabled={is_cancelled}>Contact</button>
                                                 </div>
 
                                             </div>
@@ -368,11 +368,11 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                     <div className='col-4 d-flex gap-2 justify-content-end'>
                                                         {
                                                             !details.ftech_id ?
-                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3}>Assign</button> :
+                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled}>Assign</button> :
                                                                 <button className='btn btn-light border' disabled>Assigned</button>
                                                         }
 
-                                                        <button className='btn btn-dark'>Contact</button>
+                                                        <button className='btn btn-dark' disabled={is_cancelled}>Contact</button>
                                                     </div>
 
                                                 </div>
@@ -425,7 +425,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         </div>
                     </> :
                     <>
-                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} />
+                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} is_cancelled={is_cancelled}/>
                     </>
             }
         </div>
