@@ -1,16 +1,14 @@
 import JoditEditor from 'jodit-react'
-import React, { useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 
 const WorkRequested = ({ data, setData, errors, woReqRef }) => {
     const editor = useRef(null);
 
-    const config = {
-        enablePasteFilter: false,
-        defaultActionOnPaste: "insert_as_html",
+    const config = useMemo(() => ({
         readonly: false,
-        toolbarButtonSize: 'small',
-        placeholder: 'Start typing here...',
-    };
+        placeholder: 'Start typing...'
+      }), []);
+      
     return (
         <div ref={woReqRef} className="card action-cards bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
@@ -25,7 +23,8 @@ const WorkRequested = ({ data, setData, errors, woReqRef }) => {
                         ref={editor}
                         value={data.wo_requested}
                         config={config}
-                        onBlur={() => {
+                        tabIndex={1}
+                        onChange={() => {
                             const updatedContent = editor.current?.value;
                             setData({ ...data, wo_requested: updatedContent });
                         }}

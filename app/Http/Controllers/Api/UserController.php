@@ -369,7 +369,7 @@ class UserController extends Controller
         
         $search = $request->query('search', '');
         $stage = $request->query('stage', '');
-        $w_orders = WorkOrder::select('id', 'order_id', 'created_at', 'slug', 'ftech_id', 'stage', 'status','site_id')
+        $w_orders = WorkOrder::select('id', 'order_id', 'created_at', 'slug', 'ftech_id', 'stage', 'status','site_id','is_hold')
             ->with(['customer:id,company_name', 'technician:id,company_name','site:id,site_id,zipcode'])
             ->when($search, function ($query, $search) {
                 $query->where('order_id', 'like', "%{$search}%")

@@ -14,9 +14,11 @@ import WorkRequested from './components/WorkRequested'
 import PaySheet from './components/PaySheet'
 import DocForTech from './components/DocForTech'
 import Task from './components/Task'
+import Deliverable from './components/Deliverable'
 
 const CreateWorkOrder = ({ type }) => {
 
+    const [techDocFiles, setTechDocFiles] = useState([]);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'cus_id': '',
         'priority': '',
@@ -37,14 +39,12 @@ const CreateWorkOrder = ({ type }) => {
         'schedules': [],
         'travel_cost': '',
         'otherExpenses': [],
+        'tasks': [],
         'techDocs': [],
-        'tasks': []
+        'taskFiles': [],
     });
+    
 
-    const formData = new FormData();
-    formData.append("techDocs", data.file);
-
-    console.log(data);
     const [isSticky, setIsSticky] = useState(false);
     const sidebarRef = useRef(null);
 
@@ -57,6 +57,7 @@ const CreateWorkOrder = ({ type }) => {
     const docTechRef = useRef(null);
     const instructionRef = useRef(null);
     const taskRef = useRef(null);
+    const delivarableRef = useRef(null);
     const contactRef = useRef(null);
     const scheduleRef = useRef(null);
     const locationRef = useRef(null);
@@ -75,17 +76,21 @@ const CreateWorkOrder = ({ type }) => {
 
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-
+    console.log(data);
+    
     const submit = (e) => {
         e.preventDefault();
-
+        
         post(route('user.work.order.store'), {
             preserveScroll: true,
             onSuccess: () => {
                 setSuccessMessage('New Work Order Created');
-            }
+            },
+            headers: {
+                'Content-Type': 'multipart/form-data', // Ensure multipart headers
+            },
         });
-    };
+    };    
 
     useEffect(() => {
         if (errorMessage) {
@@ -156,7 +161,7 @@ const CreateWorkOrder = ({ type }) => {
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(docTechRef)}>Documents For Technicians</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(instructionRef)}>Dispatch Instructions</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(taskRef)}>Tasks</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Deliverables</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(delivarableRef)}>Deliverables</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(contactRef)}>Contacts</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(scheduleRef)}>Schedule</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(locationRef)}>Location</li>
@@ -171,9 +176,10 @@ const CreateWorkOrder = ({ type }) => {
                         <ToolRequired data={data} setData={setData} toolRef={toolRef} />
                         <TechProvidedPart data={data} setData={setData} techPartRef={techPartRef} />
                         <Shipment data={data} setData={setData} shipmentRef={shipmentRef} />
-                        <DocForTech data={data} setData={setData} docTechRef={docTechRef} />
+                        <DocForTech data={data} setData={setData} docTechRef={docTechRef} techDocFiles={techDocFiles} setTechDocFiles={setTechDocFiles} />
                         <DispatchInstruction data={data} setData={setData} instructionRef={instructionRef} />
                         <Task data={data} setData={setData} taskRef={taskRef}/>
+                        <Deliverable data={data} setData={setData} delivarableRef={delivarableRef}/>
                         <Contact data={data} setData={setData} contactRef={contactRef} />
                         <Schedule data={data} setData={setData} scheduleRef={scheduleRef} />
                         <Location data={data} setData={setData} errors={errors} locationRef={locationRef} />

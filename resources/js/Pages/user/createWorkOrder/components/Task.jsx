@@ -18,6 +18,7 @@ const Task = ({ data, setData, taskRef }) => {
             phone: data.phone || '',
             from: data.from || '',
             item: data.item || '',
+            file: data.file || ''
         };
 
         setData({
@@ -30,6 +31,7 @@ const Task = ({ data, setData, taskRef }) => {
             phone: '',
             from: '',
             item: '',
+            file: ''
         });
 
         setShowTask(false);
@@ -52,6 +54,7 @@ const Task = ({ data, setData, taskRef }) => {
             phone: currentTask.phone,
             from: currentTask.from,
             item: currentTask.item,
+            file: currentTask.file
         });
     }
 
@@ -66,6 +69,7 @@ const Task = ({ data, setData, taskRef }) => {
             phone: '',
             from: '',
             item: '',
+            file: ''
         });
     };
 
@@ -83,6 +87,7 @@ const Task = ({ data, setData, taskRef }) => {
                       phone: data.phone || task.phone,
                       from: data.from || task.from,
                       item: data.item || task.item,
+                      file: data.file || task.file
                   }
                 : task
         );
@@ -98,6 +103,7 @@ const Task = ({ data, setData, taskRef }) => {
             phone: '',
             from: '',
             item: '',
+            file: ''
         });
     
         // Exit edit mode

@@ -1,14 +1,13 @@
 import JoditEditor from 'jodit-react'
-import React, { useRef } from 'react'
+import React, { useRef, useMemo } from 'react'
 
 const ToolRequired = ({ data, setData, toolRef }) => {
-    const editor = useRef(null);
-    
-        const config = {
-            readonly: false,
-            toolbarButtonSize: 'small',
-            placeholder: 'Start typing here...',
-        };
+    const editor2 = useRef(null);
+
+    const config = useMemo(() => ({
+        readonly: false,
+        placeholder: 'Start typing...'
+    }), []);
     return (
         <div ref={toolRef} className="card action-cards bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
@@ -20,10 +19,10 @@ const ToolRequired = ({ data, setData, toolRef }) => {
 
                 >
                     <JoditEditor
-                        ref={editor}
+                        ref={editor2}
                         value={data.r_tools}
                         config={config}
-                        onBlur={(newContent) => setData({ ...data, r_tools: newContent })}
+                        onChange={(newContent) => setData({ ...data, r_tools: newContent })}
                     />
                 </div>
             </div>

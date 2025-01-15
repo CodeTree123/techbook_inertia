@@ -97,7 +97,6 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
 
     const fetchTechnicians = async (destination, radiusValue) => {
         const respondedTechnicians = oldResponseData ? oldResponseData?.map(technician => technician.id) : [];
-        console.log(respondedTechnicians);
 
         try {
             const response = await fetch(`/user/find/tech/for/work/worder?page=${perPage}`, {
@@ -197,7 +196,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                 <h3 className='mb-0'>{tech.company_name}</h3>
                                             </div>
                                             <div className='row mt-3'>
-                                                <div className='col-8 d-flex justify-content-start gap-2 mx-0'>
+                                                <div className='col-8 d-flex justify-content-start flex-wrap gap-2 mx-0'>
                                                     {
                                                         tech.email &&
                                                         <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`mailto:${tech.email}`}>
@@ -242,15 +241,30 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                         </div>
                                                     }
 
+                                                    {
+                                                        tech?.address_data &&
+                                                        <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
+                                                            <b>Address:</b> {[
+                                                                    tech?.address_data?.address,
+                                                                    tech?.address_data?.city,
+                                                                    tech?.address_data?.state,
+                                                                    tech?.address_data?.country,
+                                                                    tech?.address_data?.zip_code
+                                                                ]
+                                                                    .filter(Boolean)
+                                                                    .join(', ')}
+                                                        </div>
+                                                    }
+
                                                 </div>
                                                 <div className='col-4 d-flex gap-2 justify-content-end'>
                                                     {
                                                         !details.ftech_id ?
-                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled}>Assign</button> :
+                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{height: 'max-content'}}>Assign</button> :
                                                             <button className='btn btn-light border' disabled>Assigned</button>
                                                     }
 
-                                                    <button className='btn btn-dark' disabled={is_cancelled}>Contact</button>
+                                                    <button className='btn btn-dark' disabled={is_cancelled} style={{height: 'max-content'}}>Contact</button>
                                                 </div>
 
                                             </div>
@@ -319,7 +333,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                     <h3 className='mb-0'>{tech.company_name} <span className='text-secondary' style={{ fontSize: '14px' }}>({tech.distance} ~ {tech.duration})</span></h3>
                                                 </div>
                                                 <div className='row mt-3'>
-                                                    <div className='col-8 d-flex justify-content-start gap-2 mx-0'>
+                                                    <div className='col-8 d-flex flex-wrap justify-content-start gap-2 mx-0'>
                                                         {
                                                             tech.email &&
                                                             <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`mailto:${tech.email}`}>
@@ -364,15 +378,30 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                             </div>
                                                         }
 
+                                                        {
+                                                            tech?.address_data &&
+                                                            <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
+                                                                <b>Address:</b> {[
+                                                                    tech?.address_data?.address,
+                                                                    tech?.address_data?.city,
+                                                                    tech?.address_data?.state,
+                                                                    tech?.address_data?.country,
+                                                                    tech?.address_data?.zip_code
+                                                                ]
+                                                                    .filter(Boolean)
+                                                                    .join(', ')}
+
+                                                            </div>
+                                                        }
                                                     </div>
                                                     <div className='col-4 d-flex gap-2 justify-content-end'>
                                                         {
                                                             !details.ftech_id ?
-                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled}>Assign</button> :
+                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{height: 'max-content'}}>Assign</button> :
                                                                 <button className='btn btn-light border' disabled>Assigned</button>
                                                         }
 
-                                                        <button className='btn btn-dark' disabled={is_cancelled}>Contact</button>
+                                                        <button className='btn btn-dark' disabled={is_cancelled} style={{height: 'max-content'}}>Contact</button>
                                                     </div>
 
                                                 </div>
@@ -425,7 +454,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                         </div>
                     </> :
                     <>
-                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} is_cancelled={is_cancelled}/>
+                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} is_cancelled={is_cancelled} />
                     </>
             }
         </div>

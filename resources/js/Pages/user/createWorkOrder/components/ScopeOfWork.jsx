@@ -1,16 +1,13 @@
 import JoditEditor from 'jodit-react'
-import React, { useRef } from 'react'
+import React, { useRef, useMemo } from 'react'
 
 const ScopeOfWork = ({ data, setData, scopeRef }) => {
-    const editor = useRef(null);
+    const editor3 = useRef(null);
 
-    const config = {
-        enablePasteFilter: false,
-        defaultActionOnPaste: "insert_as_html",
+    const config = useMemo(() => ({
         readonly: false,
-        toolbarButtonSize: 'small',
-        placeholder: 'Start typing here...',
-    };
+        placeholder: 'Start typing...'
+    }), []);
     return (
         <div ref={scopeRef} className="card action-cards bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
@@ -21,10 +18,10 @@ const ScopeOfWork = ({ data, setData, scopeRef }) => {
                     id="scopeForm"
                 >
                     <JoditEditor
-                        ref={editor}
+                        ref={editor3}
                         value={data.scope_work}
                         config={config}
-                        onBlur={(newContent) => setData({ ...data, scope_work: newContent })}
+                        onChange={(newContent) => setData({ ...data, scope_work: newContent })}
                     />
                 </div>
             </div>

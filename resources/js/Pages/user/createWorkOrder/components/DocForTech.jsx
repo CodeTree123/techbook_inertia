@@ -1,55 +1,19 @@
 import React from 'react'
 
-const DocForTech = ({ data, setData, docTechRef }) => {
-    const handleUpload = async (e) => {
-        // Check if a file was selected
-        if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
+const DocForTech = ({ data, setData, docTechRef, techDocFiles, setTechDocFiles }) => {
 
-            // Create a FormData object
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                // Send the request using Fetch API or Axios
-                const response = await fetch(route('user.wo.uploadDocForTech', id), {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, // Include CSRF token
-                    },
-                    body: formData, // Use FormData as the request body
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('File Uploaded Successfully', result);
-                    onSuccessMessage('File Uploaded Successfully');
-                    router.reload();
-                } else {
-                    console.error('File Upload Failed:', response.statusText);
-                    onSuccessMessage('File upload failed.');
-                }
-            } catch (error) {
-                console.error('Upload Error:', error);
-                onSuccessMessage('File upload failed.');
-            }
-        } else {
-            console.log('No file selected.');
-        }
+    const handleUpload = (e) => {
+        const uploadedFiles = Array.from(e.target.files);
+        setTechDocFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
     };
 
-    const deleteDoc = (e, docID) => {
+    const deleteDoc = (e, index) => {
         e.preventDefault();
 
-        deleteItem(route('user.wo.deleteDocForTech', docID), {
-            preserveScroll: true,
-            onSuccess: () => {
-                onSuccessMessage('Document Deleted Successfully');
-            },
-            onError: (e) => {
-                onSuccessMessage(e);
-            }
-        });
+        setData((prevData) => ({
+            ...prevData,
+            techDocs: prevData.techDocs.filter((_, i) => i !== index)
+        }));
     };
     return (
         <div ref={docTechRef} className="card action-cards bg-white border mb-4">
@@ -60,18 +24,18 @@ const DocForTech = ({ data, setData, docTechRef }) => {
             <div className="card-body bg-white">
                 <div id="technicianDocCont" className="d-flex gap-2">
                     {
-                        data?.techDocs?.map((doc) => (
+                        data?.techDocs?.map((doc, index) => (
                             <div className="file-preview">
                                 <div className="file-content">
                                     {(() => {
-                                        const fileExtension = doc.name.split('.').pop().toLowerCase(); // Get file extension in lowercase
+                                        const fileExtension = doc?.name?.split('.').pop().toLowerCase(); // Get file extension in lowercase
 
                                         // Check file extension and apply different logic for images, PDF, etc.
                                         if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
                                             // If it's an image
                                             return (
                                                 <div>
-                                                    <img src={`${window.location.protocol}//${window.location.host}/${doc.file}`} alt={doc.name} className="file-preview-image w-100" />
+                                                    <img src={URL.createObjectURL(doc)} alt={doc.name} className="file-preview-image w-100" />
                                                     <p className="file-name">{doc.name}</p>
                                                 </div>
                                             );
@@ -98,8 +62,8 @@ const DocForTech = ({ data, setData, docTechRef }) => {
                                         }
                                     })()}
                                 </div>
-                                <form onSubmit={(e) => deleteDoc(e, doc.id)}>
-                                    <button type="submit" className="delete-btn" disabled={is_cancelled}>×</button>
+                                <form onSubmit={(e) => deleteDoc(e, index)}>
+                                    <button type="submit" className="delete-btn">×</button>
                                 </form>
                             </div>
                         ))
@@ -110,7 +74,13 @@ const DocForTech = ({ data, setData, docTechRef }) => {
                     <form encType="multipart/form-data">
                         <label htmlFor="technicianDoc" className="btn btn-outline-dark">Add File</label>
 
-                        <input id='technicianDoc' accept=".jpg, .jpeg, .png, .pdf, .doc, .docx, .xlsx, .txt" onChange={handleUpload} name="file" className="invisible" type="file" />
+                        <input id='technicianDoc' accept=".jpg, .jpeg, .png, .pdf, .doc, .docx, .xlsx, .txt" onChange={(e) => {
+                            setData({
+                                ...data,
+                                techDocs: [...(data.techDocs || []), e.target.files[0]], // Add the new file while preserving existing files
+                            });
+                        }}
+                            name="file" className="invisible" type="file" />
                     </form>
                 </div>
             </div>

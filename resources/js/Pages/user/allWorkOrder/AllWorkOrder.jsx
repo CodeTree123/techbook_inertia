@@ -56,6 +56,22 @@ const AllWorkOrder = ({ w_orders }) => {
 
   });
 
+  const getStatus = (wo) => {
+    if (wo.is_hold === 1) {
+      return <span className="text-secondary">On Hold</span>;
+    }else{
+      const stageMap = {
+        1: <span className="text-info-emphasis">New</span>,
+        2: <span className="text-warning-emphasis">Need Dispatch</span>,
+        3: <span className="text-success">Dispatched</span>,
+        4: <span className="text-secondary">Closed</span>,
+        5: <span className="text-primary">Billing</span>,
+        7: <span className="text-danger">Cancelled</span>,
+      };
+      return stageMap[wo.stage] || '';
+    }
+    
+  };
 
   return (
     <>
@@ -111,7 +127,9 @@ const AllWorkOrder = ({ w_orders }) => {
                       <td className='border-0 fw-bold'>{DateTime.fromISO(wo.created_at).toRelative()}</td>
                       <td className='border-0 fw-bold'>{wo?.customer?.company_name ?? <i class="fa-regular fa-clock text-success"></i>}</td>
                       <td className='border-0 fw-bold'>{wo?.technician?.company_name ?? <i class="fa-regular fa-clock text-success"></i>}</td>
-                      <td className='border-0 fw-bold'>{wo.stage == 1 ? <span className='text-info-emphasis'>New</span> : wo.stage == 2 ? <span className='text-warning-emphasis'>Need Dispatch</span> : wo.stage == 3 ? <span className='text-success'>Dispatched</span> : wo.stage == 4 ? <span className='text-secondary'>Closed</span> : wo.stage == 5 ? <span className='text-primary'>Billing</span> : ''}</td>
+                      <td className='border-0 fw-bold'>
+                        {getStatus(wo)}
+                      </td>
                       <td className='border-0 fw-bold'>{wo.status == 1 ? <span className='text-info-emphasis'>Pending</span> : wo.status == 2 ? <span className='text-warning-emphasis'>Contacted</span> : wo.status == 3 ? <span className='text-success'>Confirm</span> : wo.status == 4 ? <span className='text-danger'>At Risk</span> : wo.status == 5 ? <span className='text-primary'>Delayed</span> : wo.status == 6 ? <span className='text-primary'>On hold</span> : wo.status == 7 ? <span className='text-primary'>En route</span> : wo.status == 8 ? <span className='text-primary'>Checked in</span> : wo.status == 9 ? <span className='text-primary'>Checked out</span> : wo.status == 10 ? <span className='text-primary'>Needs Approval</span> : wo.status == 11 ? <span className='text-primary'>Issue</span> : wo.status == 12 ? <span className='text-primary'>Approved</span> : wo.status == 13 ? <span className='text-primary'>Invoiced</span> : wo.status == 14 ? <span className='text-primary'>Past due</span> : wo.status == 15 ? <span className='text-primary'>Paid</span> : 'N/A'}</td>
                       <td className='border-0'>
                         <Link href={`/pdf/work/order/view/${wo.id}`} className='btn'><i class="fa-regular fa-eye"></i></Link>
@@ -119,7 +137,7 @@ const AllWorkOrder = ({ w_orders }) => {
                       <td className='border-0' style={{ borderRadius: '0 10px 10px 0' }}>
                         <div className='d-flex gap-1'>
                           <a href={`/pdf/work/order/download/${wo.id}`} download className='btn'><i class="fa-solid fa-download text-primary"></i></a>
-                          <button className='btn'><i class="fa-solid fa-trash text-danger"></i></button>
+                          
                         </div>
                       </td>
                     </tr>

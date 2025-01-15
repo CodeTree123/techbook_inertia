@@ -106,7 +106,7 @@ const PaySheet = ({ data, setData, payRef }) => {
                         <p className='me-3' style={{ width: 'max-content' }}>Travel</p>
                         <hr className="w-100" />
 
-                        <input name="travel" type="text" className="text-end ms-3 border" style={{ width: 100 }} defaultValue={data.travel_cost} onChange={(e) => setData({ ...data, travel_cost: e.target.value })} onBlur={(e) => updatePaysheet(e)} autoFocus />
+                        <input name="travel" type="text" className="text-end ms-3 border" style={{ width: 100 }} defaultValue={data.travel_cost} onChange={(e) => setData({ ...data, travel_cost: e.target.value })} autoFocus />
 
                     </div>
                 </form>

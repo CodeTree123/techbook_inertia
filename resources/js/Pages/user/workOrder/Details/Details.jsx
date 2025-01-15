@@ -15,6 +15,7 @@ import ProfitSheet from './components/ProfitSheet'
 import Task from './components/Task'
 import TimeLog from './components/TimeLog'
 import Deliverable from './components/Deliverable'
+import WorkRequested from './components/WorkRequested'
 
 const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
     return (
@@ -34,9 +35,13 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         priority: details?.priority,
                         requested_by: details?.requested_by,
                         employee_name: details?.employee?.name
-                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7}/>
-
-                    <ScopeOfWork id={id} details={{ scope_work: details?.scope_work }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7}/>
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
+                    <WorkRequested id={id} details={{ 
+                        wo_requested: details?.wo_requested,
+                        requested_date: details?.requested_date,
+                        request_type: details?.request_type
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
+                    <ScopeOfWork id={id} details={{ scope_work: details?.scope_work }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <ToolRequired id={id} details={{ r_tools: details?.r_tools, }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <TechProvidedPart id={id} details={{
                         ftech_id: details?.ftech_id,
@@ -46,7 +51,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                     <Shipment id={id} details={{
                         shipments: details?.shipments
                     }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
-                    <DocForTech id={id} details={{docs_for_tech: details?.docs_for_tech}} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
+                    <DocForTech id={id} details={{ docs_for_tech: details?.docs_for_tech }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <Dispatched id={id} details={{ instruction: details.instruction, }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <Task id={id} details={{
                         tasks: details?.tasks,

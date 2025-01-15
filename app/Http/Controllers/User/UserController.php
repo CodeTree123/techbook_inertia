@@ -1987,6 +1987,8 @@ class UserController extends Controller
                             'preference' => isset($ftech->preference) ? $ftech->preference : "",
                             'duration' => $durationText,
                             'radius' => $isWithinRadius,
+                            'tech_type' => $ftech->tech_type,
+                            'address_data' => $ftech->address_data,
                             'skills' => $ftech->skills->pluck('skill_name')->toArray(),
                         ];
                         $techniciansFound = true;
@@ -2114,8 +2116,6 @@ class UserController extends Controller
             'wo_manager' => 'required|exists:employees,id',
             'priority' => 'required|integer|min:1|max:5',
             'requested_by' => 'required|string|max:255',
-            'wo_requested' => 'required|string',
-            'scope_work' => 'required|string',
             'r_tools' => 'nullable|string',
             'site_id' => 'required|exists:customer_sites,id',
         ]);
@@ -2168,81 +2168,111 @@ class UserController extends Controller
         $invoice->work_order_id = $wo->id;
         $invoice->save();
 
-        foreach($request->techProvidedParts as $part) {
-            $techPart = new TechProvidedPart();
-
-            $techPart->wo_id = $wo->id;
-            $techPart->part_name = $part['part_name'];
-            $techPart->parts_number = $part['parts_number'];
-            $techPart->quantity = $part['quantity'];
-            $techPart->price = $part['price'];
-            $techPart->amount = $part['quantity'] * $part['price'];
-
-            $techPart->save();
-        }
-
-        foreach($request->shipments as $ship) {
-            $shipment = new OrderShipment();
-
-            $shipment->wo_id = $wo->id;
-            $shipment->associate = $ship['associate'];
-            $shipment->tracking_number = $ship['tracking_number'];
-            $shipment->shipment_from = $ship['shipment_from'];
-            $shipment->shipment_to = $ship['shipment_to'];
-            $shipment->created_at = $ship['created_at'];
-
-            $shipment->save();
-        }
-
-        foreach($request->contacts as $cnt){
-            $contact = new Contact();
-
-            $contact->wo_id = $wo->id;
-            $contact->title = $cnt['contact_title'];
-            $contact->name = $cnt['contact_name'];
-            $contact->phone = $cnt['contact_phone'];
-
-            $contact->save();
-        }
-
-        foreach($request->schedules as $sch){
-            $schdule = new WorkOrderSchedule();
-
-            $schdule->wo_id = $wo->id;
-            $schdule->on_site_by = $sch['on_site_by'];
-            $schdule->scheduled_time = $sch['scheduled_time'];
-            $schdule->h_operation = $sch['h_operation'];
-            $schdule->estimated_time = $sch['estimated_time'];
+        if($request->techProvidedParts){
+            foreach($request->techProvidedParts as $part) {
+                $techPart = new TechProvidedPart();
     
-            $schdule->save();
+                $techPart->wo_id = $wo->id;
+                $techPart->part_name = $part['part_name'];
+                $techPart->parts_number = $part['parts_number'];
+                $techPart->quantity = $part['quantity'];
+                $techPart->price = $part['price'];
+                $techPart->amount = $part['quantity'] * $part['price'];
+    
+                $techPart->save();
+            }
+        }
+        
+        if($request->shipments){
+            foreach($request->shipments as $ship) {
+                $shipment = new OrderShipment();
+    
+                $shipment->wo_id = $wo->id;
+                $shipment->associate = $ship['associate'];
+                $shipment->tracking_number = $ship['tracking_number'];
+                $shipment->shipment_from = $ship['shipment_from'];
+                $shipment->shipment_to = $ship['shipment_to'];
+                $shipment->created_at = $ship['created_at'];
+    
+                $shipment->save();
+            }
         }
 
-        foreach($request->otherExpenses as $other){
-            $otherExpense = new OtherExpense();
-
-            $otherExpense->wo_id = $wo->id;
-            $otherExpense->description = $other['other_description'];
-            $otherExpense->price = $other['other_price'];
-            $otherExpense->quantity = $other['other_quantity'] ?? 1;
-            $otherExpense->amount = $other['other_price'] * ($other['other_quantity'] ?? 1);
-
-            $otherExpense->save();
+        if($request->contacts){
+            foreach($request->contacts as $cnt){
+                $contact = new Contact();
+    
+                $contact->wo_id = $wo->id;
+                $contact->title = $cnt['contact_title'];
+                $contact->name = $cnt['contact_name'];
+                $contact->phone = $cnt['contact_phone'];
+    
+                $contact->save();
+            }
         }
 
-        foreach($request->tasks as $tsk){
-            $task = new Task();
+        if($request->schedules){
+            foreach($request->schedules as $sch){
+                $schdule = new WorkOrderSchedule();
     
-            $task->wo_id = $wo->id;
-            $task->type = $tsk['type'];
-            $task->reason = $tsk['reason'];
-            $task->description = $tsk['desc'];
-            $task->email = $tsk['email'];
-            $task->phone = $tsk['phone'];
-            $task->from = $tsk['from'];
-            $task->item = $tsk['item'];
+                $schdule->wo_id = $wo->id;
+                $schdule->on_site_by = $sch['on_site_by'];
+                $schdule->scheduled_time = $sch['scheduled_time'];
+                $schdule->h_operation = $sch['h_operation'];
+                $schdule->estimated_time = $sch['estimated_time'];
+        
+                $schdule->save();
+            }
+        }
+        
+        if($request->otherExpenses){
+            foreach($request->otherExpenses as $other){
+                $otherExpense = new OtherExpense();
+    
+                $otherExpense->wo_id = $wo->id;
+                $otherExpense->description = $other['other_description'];
+                $otherExpense->price = $other['other_price'];
+                $otherExpense->quantity = $other['other_quantity'] ?? 1;
+                $otherExpense->amount = $other['other_price'] * ($other['other_quantity'] ?? 1);
+    
+                $otherExpense->save();
+            }
+        }
 
+        if($request->tasks){
+            foreach($request->tasks as $tsk){
+                $task = new Task();
+        
+                $task->wo_id = $wo->id;
+                $task->type = $tsk['type'];
+                $task->reason = $tsk['reason'];
+                $task->description = $tsk['desc'];
+                $task->email = $tsk['email'];
+                $task->phone = $tsk['phone'];
+                $task->from = $tsk['from'];
+                $task->item = $tsk['item'];
     
-            $task->save();
+                $task->save();
+            }
+        }
+
+        if($request->file('techDocs')){
+            foreach($request->file('techDocs') as $file){
+
+                $originalName = $file->getClientOriginalName();
+                $fileName = time() . '_' . $file->getClientOriginalName();
+
+                $file->move(public_path('docs/technician'), $fileName);
+
+                $doc = new DocForTechnician();
+
+                $doc->wo_id = $wo->id;
+                $doc->technician_id = $wo->ftech_id;
+                $doc->file = 'docs/technician/' . $fileName;
+                $doc->name = $originalName;
+
+                $doc->save();
+            }
         }
 
         return redirect()->route('user.work.order.view.inertia', $wo->id);

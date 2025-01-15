@@ -1,14 +1,14 @@
 import JoditEditor from 'jodit-react';
-import React, { useRef } from 'react'
+import React, { useRef, useMemo } from 'react'
 
 const DispatchInstruction = ({data, setData, instructionRef}) => {
-    const editor = useRef(null);
+    const editor5 = useRef(null);
 
-    const config = {
+    const config = useMemo(() => ({
         readonly: false,
-        toolbarButtonSize: 'small',
-        placeholder: 'Start typing here...',
-    };
+        placeholder: 'Start typing...'
+    }), []);
+
     return (
         <div ref={instructionRef} className="card action-cards bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
@@ -20,10 +20,13 @@ const DispatchInstruction = ({data, setData, instructionRef}) => {
 
                 >
                     <JoditEditor
-                        ref={editor}
+                        ref={editor5}
                         value={data.instruction}
                         config={config}
-                        onBlur={(newContent) => setData({ ...data, instruction: newContent })}
+                        onChange={() => {
+                            const updatedContent = editor5.current?.value;
+                            setData({ ...data, instruction: updatedContent });
+                        }}
                     />
                 </div>
             </div>

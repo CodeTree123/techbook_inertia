@@ -60,7 +60,7 @@ const SiteHistory = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                         {wo?.scope_work ? wo.scope_work.replace(/<[^>]*>/g, '') : ''}
                                     </div>
                                     {
-                                        wo?.scope_work &&
+                                        wo?.scope_work && !show &&
                                         <div className='position-absolute p-2 border rounded shadow bg-white w-100 tooltip-custom' style={{ bottom: '50px', maxHeight: '400px', overflow: 'hidden' }}>
                                             <div className='position-relative'>
                                                 <div dangerouslySetInnerHTML={{ __html: wo?.scope_work }} style={{ height: '384px', overflow: 'hidden' }} />
