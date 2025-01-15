@@ -76,9 +76,6 @@
             border-bottom: 0 !important;
         }
 
-
-
-
         #scope_work {
             display: none;
             line-height: 20px !important;
@@ -127,14 +124,6 @@
             input,
             textarea {
                 font-family: 'CustomFont !important'
-            }
-
-            .bg-teal-table {
-                background-color: rgba(175, 225, 175, 0.5) !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                box-shadow: inset 0 0 0 1000px rgba(175, 225, 175, 0.5) !important;
-                /* Fallback */
             }
 
             address {
@@ -223,10 +212,6 @@
                 padding: 0;
             }
 
-            /* Avoid breaking the table rows between pages */
-            /* table {
-                                            page-break-inside: avoid;
-                                        } */
 
             .wo-req,
             .wo-perform {
@@ -241,14 +226,7 @@
                 page-break-inside: avoid;
             }
 
-            */
-
-            /* .top-print-nav {
-                                            page-break-inside: break;
-                                        }
-
-                                        /* Print layout specific to margins */
-            .container-fluid {
+            */ .container-fluid {
                 padding-left: 0;
                 padding-right: 0;
             }
@@ -317,6 +295,26 @@
     </style>
     <style>
         @media print {
+            .top-table {
+                width: max-content;
+            }
+
+            .top-table tr {
+                border-bottom: none !important;
+            }
+
+            .bg-teal-table th {
+                background-color: rgba(175, 225, 175, 0.5) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .bg-teal-table2 th {
+                background-color: #ECF3F8 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
 
             thead {
                 background-color: #6C757D
@@ -377,8 +375,8 @@
                         </address>
                     </div>
 
-                    <div class="col-md-3 text-right">
-                        <table class="table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
+                    <div class="col-md-3 text-right d-flex justify-content-end">
+                        <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                             <tr>
                                 <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
                                             class="tax">Customer ID</span></span></td>
@@ -423,7 +421,7 @@
                         <div class="margin-shop text-start" style="padding-left: 10px;">
                             <h6 class="tax">Ship To:</h6>
                             <span>{{ @$invoice->site->location }}<br>{{ @$invoice->site->address_1 }}<br>
-                                {{ @$invoice->site->city }}, {{ @$invoice->site->state }}
+                                {{ @$invoice->site->city }} {{ @$invoice->site->state }}
                                 {{ @$invoice->site->zipcode }} </span>
                         </div>
                     </div>
@@ -479,7 +477,7 @@
                     </div>
                     <table class="table mt-5 price-table" style="width:100%; justify-content: center;">
                         <thead>
-                            <tr style="background-color: rgba(61, 135, 188, 0.1);">
+                            <tr class="bg-teal-table2" style="background-color: rgba(61, 135, 188, 0.1);">
                                 <th>Qty.</th>
                                 <th>Description</th>
                                 <th>Date</th>
@@ -489,7 +487,7 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                        @if($firstHour->work_order_id == $invoice->id)
+                            @if(@$firstHour->work_order_id == $invoice->id)
                             <tr class="calc-tr">
                                 <td>
                                     <input type="text" class="total-hours p-2"
@@ -525,40 +523,40 @@
                             @endif
 
                             @if($aRate > 1)
-                                @foreach (@$wps as $wp)
-                                <tr class="calc-tr">
-                                    <td>
-                                        <input type="text" class="total-hours p-2"
-                                            value="{{ str_replace(':', '.', $aRate - 1) }}"
-                                            data-rate="{{ @$wp->calculated_rate }}" style="border:none">
-                                    </td>
-                                    <td>
-                                        <textarea class="wo-per w-100" style="border:none; height: 32px !important">{{ @$wp->description }}</textarea>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="date p-2" value="{{ @$wp->date }}"
-                                            style="border:none">
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <span class="p-2">$</span>
-                                            <input type="text" class="calculated-rate"
-                                                value="{{ @$wp->calculated_rate }}" style="border:none">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <span class="p-2">$</span>
-                                            <input type="text" class="amount" value="{{ @$wp->amount }}"
-                                                style="border:none" readonly>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-danger removeBtn"
-                                            style="display: none; border:none;">✖</button>
-                                    </td> <!-- Hidden remove button -->
-                                </tr>
-                                @endforeach
+                            @foreach (@$wps as $wp)
+                            <tr class="calc-tr">
+                                <td>
+                                    <input type="text" class="total-hours p-2"
+                                        value="{{ str_replace(':', '.', $aRate - 1) }}"
+                                        data-rate="{{ @$wp->calculated_rate }}" style="border:none">
+                                </td>
+                                <td>
+                                    <textarea class="wo-per w-100" style="border:none; height: 32px !important">{{ @$wp->description }}</textarea>
+                                </td>
+                                <td>
+                                    <input type="text" class="date p-2" value="{{ @$wp->date }}"
+                                        style="border:none">
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="p-2">$</span>
+                                        <input type="text" class="calculated-rate"
+                                            value="{{ optional($wp->workOrder?->customer)->s_rate_a ?? 'N/A' }}" style="border:none">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="p-2">$</span>
+                                        <input type="text" class="amount" value="{{ @$wp->amount }}"
+                                            style="border:none" readonly>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger removeBtn"
+                                        style="display: none; border:none;">✖</button>
+                                </td> <!-- Hidden remove button -->
+                            </tr>
+                            @endforeach
                             @endif
 
                         </tbody>
