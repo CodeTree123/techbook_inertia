@@ -755,7 +755,7 @@ class CustomerController extends Controller
         $firstHour = $attend->first();
         //dd($firstHour->work_order_id);
         $wps= $attend->get();
-        $aRate = CheckInOut::where('work_order_id', $id)->sum('total_hours');
+        $aRate = CheckInOut::with('workOrder.customer')->where('work_order_id', $id)->sum('total_hours');
         //dd($bataRate = $hours);
 
         // Initialize total price variable
