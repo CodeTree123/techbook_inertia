@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import TaskModal from './TaskModal';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
+const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         type: '',
         reason: '',
@@ -236,7 +236,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
                             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for ' + details?.technician?.company_name}</h3>
-                                <TaskModal id={id} onSuccessMessage={onSuccessMessage} />
+                                <TaskModal id={id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
 
                             </div>
                             <div className="card-body bg-white">
@@ -252,7 +252,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                         className="form-check-input ms-0 me-2"
                                                         type="checkbox"
                                                         value="1"
-                                                        disabled={details.stage !== 3 || !details.ftech_id}
+                                                        disabled={details.stage !== 3 || !details.ftech_id || is_cancelled}
                                                         checked={
                                                             details.check_in_out?.some((check_in_out) => check_in_out.check_in && !check_in_out.check_out) || false
                                                         }
@@ -283,6 +283,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                             type="button"
                                                             className="btn btn-dark col-2 addReasonButton"
                                                             onClick={() => handleAddDefaultReasonClick()}
+                                                            disabled={is_cancelled}
                                                         >
                                                             + Add reason
                                                         </button>
@@ -333,6 +334,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                                         id={`completeTaskFileUpload-${task.id}`}
                                                                         className="invisible"
                                                                         onChange={(e) => addFilePhoto(e, task.id)}
+                                                                        disabled={is_cancelled}
                                                                     />
                                                                 </form>
                                                             ) : (
@@ -346,6 +348,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                                         id={`completeTaskCheckbox-${task.id}`}
                                                                         onChange={(e) => completeTaskForm(e, task.id, task.is_completed)}
                                                                         checked={!!task.is_completed}
+                                                                        disabled={is_cancelled}
                                                                     />
                                                                 </form>
                                                             )
@@ -471,7 +474,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                     <div className="d-flex action-group gap-2">
                                                         {
                                                             editable != index &&
-                                                            <button onClick={() => handleEdit(index)} className="btn edit-btn" style={{ height: 'max-content' }}>
+                                                            <button onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                                                 <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                                             </button>
                                                         }
@@ -490,7 +493,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                         }
                                                         {
                                                             editable != index &&
-                                                            <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn" style={{ height: 'max-content' }}>
+                                                            <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                                                 <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                                             </button>
                                                         }
@@ -520,7 +523,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                         className="form-check-input ms-0 me-2"
                                                         type="checkbox"
                                                         value=""
-                                                        disabled={details.stage != 3}
+                                                        disabled={details.stage != 3 || is_cancelled}
                                                         checked={!!details.check_in_out?.slice(-1)[0]?.check_out}
                                                     />
                                                     <div>
@@ -558,7 +561,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                         <button className='btn btn-outline-danger' onClick={() => setAddClose(false)}>Cancel</button>
                                                     </div>
                                                 </div> :
-                                                <button className='btn btn-outline-dark' onClick={handleAddClose}>+ Add Closeout Note</button>
+                                                <button className='btn btn-outline-dark' onClick={handleAddClose} disabled={is_cancelled}>+ Add Closeout Note</button>
                                         }
                                         {
                                             details?.notes?.map((note) => (
@@ -585,7 +588,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                 <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
                                     <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                         <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks for {tech.engineer.name}</h3>
-                                        <TaskModal id={id} techId={tech.tech_id} onSuccessMessage={onSuccessMessage} />
+                                        <TaskModal id={id} techId={tech.tech_id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} />
 
                                     </div>
                                     <div className="card-body bg-white">
@@ -600,7 +603,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                             type="checkbox"
                                                             value="1"
                                                             id={`checkin-${tech.tech_id}`}
-                                                            disabled={details.stage != 3 || !details.ftech_id}
+                                                            disabled={details.stage != 3 || !details.ftech_id || is_cancelled}
                                                             checked={
                                                                 details.check_in_out?.some(
                                                                     (checkInOut) =>
@@ -649,6 +652,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                                 data-id={`reason-${tech.id}`}
                                                                 className="btn btn-dark col-2 addReasonButton"
                                                                 onClick={() => handleAddReasonClick(tech.id)}
+                                                                disabled={is_cancelled}
                                                             >
                                                                 + Add reason
                                                             </button>
@@ -697,6 +701,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                                                 id={`completeTaskFileUpload-${task.id}`}
                                                                                 className="invisible"
                                                                                 onChange={(e) => addFilePhoto(e, task.id)}
+                                                                                disabled={is_cancelled}
                                                                             />
                                                                         </form>
                                                                     ) : (
@@ -710,6 +715,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                                                 id={`completeTaskCheckbox-${task.id}`}
                                                                                 onChange={(e) => completeTaskForm(e, task.id, task.is_completed)}
                                                                                 checked={!!task.is_completed}
+                                                                                disabled={is_cancelled}
                                                                             />
                                                                         </form>
                                                                     )
@@ -835,7 +841,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                             <div className="d-flex action-group gap-2">
                                                                 {
                                                                     editable != index &&
-                                                                    <button onClick={() => handleEdit(index)} className="btn edit-btn" style={{ height: 'max-content' }}>
+                                                                    <button onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                                                         <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                                                     </button>
                                                                 }
@@ -854,7 +860,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                                 }
                                                                 {
                                                                     editable != index &&
-                                                                    <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn" style={{ height: 'max-content' }}>
+                                                                    <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                                                         <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                                                     </button>
                                                                 }
@@ -884,7 +890,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                             type="checkbox"
                                                             value=""
                                                             id={`checkout-${tech.tech_id}`}
-                                                            disabled={details.stage != 3}
+                                                            disabled={details.stage != 3 || is_cancelled}
                                                             checked={
                                                                 details.check_in_out
                                                                     .filter((checkInOut) => checkInOut.tech_id === tech.tech_id)
@@ -925,7 +931,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                                             <button className='btn btn-outline-danger' onClick={() => setAddCloseOut(null)}>Cancel</button>
                                                         </div>
                                                     </div> :
-                                                    <button className='btn btn-outline-dark' onClick={() => handleAddCloseout(tech.id)}>+ Add Closeout Note</button>
+                                                    <button className='btn btn-outline-dark' onClick={() => handleAddCloseout(tech.id)} disabled={is_cancelled}>+ Add Closeout Note</button>
                                             }
                                             {
                                                 details?.notes?.map((note) => (

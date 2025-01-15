@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import ContactTable from './ContactTable';
 
-const Contact = ({id, details, onSuccessMessage}) => {
+const Contact = ({id, details, onSuccessMessage, is_cancelled}) => {
     const [addContact, setAddContact] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'title': '',
@@ -28,7 +28,7 @@ const Contact = ({id, details, onSuccessMessage}) => {
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Contacts</h3>
             </div>
             <div className="card-body bg-white">
-                <ContactTable details={details} onSuccessMessage={onSuccessMessage}/>
+                <ContactTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
                 {
                     addContact &&
                     <form onSubmit={(e)=>submit(e)} className="py-3 border-bottom">
@@ -56,7 +56,7 @@ const Contact = ({id, details, onSuccessMessage}) => {
                 {
                     !addContact &&
                     <div className="mt-3">
-                        <button onClick={() => setAddContact(true)} className="btn btn-outline-dark addContact" style={{ display: 'block' }}>Add Contact</button>
+                        <button onClick={() => setAddContact(true)} className="btn btn-outline-dark addContact" style={{ display: 'block' }} disabled={is_cancelled}>Add Contact</button>
                     </div>
                 }
 

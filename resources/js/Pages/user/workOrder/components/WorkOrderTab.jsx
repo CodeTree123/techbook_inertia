@@ -9,20 +9,6 @@ import WoLog from '../WoLog/WoLog';
 const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
     const [tabIndex, setTabIndex] = useState(0);
 
-    useEffect(() => {
-        const savedTabIndex = localStorage.getItem(`tabIndex-${id}`);
-        if (savedTabIndex !== null) {
-            setTabIndex(parseInt(savedTabIndex, 10));
-        } else {
-            setTabIndex(0);
-        }
-    }, [id]);
-
-    useEffect(() => {
-        localStorage.setItem(`tabIndex-${id}`, tabIndex.toString());
-    }, [tabIndex, id]);
-
-
     return (
         <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
             <TabList className='btn-group w-100 ps-0 mb-4'>
@@ -53,10 +39,10 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                     ftech_id: details?.ftech_id,
                     tech_remove_reasons: details?.tech_remove_reasons,
                     technician: details?.technician
-                }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
+                }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7}/>
             </TabPanel>
             <TabPanel>
-                <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage}/>
+                <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7}/>
             </TabPanel>
             <TabPanel>
                 <WoLog id={id} details={details?.time_logs} timezone={details?.site?.time_zone}/>

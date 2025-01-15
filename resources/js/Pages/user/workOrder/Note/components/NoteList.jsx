@@ -2,7 +2,8 @@ import { useForm } from '@inertiajs/react';
 import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
-const NoteList = ({ id, details, timezone, addNote, setAddNote, onSuccessMessage, onErrorMessage }) => {
+const NoteList = ({ id, details, addNote, setAddNote, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+    const timezone = 'CT'
     const timezoneMap = {
         'PT': 'America/Los_Angeles',
         'MT': 'America/Denver',
@@ -39,7 +40,7 @@ const NoteList = ({ id, details, timezone, addNote, setAddNote, onSuccessMessage
                 <div className='rounded-5 bg-primary d-flex justify-content-center align-items-center' style={{ width: '50px', height: '50px' }}>
                     <h2 className='mb-0 text-white fw-bold' style={{ fontSize: '35px' }}>{details?.user?.firstname.charAt(0)}</h2>
                 </div>
-                <a className='text-primary' style={{ fontSize: '12px', whiteSpace: 'nowrap', cursor: 'pointer' }} onClick={() => setAddNote(addNote ? null : details.id)}>+ Add Note</a>
+                <button className='text-primary border-0 bg-transparent' style={{ fontSize: '12px', whiteSpace: 'nowrap', cursor: 'pointer' }} onClick={() => setAddNote(addNote ? null : details.id)} disabled={is_cancelled}>+ Add Note</button>
             </div>
             <div className='w-100'>
                 <div className='d-flex justify-content-between align-items-center mb-1'>

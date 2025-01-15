@@ -34,20 +34,20 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         priority: details?.priority,
                         requested_by: details?.requested_by,
                         employee_name: details?.employee?.name
-                    }} onSuccessMessage={onSuccessMessage} />
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7}/>
 
-                    <ScopeOfWork id={id} details={{ scope_work: details?.scope_work }} onSuccessMessage={onSuccessMessage} />
-                    <ToolRequired id={id} details={{ r_tools: details?.r_tools, }} onSuccessMessage={onSuccessMessage} />
+                    <ScopeOfWork id={id} details={{ scope_work: details?.scope_work }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7}/>
+                    <ToolRequired id={id} details={{ r_tools: details?.r_tools, }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <TechProvidedPart id={id} details={{
                         ftech_id: details?.ftech_id,
                         tech_provided_parts: details?.tech_provided_parts
-                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
+                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7} />
                     <PartByTC />
                     <Shipment id={id} details={{
                         shipments: details?.shipments
-                    }} onSuccessMessage={onSuccessMessage} />
-                    <DocForTech id={id} details={{docs_for_tech: details?.docs_for_tech}} onSuccessMessage={onSuccessMessage} />
-                    <Dispatched id={id} details={{ instruction: details.instruction, }} onSuccessMessage={onSuccessMessage} />
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
+                    <DocForTech id={id} details={{docs_for_tech: details?.docs_for_tech}} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
+                    <Dispatched id={id} details={{ instruction: details.instruction, }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <Task id={id} details={{
                         tasks: details?.tasks,
                         ftech_id: details?.ftech_id,
@@ -59,11 +59,11 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         },
                         notes: details?.notes,
                         assigned_tech: details?.assigned_tech
-                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
-                    <Deliverable id={id} details={details?.tasks} onSuccessMessage={onSuccessMessage} />
+                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7} />
+                    <Deliverable id={id} details={details?.tasks} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                 </div>
                 <div className='col-5'>
-                    <Contact id={id} details={details?.contacts} onSuccessMessage={onSuccessMessage} />
+                    <Contact id={id} details={details?.contacts} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <Schedule id={id} details={{
                         site: {
                             time_zone: details?.site?.time_zone
@@ -74,7 +74,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                             name: details?.employee?.name
                         },
                         schedules: details?.schedules
-                    }} onSuccessMessage={onSuccessMessage} />
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <Location id={id} details={{
                         slug: details.slug,
                         site_id: details?.site_id,
@@ -88,7 +88,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                             time_zone: details?.site?.time_zone,
                             zipcode: details?.site?.zipcode
                         }
-                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} />
+                    }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7} />
                     <PaySheet id={id} details={{
                         technician: {
                             rate: details?.technician?.rate,
@@ -98,7 +98,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         tech_provided_parts: details?.tech_provided_parts,
                         other_expenses: details?.other_expenses,
                         travel_cost: details?.travel_cost,
-                    }} onSuccessMessage={onSuccessMessage} />
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                     <ProfitSheet />
                     <TimeLog details={{
                         check_in_out: details?.check_in_out,
@@ -109,7 +109,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         technician: {
                             company_name: details?.technician?.company_name
                         }
-                    }} onSuccessMessage={onSuccessMessage} />
+                    }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 
-const TaskModal = ({ id, techId, onSuccessMessage }) => {
+const TaskModal = ({ id, techId, onSuccessMessage, is_cancelled }) => {
 
     const [showTask, setShowTask] = useState(false);
 
@@ -34,7 +34,7 @@ const TaskModal = ({ id, techId, onSuccessMessage }) => {
 
     return (
         <>
-            <Button variant="outline-dark" onClick={handleShowHold}>
+            <Button variant="outline-dark" onClick={handleShowHold} disabled={is_cancelled}>
                 + Add Task
             </Button>
             <Modal show={showTask} onHide={handleCloseHold}>

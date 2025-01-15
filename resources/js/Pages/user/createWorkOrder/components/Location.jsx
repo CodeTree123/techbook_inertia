@@ -63,11 +63,9 @@ const Location = ({ data, setData, errors, locationRef }) => {
         const newMapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyCZQq1GlPJb8PrwOkCiihS-tAq0qS-O1j8&q=${latitude},${longitude}`;
         setMapUrl(newMapUrl);
     }, [siteData]);
-console.log(siteData);
-
 
     return (
-        <div ref={locationRef} className="card bg-white shadow border-0 mb-4">
+        <div ref={locationRef} className="card bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Location</h3>
             </div>

@@ -1,7 +1,7 @@
 import { router, useForm } from '@inertiajs/react';
 import React from 'react'
 
-const Deliverable = ({ id, details, onSuccessMessage }) => {
+const Deliverable = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
 
     });
@@ -158,7 +158,7 @@ const Deliverable = ({ id, details, onSuccessMessage }) => {
                                 </div>
 
                                 <label htmlFor={`morefile-${description}`} className='py-2' style={{ cursor: 'pointer' }}>+ Add File</label>
-                                <input id={`morefile-${description}`} type="file" className='invisible' onChange={(e) => addFilePhoto(e, description)} />
+                                <input id={`morefile-${description}`} type="file" className='invisible' onChange={(e) => addFilePhoto(e, description)} disabled={is_cancelled} />
                             </div>
                         </div>
                     ))

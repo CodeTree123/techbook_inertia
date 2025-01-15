@@ -4,7 +4,7 @@ import ScheduleTable from './ScheduleTable';
 import { Dropdown } from 'react-bootstrap';
 import { DateTime } from 'luxon';
 
-const Schedule = ({ id, details, onSuccessMessage }) => {
+const Schedule = ({ id, details, onSuccessMessage, is_cancelled }) => {
     
     const [addSchedule, setAddSchedule] = useState(false);
 
@@ -47,7 +47,6 @@ const Schedule = ({ id, details, onSuccessMessage }) => {
         });
     };
 
-
     const timezoneMap = {
         'PT': 'America/Los_Angeles',
         'MT': 'America/Denver',
@@ -69,15 +68,15 @@ const Schedule = ({ id, details, onSuccessMessage }) => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={(e) => updateScheduleType(e, 'single')}>Single Schedule</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => updateScheduleType(e, 'multiple')}>Multiple Schedule</Dropdown.Item>
+                        <Dropdown.Item disabled={is_cancelled} onClick={(e) => updateScheduleType(e, 'single')}>Single Schedule</Dropdown.Item>
+                        <Dropdown.Item disabled={is_cancelled} onClick={(e) => updateScheduleType(e, 'multiple')}>Multiple Schedule</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
 
             </div>
             <div className="card-body bg-white">
                 <h6 className='mb-3'>Current Site Time: {DateTime.now().setZone(selectedTimezone).toLocaleString(DateTime.TIME_SIMPLE)} ({selectedTimezone})</h6>
-                <ScheduleTable details={details} onSuccessMessage={onSuccessMessage} />
+                <ScheduleTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
                 {
                     addSchedule ?
                         <form onSubmit={(e) => submit(e)} className="py-3 border-bottom">
@@ -106,7 +105,7 @@ const Schedule = ({ id, details, onSuccessMessage }) => {
                                 </button>
                             </div>
                         </form> :
-                        <button type='button' onClick={() => setAddSchedule(true)} className="btn btn-outline-dark addSchedule" style={{ display: 'block' }} disabled={details.schedule_type == 'single' && details?.schedules.length == 1}>+ Add Schedule</button>
+                        <button type='button' onClick={() => setAddSchedule(true)} className="btn btn-outline-dark addSchedule" style={{ display: 'block' }} disabled={details.schedule_type == 'single' && details?.schedules.length == 1 || is_cancelled}>+ Add Schedule</button>
                 }
 
             </div>

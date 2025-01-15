@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import JoditEditor from 'jodit-react';
 import React, { useRef, useState } from 'react'
 
-const ScopeOfWork = ({ id, details, onSuccessMessage }) => {
+const ScopeOfWork = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const editor = useRef(null);
     const [editable, setEditable] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -32,12 +32,13 @@ const ScopeOfWork = ({ id, details, onSuccessMessage }) => {
 
                 <div className="d-flex gap-2">
                     {!editable &&
-                        <a
-                            className="btn"
+                        <button
+                            className="btn border-0"
                             onClick={() => setEditable(!editable)}
+                            disabled={is_cancelled}
                         >
                             <i className="fa-solid fa-pen-to-square"></i>
-                        </a>
+                        </button>
                     }
                     {editable && (
                         <>

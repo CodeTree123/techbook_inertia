@@ -1,9 +1,11 @@
 import { Link } from '@inertiajs/react'
 import { DateTime } from 'luxon'
-import React from 'react'
+import React, { useState } from 'react'
+import { Modal } from 'react-bootstrap'
 
-const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }) => {
+const SiteHistory = ({ id, details, onSuccessMessage, onErrorMessage }) => {
 
+    const timezone = 'CT'
     const timezoneMap = {
         'PT': 'America/Los_Angeles',
         'MT': 'America/Denver',
@@ -15,6 +17,14 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
     };
 
     const selectedTimezone = timezoneMap[timezone] || 'America/Chicago';
+
+    const [show, setShow] = useState(false);
+    const [modalData, setModalData] = useState(null);
+    const handleClose = () => setShow(false);
+    const handleShow = (data) => {
+        setShow(true)
+        setModalData(data)
+    }
 
     return (
         <div>
@@ -51,8 +61,13 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
                                     </div>
                                     {
                                         wo?.scope_work &&
-                                        <div className='position-absolute p-2 border rounded shadow bg-white w-100 tooltip-custom' style={{ bottom: '50px' }}>
-                                            {wo?.scope_work ? wo.scope_work.replace(/<[^>]*>/g, '') : ''}
+                                        <div className='position-absolute p-2 border rounded shadow bg-white w-100 tooltip-custom' style={{ bottom: '50px', maxHeight: '400px', overflow: 'hidden' }}>
+                                            <div className='position-relative'>
+                                                <div dangerouslySetInnerHTML={{ __html: wo?.scope_work }} style={{ height: '384px', overflow: 'hidden' }} />
+                                                <span className='text-primary position-absolute bottom-0 end-0' style={{ cursor: 'pointer' }} onClick={()=>handleShow(wo?.scope_work)}>
+                                                    <i class="fa-solid fa-expand"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     }
 
@@ -62,7 +77,11 @@ const SiteHistory = ({ id, details, timezone, onSuccessMessage, onErrorMessage }
                                 <td className='border-0 fw-bold' style={{ borderRadius: '0 10px 10px 0' }}>#59552</td>
                             </tr>
                         ))}
-
+                        <Modal show={show} onHide={handleClose} size="lg" centered >
+                            <Modal.Body style={{zIndex: '999999'}}>
+                                <div dangerouslySetInnerHTML={{ __html: modalData }} />
+                            </Modal.Body>
+                        </Modal>
                     </tbody>
                 </table>
             </div>

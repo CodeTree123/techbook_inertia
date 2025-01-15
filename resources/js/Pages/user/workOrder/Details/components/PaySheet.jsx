@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import OtherExpenses from './OtherExpenses';
 
-const PaySheet = ({ id, details, onSuccessMessage }) => {
+const PaySheet = ({ id, details, onSuccessMessage, is_cancelled }) => {
     
     const rate = details?.technician?.rate?.['STD'] || 0;
     const totalHours = details?.check_in_out.reduce((sum, item) => {
@@ -91,9 +91,9 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                         }
                         {
                             !editable &&
-                            <div className='position-absolute rounded-5 bg-primary text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '-15px', top: '-10px' }} onClick={() => setEditable(true)}>
+                            <button className='position-absolute rounded-5 border-0 bg-primary text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '-15px', top: '-10px' }} disabled={is_cancelled} onClick={() => setEditable(true)}>
                                 <i class="fa-solid fa-pencil" style={{ fontSize: '10px' }}></i>
-                            </div>
+                            </button>
                         }
 
                     </div>
@@ -112,7 +112,7 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                     <div className="d-flex mt-2 justify-content-between" style={{ fontSize: 20, fontWeight: '400 !important' }}>
                         <p>Others</p>
                     </div>
-                    <OtherExpenses id={id} parts={details?.other_expenses} onSuccessMessage={onSuccessMessage}/>
+                    <OtherExpenses id={id} parts={details?.other_expenses} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
                     
                 </form>
                 {
@@ -142,7 +142,7 @@ const PaySheet = ({ id, details, onSuccessMessage }) => {
                 }
                 {
                     !addExpense &&
-                    <button className="btn btn-outline-dark my-3" onClick={() => setAddExpense(true)}>+ Add Items</button>
+                    <button className="btn btn-outline-dark my-3" onClick={() => setAddExpense(true)} disabled={is_cancelled}>+ Add Items</button>
                 }
 
                 <div className="d-flex mt-2 justify-content-between" style={{ fontSize: 20 }}>

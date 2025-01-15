@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 
-const ScheduleTable = ({ details, onSuccessMessage }) => {
+const ScheduleTable = ({ details, onSuccessMessage, is_cancelled }) => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based
@@ -100,8 +100,7 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                                         <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
                                     </span>
                                 }
-                            </b>
-                            <p>Approximate hours to complete</p>
+                            </b><br />
                             {
                                 editableRow !== 0 &&
                                 <b className="nrml-txt">Hours of operation: {details?.schedules[0]?.h_operation}</b>
@@ -113,7 +112,7 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                             <br />
                             {
                                     editableRow !== 0 &&
-                                    <b className="nrml-txt mb-2">Estimated Hours: {details?.schedules[0]?.estimated_time} hour(s)</b>
+                                    <b className="nrml-txt mb-2">Approximate hours to complete: {details?.schedules[0]?.estimated_time} hour(s)</b>
                                 }
                             {
                                 editableRow === 0 &&
@@ -132,25 +131,25 @@ const ScheduleTable = ({ details, onSuccessMessage }) => {
                         <div className="d-flex action-group gap-2 position-absolute end-0 top-0 p-3">
                             {
                                 editableRow !== 0 &&
-                                <button type='button' onClick={() => handleEdit(0)} className="btn edit-btn">
+                                <button type='button' onClick={() => handleEdit(0)} disabled={is_cancelled} className="btn edit-btn border-0">
                                     <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editableRow !== 0 &&
-                                <button onClick={(e) => deleteSchedule(e, details?.schedules[0]?.id)} type="button" className="btn" style={{ height: "max-content;" }}>
+                                <button onClick={(e) => deleteSchedule(e, details?.schedules[0]?.id)} disabled={is_cancelled} type="button" className="btn border-0" style={{ height: "max-content;" }}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
                                 </button>
                             }
                             {
                                 editableRow === 0 &&
-                                <button type='submit' className="btn btn-success fw-bold">
+                                <button type='submit' className="btn btn-success border-0 fw-bold" disabled={is_cancelled}>
                                     Save
                                 </button>
                             }
                             {
                                 editableRow === 0 &&
-                                <button type='button' className="btn btn-danger fw-bold" onClick={() => handleCancel()}>
+                                <button type='button' className="btn btn-danger border-0 fw-bold" onClick={() => handleCancel()} disabled={is_cancelled}>
                                     Cancel
                                 </button>
                             }

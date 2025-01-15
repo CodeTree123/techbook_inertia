@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import sidebarIcon from '../../../../../../public/assets/images/sidebar.png'
 import OffCanvasData from './components/OffCanvasData';
 import { DateTime } from 'luxon';
-const WoLog = ({ id, details, timezone }) => {
+const WoLog = ({ id, details }) => {
     const [show, setShow] = useState(false);
-
+    const timezone = 'CT'
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
@@ -18,7 +18,7 @@ const WoLog = ({ id, details, timezone }) => {
         'HST': 'Pacific/Honolulu',
     };
 
-    const selectedTimezone = timezoneMap[timezone];
+    const selectedTimezone = 'America/Chicago';
 
     return (
         <div>

@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async';
 
-const Overview = ({ id, details, onSuccessMessage }) => {
+const Overview = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const [editable, setEditable] = useState(false);
 
     const loadOptions = async (inputValue) => {
@@ -68,18 +68,18 @@ const Overview = ({ id, details, onSuccessMessage }) => {
     
 
     return (
-        <form onSubmit={submit} className="card action-cards bg-white shadow border-0 mb-4">
+        <div className="card action-cards bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Overview</h3>
                 <div className="d-flex action-group gap-2">
 
                     {
                         !editable ?
-                            <a type="button" className="btn edit-btn" onClick={() => setEditable(!editable)}>
+                            <button type="button" className="btn edit-btn border-0" onClick={() => setEditable(!editable)} disabled={is_cancelled}>
                                 <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
-                            </a> : 
+                            </button> : 
                             <>
-                                <button type='submit' className="btn btn-success fw-bold">
+                                <button onClick={submit} type='submit' className="btn btn-success fw-bold">
                                     Save
                                 </button>
                                 <button type='button' className="btn btn-danger fw-bold" onClick={() => setEditable(!editable)}>
@@ -184,7 +184,7 @@ const Overview = ({ id, details, onSuccessMessage }) => {
                     </table>
                 </div>
             </div>
-        </form>
+        </div>
 
     )
 }

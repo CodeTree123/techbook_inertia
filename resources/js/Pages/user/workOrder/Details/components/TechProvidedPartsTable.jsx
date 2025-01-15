@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
-const TechProvidedPartsTable = ({ details, onSuccessMessage }) => {
+const TechProvidedPartsTable = ({ details, onSuccessMessage, is_cancelled }) => {
     const [editingRow, setEditingRow] = useState(null);
 
     const handleEdit = (index) => {
@@ -87,25 +87,25 @@ const TechProvidedPartsTable = ({ details, onSuccessMessage }) => {
                         <div className="col-2 d-flex action-group">
                             {
                                 editingRow != index &&
-                                <button type="button" className="btn" onClick={() => handleEdit(index)} style={{ display: 'block' }}>
+                                <button type="button" className="btn" onClick={() => handleEdit(index)} style={{ display: 'block' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-pen-to-square text-primary" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editingRow == index &&
-                                <button type='submit' className="btn fw-bold">
+                                <button type='submit' className="btn fw-bold" disabled={is_cancelled}>
                                     <i className="fa-regular fa-floppy-disk text-success" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editingRow == index &&
-                                <button type="button" onClick={handleCancel} className="btn fw-bold">
+                                <button type="button" onClick={handleCancel} className="btn fw-bold" disabled={is_cancelled}>
                                     <i className="fa-solid fa-ban text-danger" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editingRow != index &&
-                                <button onClick={(e)=>deletePart(e, part.id)} type="button" className="btn" style={{ height: 'max-content' }}>
+                                <button onClick={(e)=>deletePart(e, part.id)} type="button" className="btn" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                 </button>
                             }

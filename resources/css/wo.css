@@ -256,7 +256,7 @@ textarea {
 }
 
 .tooltip-trig:hover .tooltip-custom {
-    z-index: 99999;
+    z-index: 9999;
     overflow: unset !important;
     opacity: 1;
     transform: translateY(0);
@@ -264,12 +264,14 @@ textarea {
 
 .sticky-sidebar {
     position: relative;
+    transition: padding-top 0.5s ease-in-out;
 }
 
 .sticky-sidebar.sticky {
+    transition: 0.5s ease-in-out;
     position: sticky;
     top: 0;
-    padding-top: 150px !important;
+    padding-top: 130px !important;
     padding: 10px;
     z-index: 1;
 }

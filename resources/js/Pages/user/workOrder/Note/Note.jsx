@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import NoteList from './components/NoteList';
 
-const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage }) => {
+const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage, is_cancelled }) => {
 
     const [activeFilter, setActiveFilter] = useState(0);
 
@@ -72,14 +72,14 @@ const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage }) => {
                         <option value="close_out_notes">Closeout Notes</option>
                     </select>
                 </div>
-                <button className='btn px-5 fw-bold text-black' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeNote(e)}>POST</button>
+                <button className='btn px-5 fw-bold text-black border-0' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeNote(e)} disabled={is_cancelled}>POST</button>
             </div>
 
             {
                 details.map((note) => (
 
                     filterByNoteType(note) && note.related_note == null && (
-                        <NoteList id={id} details={note} timezone={timezone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} addNote={addNote} setAddNote={setAddNote} />
+                        <NoteList id={id} details={note} timezone={timezone} is_cancelled={is_cancelled} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} addNote={addNote} setAddNote={setAddNote} />
                     )
                 ))
             }

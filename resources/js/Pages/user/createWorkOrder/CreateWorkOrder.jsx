@@ -8,6 +8,12 @@ import Location from './components/Location'
 import TechProvidedPart from './components/TechProvidedPart'
 import Shipment from './components/Shipment'
 import DispatchInstruction from './components/DispatchInstruction'
+import Contact from './components/Contact'
+import Schedule from './components/Schedule'
+import WorkRequested from './components/WorkRequested'
+import PaySheet from './components/PaySheet'
+import DocForTech from './components/DocForTech'
+import Task from './components/Task'
 
 const CreateWorkOrder = ({ type }) => {
 
@@ -15,6 +21,9 @@ const CreateWorkOrder = ({ type }) => {
         'cus_id': '',
         'priority': '',
         'requested_by': '',
+        'wo_requested': '',
+        'requested_date': '',
+        'request_type': '',
         'wo_manager': '',
         'order_type': type,
         'scope_work': '',
@@ -23,23 +32,45 @@ const CreateWorkOrder = ({ type }) => {
         'techProvidedParts': [],
         'shipments': [],
         'instruction': '',
+        'contacts': [],
+        'schedule_type': 'single',
+        'schedules': [],
+        'travel_cost': '',
+        'otherExpenses': [],
+        'techDocs': [],
+        'tasks': []
     });
+
+    const formData = new FormData();
+    formData.append("techDocs", data.file);
 
     console.log(data);
     const [isSticky, setIsSticky] = useState(false);
     const sidebarRef = useRef(null);
 
     const overviewRef = useRef(null);
+    const woReqRef = useRef(null);
     const scopeRef = useRef(null);
     const toolRef = useRef(null);
     const techPartRef = useRef(null);
     const shipmentRef = useRef(null);
+    const docTechRef = useRef(null);
     const instructionRef = useRef(null);
+    const taskRef = useRef(null);
     const contactRef = useRef(null);
+    const scheduleRef = useRef(null);
     const locationRef = useRef(null);
+    const payRef = useRef(null);
 
     const scrollToSection = (ref) => {
-        ref.current.scrollIntoView({ behavior: "smooth" });
+        const offset = 130; // Adjust by 130px above
+        const elementPosition = ref.current.getBoundingClientRect().top; // Get the position relative to the viewport
+        const offsetPosition = window.scrollY + elementPosition - offset; // Calculate the adjusted position
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+        });
     };
 
     const [successMessage, setSuccessMessage] = useState('');
@@ -76,18 +107,29 @@ const CreateWorkOrder = ({ type }) => {
 
     useEffect(() => {
         const handleScroll = () => {
-          const sidebar = sidebarRef.current;
-          if (!sidebar) return;
-    
-          const scrollTop = window.scrollY;
-          const sidebarTop = sidebar.getBoundingClientRect().top;
-    
-          setIsSticky(scrollTop > 150 && sidebarTop < 150); 
+            const sidebar = sidebarRef.current;
+            if (!sidebar) return;
+
+            const scrollTop = window.scrollY;
+            const sidebarTop = sidebar.getBoundingClientRect().top;
+
+            setIsSticky(scrollTop > 150 && sidebarTop < 150);
         };
-    
+
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        const storedData = sessionStorage.getItem('formData');
+        if (storedData) {
+            setData(JSON.parse(storedData));
+        }
+    }, []);
+
+    useEffect(() => {
+        sessionStorage.setItem('formData', JSON.stringify(data));
+    }, [data]);
 
     return (
         <MainLayout>
@@ -106,29 +148,36 @@ const CreateWorkOrder = ({ type }) => {
                         <div className='bg-white border rounded'>
                             <ul>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(overviewRef)}>Overview</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(woReqRef)}>Work Request</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(scopeRef)}>Scope Of Work</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(toolRef)}>Tool Required</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(techPartRef)}>Technician Provided Parts</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(shipmentRef)}>Shipments</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Documents For Technicians</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(docTechRef)}>Documents For Technicians</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(instructionRef)}>Dispatch Instructions</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Tasks</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(taskRef)}>Tasks</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Deliverables</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Contacts</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }}>Schedule</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(contactRef)}>Contacts</li>
+                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(scheduleRef)}>Schedule</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(locationRef)}>Location</li>
-                                <li className='fw-bold py-3 text-center' style={{ cursor: 'pointer' }}>Pay</li>
+                                <li className='fw-bold py-3 text-center' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(payRef)}>Pay</li>
                             </ul>
                         </div>
                     </div>
                     <div className='w-75 px-0 mb-3'>
                         <Overview data={data} setData={setData} errors={errors} overviewRef={overviewRef} />
+                        <WorkRequested data={data} setData={setData} errors={errors} woReqRef={woReqRef} />
                         <ScopeOfWork data={data} setData={setData} scopeRef={scopeRef} />
                         <ToolRequired data={data} setData={setData} toolRef={toolRef} />
                         <TechProvidedPart data={data} setData={setData} techPartRef={techPartRef} />
                         <Shipment data={data} setData={setData} shipmentRef={shipmentRef} />
+                        <DocForTech data={data} setData={setData} docTechRef={docTechRef} />
                         <DispatchInstruction data={data} setData={setData} instructionRef={instructionRef} />
+                        <Task data={data} setData={setData} taskRef={taskRef}/>
+                        <Contact data={data} setData={setData} contactRef={contactRef} />
+                        <Schedule data={data} setData={setData} scheduleRef={scheduleRef} />
                         <Location data={data} setData={setData} errors={errors} locationRef={locationRef} />
+                        <PaySheet data={data} setData={setData} errors={errors} payRef={payRef} />
                     </div>
                 </div>
             </div>

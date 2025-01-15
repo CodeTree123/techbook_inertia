@@ -15,8 +15,7 @@ const Overview = ({data, setData, errors, overviewRef}) => {
                     label: customer.company_name,
                 }));
             }
-
-            return []; // Return an empty array if no data is available
+            return [];
         } catch (error) {
             console.error('Error fetching customers:', error);
             return [];
@@ -35,7 +34,7 @@ const Overview = ({data, setData, errors, overviewRef}) => {
                 }));
             }
 
-            return []; // Return an empty array if no data is available
+            return [];
         } catch (error) {
             console.error('Error fetching employees:', error);
             return [];
@@ -69,7 +68,7 @@ const Overview = ({data, setData, errors, overviewRef}) => {
                     <h6 style={{ fontWeight: 600 }}>
                         Priority :
                     </h6>
-                    <select className="mb-0 fw-bold w-100 p-0 mb-3 border p-2 rounded" name="priority" onChange={handlePriorityChange}>
+                    <select className="mb-0 w-100 p-0 mb-3 border p-2 rounded" name="priority" onChange={handlePriorityChange}>
                         <option value={1} selected={data.priority == 1}>P1
                         </option>
                         <option value={2} selected={data.priority == 2}>P2
@@ -86,13 +85,13 @@ const Overview = ({data, setData, errors, overviewRef}) => {
                     <h6 style={{ fontWeight: 600 }}>
                         Requested By :
                     </h6>
-                    <input className="mb-0 fw-bold border p-2 rounded mb-3 w-100" name="requested_by" type="text" defaultValue={data.requested_by} onChange={(e) => setData({ ...data, requested_by: e.target.value })} />
+                    <input className="mb-0 border p-2 rounded mb-3 w-100" name="requested_by" type="text" defaultValue={data.requested_by} onChange={(e) => setData({ ...data, requested_by: e.target.value })} />
                     {errors.requested_by && <p className='text-danger mb-0' style={{marginTop: '-16px'}}>{errors.requested_by}</p>}
 
                     <h6 style={{ fontWeight: 600 }}>
                         Team :
                     </h6>
-                    <input className="mb-0 fw-bold border p-2 rounded mb-3 w-100" type="text" defaultValue={''} name="team" />
+                    <input className="mb-0 border p-2 rounded mb-3 w-100" type="text" defaultValue={''} name="team" />
 
                     <h6 style={{ fontWeight: 600 }}>
                         WO Manager :

@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async'
 
-const Location = ({ id, details, onSuccessMessage ,onErrorMessage}) => {
+const Location = ({ id, details, onSuccessMessage ,onErrorMessage, is_cancelled}) => {
 
     const loadSiteOptions = async (inputValue) => {
         try {
@@ -73,19 +73,19 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage}) => {
                 <div className="d-flex action-group gap-2">
                     {
                         !editable && details?.site &&
-                        <button type='button' onClick={(e) => handleEdit(e)} className="btn edit-btn">
+                        <button type='button' onClick={(e) => handleEdit(e)} className="btn border-0 edit-btn" disabled={is_cancelled}>
                             <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                         </button>
                     }
                     {
                         editable &&
-                        <button type='submit' className="btn btn-success fw-bold">
+                        <button type='submit' className="btn border-0 btn-success fw-bold" disabled={is_cancelled}>
                             Save
                         </button>
                     }
                     {
                         editable &&
-                        <button type='button' onClick={() => setEditable(false)} className="btn btn-danger fw-bold">
+                        <button type='button' onClick={() => setEditable(false)} className="btn border-0 btn-danger fw-bold" disabled={is_cancelled}>
                             Cancel
                         </button>
                     }
