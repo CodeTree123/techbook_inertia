@@ -63,56 +63,6 @@ $customers = Customer::all();
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
-                                    <label for="address">
-                                        <h6>Address</h6>
-                                    </label>
-                                    <input type="text" class="form-control" name="address"
-                                        placeholder="Enter address" value="{{ old('address') }}">
-                                    @error('address')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-4">
-                                    <label for="country">
-                                        <h6>Country</h6>
-                                    </label>
-                                    <input type="text" class="form-control" name="country"
-                                        placeholder="Enter country" value="{{ old('country') }}">
-                                    @error('country')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-4">
-                                    <label for="city">
-                                        <h6>City</h6>
-                                    </label>
-                                    <input type="text" class="form-control" name="city" placeholder="Enter city"
-                                        value="{{ old('city') }}">
-                                    @error('city')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-4">
-                                    <label for="state">
-                                        <h6>State</h6>
-                                    </label>
-                                    <input id="state" type="text" class="form-control" name="state"
-                                        placeholder="Enter state" value="{{ old('state') }}">
-                                    @error('state')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-4">
-                                    <label for="zip_code">
-                                        <h6>Zip Code</h6>
-                                    </label>
-                                    <input type="text" class="form-control" name="zip_code" placeholder="Enter zip"
-                                        value="{{ old('zip_code') }}">
-                                    @error('zip_code')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-4">
                                     <label for="email">
                                         <h6>Email</h6>
                                     </label>
@@ -132,6 +82,70 @@ $customers = Customer::all();
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <div class="form-group col-4">
+                                    <label for="team">
+                                        <h6>Team</h6>
+                                    </label>
+                                    <select name="team" class="form-control" id="">
+                                        <option value="">Select Team</option>
+                                        <option value="Blue Team" {{ old('team') == 'Blue Team' ? 'selected' : '' }}>
+                                            Blue Team</option>
+                                        <option value="Red Team" {{ old('team') == 'Red Team' ? 'selected' : '' }}>Red
+                                            Team</option>
+                                        <option value="Etc" {{ old('team') == 'Etc' ? 'selected' : '' }}>Etc
+                                        </option>
+                                    </select>
+                                    @error('team')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="billing_term">
+                                        <h6>Billing Term</h6>
+                                    </label>
+                                    <select name="billing_term" class="form-control">
+                                        <option value="">Select Billing Term</option>
+
+                                        <option value="Upon Receipt" {{ old('billing_term') == 'Upon Receipt' ? 'selected' : '' }}>
+                                            Upon Receipt</option>
+                                        <option value="NET15" {{ old('billing_term') == 'NET15' ? 'selected' : '' }}>
+                                            NET15</option>
+                                        <option value="NET30" {{ old('billing_term') == 'NET30' ? 'selected' : '' }}>
+                                            NET30</option>
+                                        <option value="NET45" {{ old('billing_term') == 'NET45' ? 'selected' : '' }}>
+                                            NET45</option>
+                                        <option value="Etc" {{ old('billing_term') == 'Etc' ? 'selected' : '' }}>
+                                            Etc</option>
+                                    </select>
+                                    @error('billing_term')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="sales_person">
+                                        <h6>Sales Person Assigned</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="sales_person"
+                                        placeholder="Enter Sales person assign" value="{{ old('sales_person') }}">
+                                    @error('sales_person')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="project_manager">
+                                        <h6>Project Manager Assigned</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="project_manager"
+                                        placeholder="Enter Project Manager assign" value="{{ old('project_manager') }}">
+                                    @error('project_manager')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
+                                    Rates
+                                </div>
+
                                 <div class="form-group col-4">
                                     <label for="s_rate_f">
                                         <h6>Standard Rate First hour</h6>
@@ -222,34 +236,128 @@ $customers = Customer::all();
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="form-group col-4">
-                                    <label for="billing_term">
-                                        <h6>Billing Term</h6>
-                                    </label>
-                                    <select name="billing_term" class="form-control">
-                                        <option value="">Select Billing Term</option>
+                                
+                                <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
+                                    Billing Address
+                                </div>
 
-                                        <option value="Upon Receipt" {{ old('billing_term') == 'Upon Receipt' ? 'selected' : '' }}>
-                                            Upon Receipt</option>
-                                        <option value="NET15" {{ old('billing_term') == 'NET15' ? 'selected' : '' }}>
-                                            NET15</option>
-                                        <option value="NET30" {{ old('billing_term') == 'NET30' ? 'selected' : '' }}>
-                                            NET30</option>
-                                        <option value="NET45" {{ old('billing_term') == 'NET45' ? 'selected' : '' }}>
-                                            NET45</option>
-                                        <option value="Etc" {{ old('billing_term') == 'Etc' ? 'selected' : '' }}>
-                                            Etc</option>
-                                    </select>
-                                    @error('billing_term')
+                                <div class="form-group col-4">
+                                    <label for="address">
+                                        <h6>Address</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="address"
+                                        placeholder="Enter address" value="{{ old('address') }}">
+                                    @error('address')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
+                                </div>
+
+                                <div class="form-group col-4">
+                                    <label for="city">
+                                        <h6>City</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="city" placeholder="Enter city"
+                                        value="{{ old('city') }}">
+                                    @error('city')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="state">
+                                        <h6>State</h6>
+                                    </label>
+                                    <input id="state" type="text" class="form-control" name="state"
+                                        placeholder="Enter state" value="{{ old('state') }}">
+                                    @error('state')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="zip_code">
+                                        <h6>Zip Code</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="zip_code" placeholder="Enter zip"
+                                        value="{{ old('zip_code') }}">
+                                    @error('zip_code')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="country">
+                                        <h6>Country</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="country"
+                                        placeholder="Enter country" value="{{ old('country') }}">
+                                    @error('country')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
+                                    Head office Address
+                                </div>
+
+                                <div class="form-group col-4">
+                                    <label for="address">
+                                        <h6>Address</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="h_address"
+                                        placeholder="Enter address" value="{{ old('h_address') }}">
+                                    @error('address')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group col-4">
+                                    <label for="city">
+                                        <h6>City</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="h_city" placeholder="Enter city"
+                                        value="{{ old('h_city') }}">
+                                    @error('city')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="state">
+                                        <h6>State</h6>
+                                    </label>
+                                    <input id="state" type="text" class="form-control" name="h_state"
+                                        placeholder="Enter state" value="{{ old('h_state') }}">
+                                    @error('state')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="zip_code">
+                                        <h6>Zip Code</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="h_zip_code" placeholder="Enter zip"
+                                        value="{{ old('h_zip_code') }}">
+                                    @error('zip_code')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="country">
+                                        <h6>Country</h6>
+                                    </label>
+                                    <input type="text" class="form-control" name="h_country"
+                                        placeholder="Enter country" value="{{ old('h_country') }}">
+                                    @error('country')
+                                    <span style="color:red; font-size:14px">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                
+                                <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
+                                    Type of equipments
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="type_phone">
                                         <h6>Type Of Phone System</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_phone"
-                                        placeholder="Type Of Phone" value="{{ old('type_phone') }}">
+                                        placeholder="Enter Type Of Phone" value="{{ old('type_phone') }}">
                                     @error('type_phone')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -259,7 +367,7 @@ $customers = Customer::all();
                                         <h6>Type Of Wireless</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_wireless"
-                                        placeholder="Type Of Wireless" value="{{ old('type_wireless') }}">
+                                        placeholder="Enter Type Of Wireless" value="{{ old('type_wireless') }}">
                                     @error('type_wireless')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -269,7 +377,7 @@ $customers = Customer::all();
                                         <h6>Type Of CCTV</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_cctv"
-                                        placeholder="Type Of CCTV" value="{{ old('type_cctv') }}">
+                                        placeholder="Enter Type Of CCTV" value="{{ old('type_cctv') }}">
                                     @error('type_cctv')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -279,48 +387,12 @@ $customers = Customer::all();
                                         <h6>Type Of POS</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_pos"
-                                        placeholder="Type Of POS" value="{{ old('type_pos') }}">
+                                        placeholder="Enter Type Of POS" value="{{ old('type_pos') }}">
                                     @error('type_pos')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="form-group col-4">
-                                    <label for="team">
-                                        <h6>Team</h6>
-                                    </label>
-                                    <select name="team" class="form-control" id="">
-                                        <option value="">Select Team</option>
-                                        <option value="Blue Team" {{ old('team') == 'Blue Team' ? 'selected' : '' }}>
-                                            Blue Team</option>
-                                        <option value="Red Team" {{ old('team') == 'Red Team' ? 'selected' : '' }}>Red
-                                            Team</option>
-                                        <option value="Etc" {{ old('team') == 'Etc' ? 'selected' : '' }}>Etc
-                                        </option>
-                                    </select>
-                                    @error('team')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="sales_person">
-                                        <h6>Sales Person Assigned</h6>
-                                    </label>
-                                    <input type="text" class="form-control" name="sales_person"
-                                        placeholder="Sales person assign" value="{{ old('sales_person') }}">
-                                    @error('sales_person')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="project_manager">
-                                        <h6>Project Manager Assigned</h6>
-                                    </label>
-                                    <input type="text" class="form-control" name="project_manager"
-                                        placeholder="Project Manager assign" value="{{ old('project_manager') }}">
-                                    @error('project_manager')
-                                    <span style="color:red; font-size:14px">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                
                                 <div class="form-group col-12">
                                     <button type="submit" class="btn btn-primary btn-block"><i
                                             class="fas fa-check"></i> Submit</button>
