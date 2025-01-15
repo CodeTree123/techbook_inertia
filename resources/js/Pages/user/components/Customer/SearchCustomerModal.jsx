@@ -228,7 +228,7 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                                 <h6 className='mb-0'>{customerData?.address?.h_country}</h6>
                             </div>
 
-                            <Shade title="Type of Equipments" />
+                            <Shade title="Type of equipments" />
                                 <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                     <h6 className='fw-bold pe-2 mb-0'>Type of phone system:</h6>
                                     <h6 className='mb-0'>{customerData?.type_phone}</h6>
