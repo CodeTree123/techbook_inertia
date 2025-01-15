@@ -287,7 +287,12 @@ class CustomerController extends Controller
             'country' => $request->country,
             'city' => $request->city,
             'state' => $request->state,
-            'zip_code' => $request->zip_code
+            'zip_code' => $request->zip_code,
+            'h_address' => $request->h_address,
+            'h_country' => $request->h_country,
+            'h_city' => $request->h_city,
+            'h_state' => $request->h_state,
+            'h_zip_code' => $request->h_zip_code
         ];
 
         $update = Customer::find($id);
@@ -296,8 +301,14 @@ class CustomerController extends Controller
         $update->customer_type = $request->customer_type;
         $update->phone = $request->phone;
         $update->address = $addressData;
-        $update->s_rate = $request->s_rate;
-        $update->e_rate = $request->e_rate;
+        $update->s_rate_f = $request->s_rate_f;
+        $update->e_rate_f = $request->e_rate_f;
+        $update->s_rate_a = $request->s_rate_a;
+        $update->e_rate_a = $request->e_rate_a;
+        $update->w_rate_f = $request->w_rate_f;
+        $update->w_rate_a = $request->w_rate_a;
+        $update->sh_rate_f = $request->sh_rate_f;
+        $update->sh_rate_a = $request->sh_rate_a;
         $update->travel = $request->travel;
         $update->billing_term = $request->billing_term;
         $update->type_phone = $request->type_phone;

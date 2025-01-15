@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Shade from "@/Pages/user/components/Shade";
 import { Modal } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 
@@ -113,15 +114,13 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                                 <h6 className='fw-bold pe-2 mb-0'>Email:</h6>
                                 <h6 className='mb-0'>{customerData?.email}</h6>
                             </div>
-                            
+
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Phone:</h6>
                                 <h6 className='mb-0'>{customerData?.phone}</h6>
                             </div>
 
-                            <div className="rates my-3" style={{ padding: '10px 20px', backgroundColor: 'rgba(175, 225, 175, 0.5)', color: 'black', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
-                                Rates
-                            </div>
+                            <Shade title="Rates" />
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Standard first hour rate
@@ -177,9 +176,7 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                                 <h6 className='mb-0'>{customerData?.travel}</h6>
                             </div>
 
-                            <div className="billing-address my-3" style={{ padding: '10px 20px', backgroundColor: 'rgba(175, 225, 175, 0.5)', color: 'black', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
-                                Billing Address
-                            </div>
+                            <Shade title="Billing address" />
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Address:</h6>
@@ -205,9 +202,7 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                                 <h6 className='mb-0'>{customerData?.address?.country}</h6>
                             </div>
 
-                            <div className="head-address my-3" style={{ padding: '10px 20px', backgroundColor: 'rgba(175, 225, 175, 0.5)', color: 'black', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
-                                Head office Address
-                            </div>
+                            <Shade title="Head office address" />
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Address:</h6>
@@ -233,33 +228,26 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                                 <h6 className='mb-0'>{customerData?.address?.h_country}</h6>
                             </div>
 
-                            <div className="other my-3" style={{ padding: '10px 20px', backgroundColor: 'rgba(175, 225, 175, 0.5)', color: 'black', textAlign: 'center', borderRadius: '12px', fontSize: '18px', display: 'inline-block' }}>
-                                Type of equipments
-                            </div>
+                            <Shade title="Type of Equipments" />
+                                <div className='col-4 d-flex align-items-center gap-2 border py-2'>
+                                    <h6 className='fw-bold pe-2 mb-0'>Type of phone system:</h6>
+                                    <h6 className='mb-0'>{customerData?.type_phone}</h6>
+                                </div>
 
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Type of phone system
-                                    :</h6>
-                                <h6 className='mb-0'>{customerData?.type_phone}</h6>
-                            </div>
+                                <div className='col-4 d-flex align-items-center gap-2 border py-2'>
+                                    <h6 className='fw-bold pe-2 mb-0'>Type of wireless:</h6>
+                                    <h6 className='mb-0'>{customerData?.type_wireless}</h6>
+                                </div>
 
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Type of wireless
-                                    :</h6>
-                                <h6 className='mb-0'>{customerData?.type_wireless}</h6>
-                            </div>
+                                <div className='col-4 d-flex align-items-center gap-2 border py-2'>
+                                    <h6 className='fw-bold pe-2 mb-0'>Type of CCTV:</h6>
+                                    <h6 className='mb-0'>{customerData?.type_cctv}</h6>
+                                </div>
 
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Type of CCTV
-                                    :</h6>
-                                <h6 className='mb-0'>{customerData?.type_cctv}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Type of POS
-                                    :</h6>
-                                <h6 className='mb-0'>{customerData?.type_pos}</h6>
-                            </div>
+                                <div className='col-4 d-flex align-items-center gap-2 border py-2'>
+                                    <h6 className='fw-bold pe-2 mb-0'>Type of POS:</h6>
+                                    <h6 className='mb-0'>{customerData?.type_pos}</h6>
+                                </div>
                         </div>
                     }
                 </Modal.Body>
