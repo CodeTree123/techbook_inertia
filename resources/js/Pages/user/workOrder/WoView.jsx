@@ -693,31 +693,32 @@ export default function WoView({ wo }) {
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
-              <h2 className="text-center" style={{ fontSize: 12, fontWeight: 600 }}>WO Manager</h2>
-              <p className="text-center">{wo?.employee?.name}</p>
-              <p style={{ fontSize: 12, fontWeight: 600 }} className="text-center mb-0">Requested By</p>
-              <p className="text-center pb-3">{wo.requested_by}</p>
               {
                 wo?.order_type === 1 && (
                   <p className="text-divider">
-                    <span style={{ fontWeight: '600', backgroundColor: 'rgba(248, 249, 250, 1)' }}>Service</span>
+                    <span style={{ fontWeight: '700', backgroundColor: 'rgba(248, 249, 250, 1)', fontSize: '24px' }}>Service</span>
                   </p>
                 )
               }
               {
                 wo?.order_type === 2 && (
                   <p className="text-divider">
-                    <span style={{ fontWeight: '600', backgroundColor: 'rgba(248, 249, 250, 1)' }}>Project</span>
+                    <span style={{ fontWeight: '700', backgroundColor: 'rgba(248, 249, 250, 1)', fontSize: '24px' }}>Project</span>
                   </p>
                 )
               }
               {
                 wo?.order_type === 3 && (
                   <p className="text-divider">
-                    <span style={{ fontWeight: '600', backgroundColor: 'rgba(248, 249, 250, 1)' }}>Install</span>
+                    <span style={{ fontWeight: '700', backgroundColor: 'rgba(248, 249, 250, 1)', fontSize: '24px' }}>Install</span>
                   </p>
                 )
               }
+              <h2 className="text-center" style={{ fontSize: 12, fontWeight: 600 }}>WO Manager</h2>
+              <p className="text-center">{wo?.employee?.name}</p>
+              <p style={{ fontSize: 12, fontWeight: 600 }} className="text-center mb-0">Requested By</p>
+              <p className="text-center pb-3">{wo.requested_by}</p>
+
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
