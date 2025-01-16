@@ -84,19 +84,26 @@ const TimeLog = ({ details, onSuccessMessage, is_cancelled }) => {
                             'AKT': 'America/Anchorage',
                             'HST': 'Pacific/Honolulu',
                         };
-
+                    
                         const timeZoneName = timezoneMap[timezoneKey] || 'UTC';
-
-                        // Get the current date using JavaScript's Date object
-                        const currentDate = new Date().toISOString().slice(0, 10); // Get YYYY-MM-DD format
-
+                    
+                        // Get the current datetime in the target timezone
                         const now = DateTime.now().setZone(timeZoneName);
-                        const checkInDateTime = DateTime.fromISO(`${currentDate}T${checkIn}`, { zone: timeZoneName });
-
+                    
+                        // Get the checkIn datetime in the target timezone
+                        let checkInDateTime = DateTime.fromISO(`${now.toISODate()}T${checkIn}`, { zone: timeZoneName });
+                    
+                        // If now is past midnight but checkIn is later in the day, adjust checkIn to the previous day
+                        if (checkInDateTime > now) {
+                            checkInDateTime = checkInDateTime.minus({ days: 1 });
+                        }
+                    
+                        // Calculate the difference
                         const diff = now.diff(checkInDateTime, ['hours', 'minutes']);
-
-                        return `${diff.hours} hours ${diff.minutes.toFixed(0)} minutes`;
+                    
+                        return `${Math.abs(diff.hours)} hours ${Math.abs(diff.minutes.toFixed(0))} minutes`;
                     };
+                    
 
                     // Example usage
                     const timezoneKey = details?.site?.time_zone; // This is dynamically passed

@@ -35,6 +35,7 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                         time_zone: details?.site?.time_zone,
                         zipcode: details?.site?.zipcode
                     },
+                    assigned_tech: details?.assigned_tech,
                     check_in_out: details?.check_in_out,
                     ftech_id: details?.ftech_id,
                     tech_remove_reasons: details?.tech_remove_reasons,

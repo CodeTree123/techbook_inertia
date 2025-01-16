@@ -58,6 +58,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         ftech_id: details?.ftech_id,
                         stage: details?.stage,
                         check_in_out: details?.check_in_out,
+                        site_id: details?.site_id,
                         technician: {
                             tech_type: details?.technician?.tech_type,
                             company_name: details?.technician?.company_name

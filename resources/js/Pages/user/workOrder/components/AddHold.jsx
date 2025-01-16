@@ -4,7 +4,7 @@ import { Modal, Button } from 'react-bootstrap';
 import {route} from 'ziggy-js';
 
 
-const AddHold = ({ id, stage, onSuccessMessage  }) => {
+const AddHold = ({ id, stage, onSuccessMessage, is_cancelled  }) => {
 
     const [showHold, setShowHold] = useState(false);
 
@@ -29,7 +29,7 @@ const AddHold = ({ id, stage, onSuccessMessage  }) => {
 
     return (
         <>
-            <Button variant="outline-dark" style={{height: 'max-content'}} onClick={handleShowHold}>
+            <Button variant="outline-dark" style={{height: 'max-content'}} onClick={handleShowHold} disabled={is_cancelled}>
                 {stage ? 'Remove Hold' : "Add Hold"}
             </Button>
 

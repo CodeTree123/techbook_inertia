@@ -14,7 +14,6 @@ import WorkRequested from './components/WorkRequested'
 import PaySheet from './components/PaySheet'
 import DocForTech from './components/DocForTech'
 import Task from './components/Task'
-import Deliverable from './components/Deliverable'
 
 const CreateWorkOrder = ({ type }) => {
 
@@ -57,7 +56,6 @@ const CreateWorkOrder = ({ type }) => {
     const docTechRef = useRef(null);
     const instructionRef = useRef(null);
     const taskRef = useRef(null);
-    const delivarableRef = useRef(null);
     const contactRef = useRef(null);
     const scheduleRef = useRef(null);
     const locationRef = useRef(null);
@@ -161,7 +159,6 @@ const CreateWorkOrder = ({ type }) => {
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(docTechRef)}>Documents For Technicians</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(instructionRef)}>Dispatch Instructions</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(taskRef)}>Tasks</li>
-                                <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(delivarableRef)}>Deliverables</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(contactRef)}>Contacts</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(scheduleRef)}>Schedule</li>
                                 <li className='fw-bold py-3 text-center border-bottom' style={{ cursor: 'pointer' }} onClick={() => scrollToSection(locationRef)}>Location</li>
@@ -179,7 +176,6 @@ const CreateWorkOrder = ({ type }) => {
                         <DocForTech data={data} setData={setData} docTechRef={docTechRef} techDocFiles={techDocFiles} setTechDocFiles={setTechDocFiles} />
                         <DispatchInstruction data={data} setData={setData} instructionRef={instructionRef} />
                         <Task data={data} setData={setData} taskRef={taskRef}/>
-                        <Deliverable data={data} setData={setData} delivarableRef={delivarableRef}/>
                         <Contact data={data} setData={setData} contactRef={contactRef} />
                         <Schedule data={data} setData={setData} scheduleRef={scheduleRef} />
                         <Location data={data} setData={setData} errors={errors} locationRef={locationRef} />

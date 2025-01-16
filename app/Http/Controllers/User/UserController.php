@@ -2357,6 +2357,16 @@ class UserController extends Controller
 
     public function makeCancel(Request $request, $id)
     {
+        $request->validate(
+            [
+                'cancelling_note' => 'required|string|max:255',
+            ],
+            [
+                'cancelling_note.required' => 'The cancellation note is required.',
+                'cancelling_note.string' => 'The cancellation note must be a valid string.',
+            ]
+        );
+
         $wo = WorkOrder::find($id);
 
         $wo->stage = Status::STAGE_CANCEL;
@@ -2548,6 +2558,32 @@ class UserController extends Controller
         if ($request->wo_manager) {
             $preLog = WorkOrderTimeLog::where('column_name', 'em_id')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'em_id', $wo->id, $wo->updated_at, $preLog, $wo->em_id, $wo->employee->name ?? '', 'id', $preLog ? 'Employee Updated' : 'Employee Added', $id);
+        }
+    }
+
+    public function updateWorkRequested(Request $request, $id)
+    {
+
+        $wo = WorkOrder::find($id);
+        $wo->wo_requested = $request['wo_requested'] ?? $wo->wo_requested;
+        $wo->request_type = $request['request_type'] ?? $wo->request_type;
+        $wo->requested_date = $request['requested_date'] ?? $wo->requested_date;
+
+        $wo->save();
+
+        if ($request->scope_work) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'wo_requested')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'wo_requested', $wo->id, $wo->updated_at, $preLog, $wo->wo_requested, '', 'html_text', $preLog ? 'Work Requested Updated' : 'Work Requested Added', $id);
+        }
+
+        if ($request->request_type) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'request_type')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'request_type', $wo->id, $wo->updated_at, $preLog, $wo->request_type, '', 'html_text', $preLog ? 'Requesting Method Updated' : 'Requesting Method Added', $id);
+        }
+
+        if ($request->requested_date) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'requested_date')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'requested_date', $wo->id, $wo->updated_at, $preLog, $wo->requested_date, '', 'html_text', $preLog ? 'Requesting Date Updated' : 'Requesting Date Added', $id);
         }
     }
 
@@ -2943,12 +2979,7 @@ class UserController extends Controller
 
         $totalMinutes = $checkOutTime->diffInMinutes($checkInTime);
 
-        if ($techId != null) {
-            $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)->where('check_out', '!=', null)
-                ->first();
-        } else {
-            $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('check_out', '!=', null)->first();
-        }
+        $firstCheckInOut = CheckInOut::where('work_order_id', $id)->where('check_out', '!=', null)->first();
 
         if ($totalMinutes <= 60 && !$firstCheckInOut) {
             $totalHours = 1;
@@ -3058,12 +3089,7 @@ class UserController extends Controller
             // Calculate total minutes and total hours
             $totalMinutes = $checkOutTime->diffInMinutes($checkInTime);
 
-            if ($checkInOut->tech_id != null) {
-                $firstCheckInOut = CheckInOut::where('work_order_id', $checkInOut->work_order_id)->where('tech_id', $checkInOut->tech_id)->where('check_out', '!=', null)
-                    ->first();
-            } else {
-                $firstCheckInOut = CheckInOut::where('work_order_id', $checkInOut->work_order_id)->where('check_out', '!=', null)->first();
-            }
+            $firstCheckInOut = CheckInOut::where('work_order_id', $checkInOut->work_order_id)->where('check_out', '!=', null)->first();
 
             if ($totalMinutes <= 60 && !$firstCheckInOut) {
                 $totalHours = 1;

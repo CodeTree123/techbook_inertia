@@ -112,7 +112,7 @@ const Location = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled 
 
                     {
                         !details?.site_id && !editable &&
-                        <button className='btn btn-outline-dark' onClick={(e) => handleEdit(e)}>+ Add Site</button>
+                        <button className='btn btn-outline-dark' onClick={(e) => handleEdit(e)} disabled={is_cancelled}>+ Add Site</button>
                     }
 
                 </div>

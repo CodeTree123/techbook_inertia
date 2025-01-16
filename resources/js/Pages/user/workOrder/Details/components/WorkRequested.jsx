@@ -1,6 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import JoditEditor from 'jodit-react';
-import React, { useRef, useState } from 'react'
+import { DateTime } from 'luxon';
+import React, { useRef, useState, useMemo } from 'react'
 
 const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const editor = useRef(null);
@@ -8,21 +9,21 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'wo_requested': details.wo_requested,
         'requested_date': details.requested_date,
-        'request_type': details.request_type,
+        'request_type': details.request_type || 'Email',
     });
 
-    const config = {
+    const config = useMemo(() => ({
         readonly: false,
-        toolbarButtonSize: 'small',
-        placeholder: 'Start typing here...',
-    };
+        placeholder: 'Start typing...'
+    }), []);
+
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('user.wo.updateScopeOfWork', id), {
+        post(route('user.wo.updateWorkRequested', id), {
             preserveScroll: true,
             onSuccess: () => {
-                onSuccessMessage('Scope of work is Updated Successfully');
+                onSuccessMessage('Work Requested is Updated Successfully');
                 setEditable(false);
             }
         });
@@ -65,6 +66,19 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
             <div className="card-body bg-white">
                 {
                     editable &&
+                    <>
+                        <label htmlFor className='mt-3'>Requesting Date</label>
+                        <input type="date" defaultValue={details.requested_date} className='border-bottom w-100' onChange={(e) => setData({ ...data, requested_date: e.target.value })} />
+                        <label htmlFor className='mt-3'>Requesting Method</label>
+                        <select className='border-bottom w-100' onChange={(e) => setData({ ...data, request_type: e.target.value })}>
+                            <option value="Email" selected={details.request_type == 'Email'}>Email</option>
+                            <option value="Phone" selected={details.request_type == 'Phone'}>Phone</option>
+                        </select>
+                    </>
+
+                }
+                {
+                    editable &&
                     <div
                         id="scopeForm"
 
@@ -78,26 +92,24 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
                     </div>
                 }
 
-                {
-                    editable &&
-                    <input type="date" defaultValue={details.requested_date} onChange={(e) => setData({ ...data, requested_date: e.target.value })} />
-                }
-
                 {!editable && (
-                    <div className="mb-0 fw-bold"><div dangerouslySetInnerHTML={{ __html: details.wo_requested }} /></div>
-                )}
-
-                {!editable && (
-                    <p className="mb-0 fw-bold">
-                        Requesting Date: {details?.requested_date}
+                    <p className="mb-0">
+                        <span className='fw-bold'>Requesting Date: </span> {details?.requested_date
+                            ? DateTime.fromISO(details.requested_date).toFormat('MM-dd-yy')
+                            : null}
                     </p>
                 )}
 
                 {!editable && (
-                    <p className="mb-0 fw-bold">
-                        Requesting Method: {details?.request_type}
+                    <p className="mb-4">
+                        <span className='fw-bold'>Requesting Method: </span> {details?.request_type}
                     </p>
                 )}
+
+                {!editable && (
+                    <div className="mb-0"><div dangerouslySetInnerHTML={{ __html: details.wo_requested }}/></div>
+                )}
+
             </div>
         </form>
     )
