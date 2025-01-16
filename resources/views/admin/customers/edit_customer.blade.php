@@ -26,7 +26,7 @@
                             <div class="form-row">
                                 <div class="form-group col-4">
                                     <label for="company_name">
-                                        <h6>Company Name</h6>
+                                        <h6>Company name</h6>
                                     </label>
                                     <input type="text" class="form-control" name="company_name"
                                         placeholder="Enter company name" value="{{ $edit->company_name }}">
@@ -36,10 +36,10 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="customer_type">
-                                        <h6>Customer Type</h6>
+                                        <h6>Customer type</h6>
                                     </label>
                                     <select name="customer_type" class="form-control">
-                                        <option value="">Select Billing Term</option>
+                                        <option value="">Select type</option>
                                         <option value="Customer"
                                             {{ $edit->customer_type == 'Customer' ? 'selected' : '' }}>Customer</option>
                                         <option value="Prospecting"
@@ -74,10 +74,10 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="billing_term">
-                                        <h6>Billing Term</h6>
+                                        <h6>Billing term</h6>
                                     </label>
                                     <select name="billing_term" class="form-control">
-                                        <option value="">Select Billing Term</option>
+                                        <option value="">Select billing term</option>
                                         <option value="Upon Receipt" {{ $edit->billing_term == 'Upon Receipt' ? 'selected' : '' }}>
                                             Upon Receipt</option>
                                         <option value="NET15" {{ $edit->billing_term == 'NET15' ? 'selected' : '' }}>
@@ -98,7 +98,7 @@
                                         <h6>Team</h6>
                                     </label>
                                     <select name="team" class="form-control">
-                                        <option value="">Select Team</option>
+                                        <option value="">Select team</option>
                                         <option value="Blue Team" {{ $edit->team == 'Blue Team' ? 'selected' : '' }}>
                                             Blue Team</option>
                                         <option value="Red Team" {{ $edit->team == 'Red Team' ? 'selected' : '' }}>Red
@@ -136,7 +136,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="s_rate_f">
-                                        <h6>Standard Rate First hour</h6>
+                                        <h6>Standard rate first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_f"
                                         placeholder="Standard Rate First hour" value="{{ $edit->s_rate_f }}">
@@ -146,7 +146,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="s_rate_a">
-                                        <h6>Standard Rate Additional hour</h6>
+                                        <h6>Standard rate additional hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_a"
                                         placeholder="Standard Rate Additional hour" value="{{ $edit->s_rate_a }}">
@@ -156,7 +156,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_f">
-                                        <h6>Emergency Rate First hour</h6>
+                                        <h6>Emergency rate first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_f"
                                         placeholder="Enter Emergency rate First hour" value="{{ $edit->e_rate_f }}">
@@ -166,20 +166,20 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_a">
-                                        <h6>Emergency Rate Additional hour</h6>
+                                        <h6>Emergency rate additional hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_a"
-                                        placeholder="Enter Emergency rate Additional hour" value="{{ $edit->e_rate_a }}">
+                                        placeholder="Enter emergency rate additional hour" value="{{ $edit->e_rate_a }}">
                                     @error('e_rate_a')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="w_rate_f">
-                                        <h6>Weekend Rates First hour</h6>
+                                        <h6>Weekend rates first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="w_rate_f"
-                                        placeholder="Enter Weekend rate First hour" value="{{ $edit->w_rate_f }}">
+                                        placeholder="Enter weekend rate First hour" value="{{ $edit->w_rate_f }}">
                                     @error('w_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -224,7 +224,7 @@
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
                                    Billing Address
                                 </div>

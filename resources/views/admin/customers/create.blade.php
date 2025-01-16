@@ -36,7 +36,7 @@ $customers = Customer::all();
                             <div class="form-row">
                                 <div class="form-group col-4">
                                     <label for="company_name">
-                                        <h6>Company Name</h6>
+                                        <h6>Company name</h6>
                                     </label>
                                     <input type="text" class="form-control" name="company_name"
                                         placeholder="Enter company name" value="{{ old('company_name') }}">
@@ -46,10 +46,10 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="customer_type">
-                                        <h6>Customer Type</h6>
+                                        <h6>Customer type</h6>
                                     </label>
                                     <select name="customer_type" class="form-control">
-                                        <option value="">Select Customer Type</option>
+                                        <option value="">Select customer type</option>
                                         <option value="Customer"
                                             {{ old('customer_type') == 'Customer' ? 'selected' : '' }}>Customer</option>
                                         <option value="Prospecting"
@@ -101,10 +101,10 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="billing_term">
-                                        <h6>Billing Term</h6>
+                                        <h6>Billing term</h6>
                                     </label>
                                     <select name="billing_term" class="form-control">
-                                        <option value="">Select Billing Term</option>
+                                        <option value="">Select billing term</option>
 
                                         <option value="Upon Receipt" {{ old('billing_term') == 'Upon Receipt' ? 'selected' : '' }}>
                                             Upon Receipt</option>
@@ -123,7 +123,7 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-6">
                                     <label for="sales_person">
-                                        <h6>Sales Person Assigned</h6>
+                                        <h6>Sales person assigned</h6>
                                     </label>
                                     <input type="text" class="form-control" name="sales_person"
                                         placeholder="Enter Sales person assign" value="{{ old('sales_person') }}">
@@ -133,10 +133,10 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-6">
                                     <label for="project_manager">
-                                        <h6>Project Manager Assigned</h6>
+                                        <h6>Project manager assigned</h6>
                                     </label>
                                     <input type="text" class="form-control" name="project_manager"
-                                        placeholder="Enter Project Manager assign" value="{{ old('project_manager') }}">
+                                        placeholder="Enter Project manager assign" value="{{ old('project_manager') }}">
                                     @error('project_manager')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -148,80 +148,80 @@ $customers = Customer::all();
 
                                 <div class="form-group col-4">
                                     <label for="s_rate_f">
-                                        <h6>Standard Rate First hour</h6>
+                                        <h6>Standard rate first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_f"
-                                        placeholder="Standard Rate First hour" value="{{ old('s_rate_f') }}">
+                                        placeholder="Standard rate first hour" value="{{ old('s_rate_f') }}">
                                     @error('s_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="s_rate_a">
-                                        <h6>Standard Rate Additional hour</h6>
+                                        <h6>Standard rate additional hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_a"
-                                        placeholder="Standard Rate Additional hour" value="{{ old('s_rate_a') }}">
+                                        placeholder="Standard rate additional hour" value="{{ old('s_rate_a') }}">
                                     @error('s_rate_a')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_f">
-                                        <h6>Emergency Rate First hour</h6>
+                                        <h6>Emergency rate first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_f"
-                                        placeholder="Enter Emergency rate First hour" value="{{ old('e_rate_f') }}">
+                                        placeholder="Enter Emergency rate first hour" value="{{ old('e_rate_f') }}">
                                     @error('e_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_a">
-                                        <h6>Emergency Rate Additional hour</h6>
+                                        <h6>Emergency rate additional hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_a"
-                                        placeholder="Enter Emergency rate Additional hour" value="{{ old('e_rate_a') }}">
+                                        placeholder="Enter Emergency rate additional hour" value="{{ old('e_rate_a') }}">
                                     @error('e_rate_a')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="w_rate_f">
-                                        <h6>Weekend Rates First hour</h6>
+                                        <h6>Weekend rates first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="w_rate_f"
-                                        placeholder="Enter Weekend rate First hour" value="{{ old('w_rate_f') }}">
+                                        placeholder="Enter weekend rate first hour" value="{{ old('w_rate_f') }}">
                                     @error('w_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="w_rate_a">
-                                        <h6>Weekend Rates Additional Hour</h6>
+                                        <h6>Weekend rates additional hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="w_rate_a"
-                                        placeholder="Enter Weekend rate Additional Hour" value="{{ old('w_rate_a') }}">
+                                        placeholder="Enter weekend rate additional hour" value="{{ old('w_rate_a') }}">
                                     @error('w_rate_a')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="sh_rate_f">
-                                        <h6>Sunday & Holiday Rates First hour</h6>
+                                        <h6>Sunday & Holiday rates first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="sh_rate_f"
-                                        placeholder="Enter Sunday & Holiday rate First hour" value="{{ old('sh_rate_f') }}">
+                                        placeholder="Enter sunday & holiday rate first hour" value="{{ old('sh_rate_f') }}">
                                     @error('sh_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="sh_rate_a">
-                                        <h6>Sunday & Holiday Rates Additional hour</h6>
+                                        <h6>Sunday & Holiday rates additional hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="sh_rate_a"
-                                        placeholder="Enter Sunday & Holiday rate Additional hour" value="{{ old('sh_rate_a') }}">
+                                        placeholder="Enter Sunday & Holiday rate additional hour" value="{{ old('sh_rate_a') }}">
                                     @error('sh_rate_a')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -236,7 +236,7 @@ $customers = Customer::all();
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
                                     Billing Address
                                 </div>
@@ -354,40 +354,40 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="type_phone">
-                                        <h6>Type Of Phone System</h6>
+                                        <h6>Type of phone system</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_phone"
-                                        placeholder="Enter Type Of Phone" value="{{ old('type_phone') }}">
+                                        placeholder="Enter type of phone" value="{{ old('type_phone') }}">
                                     @error('type_phone')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="type_wireless">
-                                        <h6>Type Of Wireless</h6>
+                                        <h6>Type of wireless</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_wireless"
-                                        placeholder="Enter Type Of Wireless" value="{{ old('type_wireless') }}">
+                                        placeholder="Enter type of wireless" value="{{ old('type_wireless') }}">
                                     @error('type_wireless')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="type_cctv">
-                                        <h6>Type Of CCTV</h6>
+                                        <h6>Type of CCTV</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_cctv"
-                                        placeholder="Enter Type Of CCTV" value="{{ old('type_cctv') }}">
+                                        placeholder="Enter type of CCTV" value="{{ old('type_cctv') }}">
                                     @error('type_cctv')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="type_pos">
-                                        <h6>Type Of POS</h6>
+                                        <h6>Type of POS</h6>
                                     </label>
                                     <input type="text" class="form-control" name="type_pos"
-                                        placeholder="Enter Type Of POS" value="{{ old('type_pos') }}">
+                                        placeholder="Enter type of POS" value="{{ old('type_pos') }}">
                                     @error('type_pos')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror

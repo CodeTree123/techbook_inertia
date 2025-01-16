@@ -55,7 +55,7 @@
 
  <script>
      $(document).ready(function() {
-         $('#example').DataTable({
+         $('#site_list01').DataTable({
              "columnDefs": [{
                      "targets": [0],
                      "orderable": false

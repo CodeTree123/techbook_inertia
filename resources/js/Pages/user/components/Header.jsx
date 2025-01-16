@@ -3,7 +3,7 @@ import React from 'react'
 import '../../../../css/header.css'
 import CreateSiteModal from './Site/CreateSiteModal';
 import SearchSiteModal from './Site/SearchSiteModal';
-import CreateCustomerModal from './Customer/CreateCustomerModal';
+// import CreateCustomerModal from './Customer/CreateCustomerModal';
 import SearchCustomerModal from './Customer/SearchCustomerModal';
 import CreateTechModal from './FieldTech/CreateTechModal';
 import SearchTechnicianModal from './FieldTech/SearchTechnicianModal';
@@ -107,7 +107,6 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
                                         </li>
                                         <li><a href="#">Customer</a>
                                             <ul>
-                                                <CreateCustomerModal onSuccessMessage={onSuccessMessage} />
                                                 <SearchCustomerModal onSuccessMessage={onSuccessMessage} />
                                             </ul>
                                         </li>

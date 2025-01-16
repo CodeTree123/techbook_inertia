@@ -23,6 +23,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -420,21 +421,46 @@ class CustomerController extends Controller
     //customer zone
     public function customerZone($id)
     {
-        $pageTitle = "Customer Zone";
-        $zone = Customer::find($id);
-        $sites = CustomerSite::where('customer_id', $id)->get();
-        $workOrders = WorkOrder::where('slug', $id)->get();
-        $data = ["sites" => $sites, "workOrders" => $workOrders];
-
-        if (request()->ajax()) {
-            return response()->json($data, 200, [], JSON_PRETTY_PRINT)
-                ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                ->header('Pragma', 'no-cache')
-                ->header('Expires', '0');
-        } else {
-            return view('admin.customers.customer_zone', compact('pageTitle', 'zone', 'sites'));
+        try {
+            $pageTitle = "Customer Zone";
+            $zone = Customer::findOrFail($id);
+    
+            $sites = CustomerSite::where('customer_id', $id)->get()->map(function ($site) {
+                return [
+                    'id' => $site->id,
+                    'site_id' => mb_convert_encoding($site->site_id, 'UTF-8', 'UTF-8'),
+                    'location' => mb_convert_encoding($site->location, 'UTF-8', 'UTF-8'),
+                    'address_1' => mb_convert_encoding($site->address_1, 'UTF-8', 'UTF-8'),
+                    'city' => mb_convert_encoding($site->city, 'UTF-8', 'UTF-8'),
+                    'state' => mb_convert_encoding($site->state, 'UTF-8', 'UTF-8'),
+                    'zipcode' => mb_convert_encoding($site->zipcode, 'UTF-8', 'UTF-8'),
+                    'time_zone' => mb_convert_encoding($site->time_zone, 'UTF-8', 'UTF-8'),
+                ];
+            });
+    
+            $workOrders = WorkOrder::where('slug', $id)->get();
+    
+            $data = [
+                "sites" => $sites,
+                "workOrders" => $workOrders,
+            ];
+    
+            if (request()->ajax()) {
+                return response()->json($data, 200, [], JSON_PRETTY_PRINT)->withHeaders([
+                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                    'Pragma' => 'no-cache',
+                    'Expires' => '0',
+                ]);
+            } else {
+                return view('admin.customers.customer_zone', compact('pageTitle', 'zone', 'sites'));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in customerZone(): ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong.'], 500);
         }
     }
+    
+    
 
     public function getCustomerSite(Request $request)
     {
@@ -737,14 +763,30 @@ class CustomerController extends Controller
         $skills = SkillCategory::all();
         return response()->json($skills);
     }
+    const INVOICED = 13;
+    const PAST_DUE = 14;
+    const PAID = 15;
 
     //begin customer invoice 
     public function allInvoice()
     {
         $pageTitle = "Invoice History";
-        $invoices = WorkOrder::with('invoice', 'customer')->searchable(['order_id'])->dateFilter()->orderBy('id', 'desc')->paginate(getPaginate());
+        $invoices = WorkOrder::with('invoice', 'customer')
+            ->where('stage', Status::STAGE_BILLING)
+            ->whereIn('status', [
+                Status::APPROVED,
+                Status::INVOICED,
+                Status::PAST_DUE,
+                Status::PAID
+            ])
+            ->searchable(['order_id'])
+            ->dateFilter()
+            ->orderBy('id', 'desc')
+            ->paginate(getPaginate());
+            
         return view('admin.customers.invoices.all_invoice', compact('pageTitle', 'invoices'));
     }
+    
     public function paidInvoice()
     {
         $pageTitle = "Paid Invoices";

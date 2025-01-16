@@ -108,19 +108,24 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-gray">
-                        <h3><i class="fas fa-history"></i> Site history</h3>
+                        <h3><i class="fas fa-history"></i> Site List</h3>
                     </div>
                     <div class="card-body py-3">
                         <div class="table-responsive">
-                            <table id="example" class="dataTable">
+                            <table id="site_list01" class="dataTable">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Site ID</th>
                                         <th>Location</th>
+                                        <th>Address</th>
+                                        <th>City</th>
+                                        <th>State</th>
+                                        <th>Zip Code</th>
+                                        <th>Time Zone</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -128,7 +133,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-gray">
                         <h3><i class="fas fa-file-alt"></i> Work Order history</h3>
@@ -147,7 +152,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <!--add Site Modal -->
@@ -659,32 +664,47 @@
         });
 
         function loadSite() {
-            var id = $("#customerId").val();
-            var ajaxURL = "{{ route('customer.customerZone', ':id') }}";
-            ajaxURL = ajaxURL.replace(':id', id);
+    var id = $("#customerId").val();
+    var ajaxURL = "{{ route('customer.customerZone', ':id') }}".replace(':id', id);
 
-            $.ajax({
-                url: ajaxURL,
-                type: "GET",
-                cache: false,
-                success: function(data) {
-                    let sites = data.sites;
-                    var table = $('#example').DataTable();
-                    table.clear();
-                    sites.forEach((item, index) => {
-                        let id = item.id;
-                        table.row.add([
-                            index + 1,
-                            '<a href="" class="site-details" data-id="' + id +
-                            '">' + item.site_id + '</a>',
-                            '<a href="" class="site-details" data-id="' + id +
-                            '">' + item.location + '</a>',
-                        ]);
-                    });
-                    table.draw();
-                }
-            });
+    $.ajax({
+        url: ajaxURL,
+        type: "GET",
+        cache: false,
+        success: function(data) {
+            console.log("AJAX response data:", data);  // ✅ Debugging: Check the entire response
+            
+            if (data.sites && data.sites.length > 0) {
+                console.log("Sites data available:", data.sites);  // ✅ Debugging: Check sites data
+                
+                var table = $('#site_list01').DataTable();
+                table.clear();
+
+                data.sites.forEach((item, index) => {
+                    let id = item.id;
+                    table.row.add([
+                        index + 1,
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.site_id + '</a>',
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.location + '</a>',
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.address_1 + '</a>',
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.city + '</a>',
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.state + '</a>',
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.zipcode + '</a>',
+                        '<a href="#" class="site-details" data-id="' + id + '">' + item.time_zone + '</a>'
+                    ]);
+                });
+
+                table.draw();
+            } else {
+                console.warn("No sites data found.");  // ✅ Warning: No data available
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("AJAX request failed:", textStatus, errorThrown);  // ✅ Debugging: Handle errors
         }
+    });
+}
+
 
         function siteRoute() {
             $(document).on('click', '.site-details', function() {
