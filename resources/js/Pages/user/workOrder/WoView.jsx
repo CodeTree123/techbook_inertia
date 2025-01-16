@@ -622,7 +622,7 @@ export default function WoView({ wo }) {
 
               <div className="d-flex justify-content-center align-items-center gap-2">
                 <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
-                <h2 className="mb-0 fw-light" style={{ fontSize: 16 }}> Location : {wo?.site ? wo?.site?.location : <span className='fw-light'>No Location Added Yet</span>}</h2>
+                <h2 className="mb-0 fw-light" style={{ fontSize: 16 }}> Location : {wo?.site ? wo?.site?.location+' ('+wo?.site?.site_id+')' : <span className='fw-light'>No Location Added Yet</span>}</h2>
               </div>
               <p style={{ color: '#808080' }} className='text-center'>Site: {wo?.site && wo?.site?.address_1 + ';'} {wo?.site && wo?.site?.city + ','}
                 {wo?.site?.state} {wo?.site?.zipcode}</p>
