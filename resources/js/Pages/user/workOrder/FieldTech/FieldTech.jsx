@@ -161,6 +161,8 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
         return sum + hours;
     }, 0);
 
+    console.log(details);
+    
 
     return (
         <div>
@@ -171,8 +173,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
                                 <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null)}>
-                                    <i className="fa-brands fa-google" style={{ fontSize: 16 }} aria-hidden="true" />
-                                    Find Tech
+                                    Nearby Techs
                                 </button>
                             </div>
                         </div>

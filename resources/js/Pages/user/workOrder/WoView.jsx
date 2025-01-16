@@ -21,8 +21,8 @@ export default function WoView({ wo }) {
 
   const hasRun = useRef(false);
 
-  useEffect(()=>{
-    if (!hasRun.current) {
+  useEffect(() => {
+    if (!hasRun.current && wo.stage == 3) {
       post(route('user.wo.goAtRisk', wo.id), {
         preserveScroll: true,
         onSuccess: () => {
@@ -131,7 +131,7 @@ export default function WoView({ wo }) {
 
       // Update the state based on the validation results
 
-      setData({atRisk: !isValidSchedule})
+      setData({ atRisk: !isValidSchedule })
       setLatestAtRiskScheduleId(latestRiskId);
 
     }
@@ -217,7 +217,7 @@ export default function WoView({ wo }) {
         <div className="container-fluid total-bg">
           <div className="row">
 
-            <div className="col-2 border-end border-bottom px-3 py-2" >
+            <div className="col-4 border-end border-bottom px-3 py-2" >
               <h2 classname="fw-bold" style={{ fontSize: 24 }}>#{wo.order_id}
               </h2>
               <div className="d-flex align-items-center gap-2">
@@ -613,27 +613,66 @@ export default function WoView({ wo }) {
                 }
 
               </div>
+              <p style={{ color: '#808080' }} className="mb-0 text-start">Purchase Order : #{wo.p_o}</p>
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
+
               <h2 className="fw-bold text-center" style={{ fontSize: 24 }}>{wo?.customer?.company_name}</h2>
-              <p style={{ color: '#808080' }} className="mb-0">Purchase Order : #{wo.p_o}</p>
-              <p style={{ color: '#808080' }} className="mb-0">Problem Code : #595</p>
-              <p style={{ color: '#808080' }} className="mb-0">Resolution Code : #59552</p>
+
+              <div className="d-flex justify-content-center align-items-center gap-2">
+                <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
+                <h2 className="mb-0 fw-light" style={{ fontSize: 16 }}> Location : {wo?.site ? wo?.site?.location : <span className='fw-light'>No Location Added Yet</span>}</h2>
+              </div>
+              <p style={{ color: '#808080' }} className='text-center'>Site: {wo?.site && wo?.site?.address_1 + ';'} {wo?.site && wo?.site?.city + ','}
+                {wo?.site?.state} {wo?.site?.zipcode}</p>
             </div>
 
-            <div className="col-3 border-end border-bottom px-3 py-2">
-              <h2 className="fw-bold text-center" style={{ fontSize: 24 }}>WO Manager</h2>
-              <p className="fw-bold text-center">{wo?.employee?.name}</p>
-            </div>
+            {
+              wo.schedule_type == 'single' ?
 
-            <div className="col-3 border-end border-bottom px-3 py-2">
+                <div className="col-4 border-end border-bottom px-3 py-2">
+                  <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Schedule</p>
+                  {wo.schedules[0] ? (
+                    <p className='text-end'>{
+                      DateTime.fromISO(wo.schedules[0].on_site_by).toFormat('MM-dd-yy')
+                    } at {DateTime.fromISO(wo.schedules[0].scheduled_time).toFormat('hh:mm a')}</p>
+                  ) : (
+                    <p className='text-end'>No upcoming schedules.</p>
+                  )}
+                </div> :
+
+                wo.check_in_out?.[0]?.check_in ? (
+                  <div className="col-4 border-end border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Time Logged</p>
+                    <p style={{ color: '#808080' }} className='text-end'>
+                      {wo?.check_in_out.reduce((sum, item) => {
+                        const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
+                        return sum + hours;
+                      }, 0)} Hours
+                    </p>
+                  </div>
+                ) : (
+                  <div className="col-4 border-end border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0 text-end" style={{ fontSize: '16px' }}>Scheduled Time</p>
+                    {upcomingSchedule ? (
+                      <p className='text-end'>{
+                        DateTime.fromISO(upcomingSchedule.on_site_by).toFormat('MM-dd-yy')
+                      } at {scheduledTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
+                    ) : (
+                      <p className='text-end'>No upcoming schedules.</p>
+                    )}
+                  </div>
+                )
+            }
+
+            <div className="col-4 border-end border-bottom px-3 py-2">
               <div className="d-flex justify-content-start align-items-center gap-2">
                 <i className="fa-solid fa-circle-user" style={{ fontSize: 25 }} aria-hidden="true" />
                 <h2 className="fw-bold" style={{ fontSize: 24 }}>Field Tech</h2>
               </div>
-              <p style={{ color: '#808080' }}>{wo?.technician && wo?.technician?.company_name+';'}
-                {wo?.technician && ' ID :'+wo?.technician?.technician_id}</p>
+              <p style={{ color: '#808080' }}>{wo?.technician && wo?.technician?.company_name + ';'} <br />
+                {wo?.technician && ' ID :' + wo?.technician?.technician_id}</p>
               {
                 wo?.technician?.phone && (
                   <a href={`callto:${wo?.technician?.phone}`}>
@@ -650,9 +689,12 @@ export default function WoView({ wo }) {
                 )
               }
 
+
             </div>
 
-            <div className="col-2 border-end border-bottom px-3 py-2">
+            <div className="col-4 border-end border-bottom px-3 py-2">
+              <h2 className="text-center" style={{ fontSize: 12, fontWeight: 600 }}>WO Manager</h2>
+              <p className="text-center">{wo?.employee?.name}</p>
               <p style={{ fontSize: 12, fontWeight: 600 }} className="text-center mb-0">Requested By</p>
               <p className="text-center pb-3">{wo.requested_by}</p>
               {
@@ -676,66 +718,26 @@ export default function WoView({ wo }) {
                   </p>
                 )
               }
-
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
-              <div className="d-flex justify-content-start align-items-center gap-2">
-                <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
-                <h2 className="fw-bold mb-0" style={{ fontSize: 16 }}>Location : {wo?.site ? wo?.site?.location : <span className='fw-light'>No Location Added Yet</span>}</h2>
+              <div className='d-flex flex-column align-items-end'>
+                <div className='w-100 pb-4'>
+                  <h4 style={{ fontSize: '24px' }} className='fw-bold text-end'>Problem Code</h4>
+                  <p style={{ color: '#808080' }} className="mb-0 text-end"> #595</p>
+                </div>
+                <hr className='w-25 my-0'/>
+                <div className='w-100 pt-4'>
+                  <h4 style={{ fontSize: '24px' }} className='fw-bold text-end'>Resolution Code</h4>
+                  <p style={{ color: '#808080' }} className="mb-0 text-end"> #59552</p>
+                </div>
               </div>
-              <p style={{ color: '#808080' }}>Site: {wo?.site && wo?.site?.address_1.AKT+';'} {wo?.site && wo?.site?.city+','}
-                {wo?.site?.state} {wo?.site?.zipcode}</p>
-            </div>
-
-            {
-              wo.schedule_type == 'single' ?
-
-                <div className="col-3 border-end border-bottom px-3 py-2">
-                  <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Schedule</p>
-                  {wo.schedules[0] ? (
-                    <p>{
-                      DateTime.fromISO(wo.schedules[0].on_site_by).toFormat('MM-dd-yy')
-                    } at {DateTime.fromISO(wo.schedules[0].scheduled_time).toFormat('hh:mm a')}</p>
-                  ) : (
-                    <p>No upcoming schedules.</p>
-                  )}
-                </div> :
-
-                wo.check_in_out?.[0]?.check_in ? (
-                  <div className="col-3 border-end border-bottom px-3 py-2">
-                    <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Time Logged</p>
-                    <p style={{ color: '#808080' }}>
-                      {wo?.check_in_out.reduce((sum, item) => {
-                        const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
-                        return sum + hours;
-                      }, 0)} Hours
-                    </p>
-                  </div>
-                ) : (
-                  <div className="col-3 border-end border-bottom px-3 py-2">
-                    <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Scheduled Time</p>
-                    {upcomingSchedule ? (
-                      <p>{
-                        DateTime.fromISO(upcomingSchedule.on_site_by).toFormat('MM-dd-yy')
-                      } at {scheduledTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
-                    ) : (
-                      <p>No upcoming schedules.</p>
-                    )}
-                  </div>
-                )
-
-            }
-
-
-
-            <div className="col-3 border-end border-bottom px-3 py-2">
-              <p className="fw-bold mb-0 text-center" style={{ fontSize: 16 }}>Support Ticket</p>
+              
             </div>
 
             <div className="col-2 d-flex gap-1 px-3 py-4">
-              <AddHold id={wo?.id} onSuccessMessage={handleSuccessMessage} stage={wo.is_hold} />
-              <MakeCancel id={wo?.id} onSuccessMessage={handleSuccessMessage} is_cancelled={wo.stage} />
+              <AddHold id={wo?.id} onSuccessMessage={handleSuccessMessage} stage={wo.is_hold} is_cancelled={wo.stage == 7} />
+              <MakeCancel id={wo?.id} onSuccessMessage={handleSuccessMessage} is_cancelled={wo.stage == 7} />
             </div>
 
             <div className="col-8 px-3 py-4">
@@ -797,13 +799,13 @@ export default function WoView({ wo }) {
               <a target='_blank' href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/${wo.id}`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
                 <i className="fa fa-eye" aria-hidden="true" />
               </a>
-              <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id}  is_cancelled={wo.stage == 7}/>
-              <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7}/>
+              <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7} />
+              <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7} />
             </div>
 
             {
               wo.status == 4 &&
-              <Reschedule id={latestAtRiskScheduleId} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} />
+              <Reschedule id={latestAtRiskScheduleId} is_ftech={wo.ftech_id} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} is_cancelled={wo.stage == 7} />
             }
 
 

@@ -26,8 +26,8 @@ const MakeCancel = ({id, is_cancelled, onSuccessMessage}) => {
 
     return (
         <>
-            <Button variant="danger" style={{height: 'max-content'}} onClick={handleShowCancel} disabled={is_cancelled == 7}>
-                {is_cancelled != 7 ? 'Cancel' : 'Cancelled'}
+            <Button variant="danger" style={{height: 'max-content'}} onClick={handleShowCancel} disabled={is_cancelled}>
+                {!is_cancelled ? 'Cancel' : 'Cancelled'}
             </Button>
 
             <Modal show={showCancel} onHide={handleCloseCancel}>
@@ -44,6 +44,7 @@ const MakeCancel = ({id, is_cancelled, onSuccessMessage}) => {
                         <div className="form-floating mb-3">
                             <textarea className="form-control" name="cancelling_note" placeCanceler="Leave a comment here" id="floatingTextarea2" style={{ height: 100 }} defaultValue={data.cancelling_note} onChange={(e) => setData('cancelling_note', e.target.value)} />
                             <label htmlFor="floatingTextarea2">Canceling Note</label>
+                            {errors.cancelling_note && <p className='text-danger'>{errors.cancelling_note}</p>}
                         </div>
                         <Button variant="secondary" className='me-2' onClick={handleCloseCancel}>
                             Close

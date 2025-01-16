@@ -164,6 +164,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('back-status/{id}', 'backStatus')->name('wo.backStatus');
 
                 Route::post('update-work-order/{id}', 'updateOverview')->name('wo.updateOverview');
+                Route::post('update-work-requ/{id}', 'updateWorkRequested')->name('wo.updateWorkRequested');
                 Route::post('update-scope-or-work/{id}', 'updateScopeOfWork')->name('wo.updateScopeOfWork');
                 Route::post('update-required-tools/{id}', 'updateTools')->name('wo.updateTools');
                 Route::post('update-instruction/{id}', 'updateDispatchedInstruction')->name('wo.updateDispatchedInstruction');

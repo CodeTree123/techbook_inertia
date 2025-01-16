@@ -123,12 +123,14 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
         e.preventDefault();
 
         if (details.ftech_id == null) {
-            onSuccessMessage('Assign a technician first');
+            onErrorMessage('Assign a technician first');
+        } else if(details?.site_id == null){
+            onErrorMessage('Add a site first');
         } else {
             post(route('user.wo.checkin', [id, taskId]), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    onSuccessMessage('Technician Checked in Successfully');
+                    onSuccessMessage('Technician checked in successfully');
                 },
                 onError: (e) => {
                     onSuccessMessage(e);

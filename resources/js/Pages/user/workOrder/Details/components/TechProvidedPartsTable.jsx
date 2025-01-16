@@ -87,25 +87,25 @@ const TechProvidedPartsTable = ({ details, onSuccessMessage, is_cancelled }) => 
                         <div className="col-2 d-flex action-group">
                             {
                                 editingRow != index &&
-                                <button type="button" className="btn" onClick={() => handleEdit(index)} style={{ display: 'block' }} disabled={is_cancelled}>
+                                <button type="button" className="btn border-0" onClick={() => handleEdit(index)} style={{ display: 'block' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-pen-to-square text-primary" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editingRow == index &&
-                                <button type='submit' className="btn fw-bold" disabled={is_cancelled}>
+                                <button type='submit' className="btn fw-bold border-0" disabled={is_cancelled}>
                                     <i className="fa-regular fa-floppy-disk text-success" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editingRow == index &&
-                                <button type="button" onClick={handleCancel} className="btn fw-bold" disabled={is_cancelled}>
+                                <button type="button" onClick={handleCancel} className="btn fw-bold border-0" disabled={is_cancelled}>
                                     <i className="fa-solid fa-ban text-danger" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editingRow != index &&
-                                <button onClick={(e)=>deletePart(e, part.id)} type="button" className="btn" style={{ height: 'max-content' }} disabled={is_cancelled}>
+                                <button onClick={(e)=>deletePart(e, part.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                 </button>
                             }
