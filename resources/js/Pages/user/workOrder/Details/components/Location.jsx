@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async'
 
-const Location = ({ id, details, onSuccessMessage ,onErrorMessage, is_cancelled}) => {
+const Location = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
 
     const loadSiteOptions = async (inputValue) => {
         try {
@@ -27,12 +27,12 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage, is_cancelled}
 
     const handleEdit = (e) => {
         e.preventDefault();
-        if(!details.slug){
+        if (!details.slug) {
             onErrorMessage('Add Customer First')
-        }else{
+        } else {
             setEditable(true);
         }
-        
+
     }
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -50,7 +50,7 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage, is_cancelled}
             }
         });
     };
-    
+
 
     let latitude = 34.9776679;
     let longitude = -120.4379281;
@@ -119,10 +119,10 @@ const Location = ({ id, details, onSuccessMessage ,onErrorMessage, is_cancelled}
                 {
                     details?.site_id != null &&
                     <>
-                        <p className="mb-0">{details?.site?.location} &amp;
-                            {details?.site && details?.site?.address_1+','}</p>
-                        <p className="mb-0">{details?.site && details?.site?.city+','} {details?.site && details?.site?.state+','} </p>
-                        <p className="mb-0">{details?.site?.zipcode}</p>
+                        <p className="mb-0">{details?.site?.site_id}</p>
+                        <p className="mb-0">{details?.site?.location + ','}</p>
+                        <p className="mb-0">{details?.site && details?.site?.address_1 + ','} {details?.site && details?.site?.city + ','} {details?.site && details?.site?.state + ','} 
+                        {details?.site?.zipcode}</p>
                         <iframe
                             src={mapUrl}
                             width="100%"

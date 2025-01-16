@@ -36,7 +36,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         requested_by: details?.requested_by,
                         employee_name: details?.employee?.name
                     }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} />
-                    <WorkRequested id={id} details={{ 
+                    <WorkRequested id={id} details={{
                         wo_requested: details?.wo_requested,
                         requested_date: details?.requested_date,
                         request_type: details?.request_type
@@ -85,6 +85,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         slug: details.slug,
                         site_id: details?.site_id,
                         site: {
+                            site_id: details?.site?.site_id,
                             address_1: details?.site?.address_1,
                             city: details?.site?.city,
                             co_ordinates: details?.site?.co_ordinates,

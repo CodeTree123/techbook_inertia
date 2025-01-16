@@ -2168,81 +2168,81 @@ class UserController extends Controller
         $invoice->work_order_id = $wo->id;
         $invoice->save();
 
-        if($request->techProvidedParts){
-            foreach($request->techProvidedParts as $part) {
+        if ($request->techProvidedParts) {
+            foreach ($request->techProvidedParts as $part) {
                 $techPart = new TechProvidedPart();
-    
+
                 $techPart->wo_id = $wo->id;
                 $techPart->part_name = $part['part_name'];
                 $techPart->parts_number = $part['parts_number'];
                 $techPart->quantity = $part['quantity'];
                 $techPart->price = $part['price'];
                 $techPart->amount = $part['quantity'] * $part['price'];
-    
+
                 $techPart->save();
             }
         }
-        
-        if($request->shipments){
-            foreach($request->shipments as $ship) {
+
+        if ($request->shipments) {
+            foreach ($request->shipments as $ship) {
                 $shipment = new OrderShipment();
-    
+
                 $shipment->wo_id = $wo->id;
                 $shipment->associate = $ship['associate'];
                 $shipment->tracking_number = $ship['tracking_number'];
                 $shipment->shipment_from = $ship['shipment_from'];
                 $shipment->shipment_to = $ship['shipment_to'];
                 $shipment->created_at = $ship['created_at'];
-    
+
                 $shipment->save();
             }
         }
 
-        if($request->contacts){
-            foreach($request->contacts as $cnt){
+        if ($request->contacts) {
+            foreach ($request->contacts as $cnt) {
                 $contact = new Contact();
-    
+
                 $contact->wo_id = $wo->id;
                 $contact->title = $cnt['contact_title'];
                 $contact->name = $cnt['contact_name'];
                 $contact->phone = $cnt['contact_phone'];
-    
+
                 $contact->save();
             }
         }
 
-        if($request->schedules){
-            foreach($request->schedules as $sch){
+        if ($request->schedules) {
+            foreach ($request->schedules as $sch) {
                 $schdule = new WorkOrderSchedule();
-    
+
                 $schdule->wo_id = $wo->id;
                 $schdule->on_site_by = $sch['on_site_by'];
                 $schdule->scheduled_time = $sch['scheduled_time'];
                 $schdule->h_operation = $sch['h_operation'];
                 $schdule->estimated_time = $sch['estimated_time'];
-        
+
                 $schdule->save();
             }
         }
-        
-        if($request->otherExpenses){
-            foreach($request->otherExpenses as $other){
+
+        if ($request->otherExpenses) {
+            foreach ($request->otherExpenses as $other) {
                 $otherExpense = new OtherExpense();
-    
+
                 $otherExpense->wo_id = $wo->id;
                 $otherExpense->description = $other['other_description'];
                 $otherExpense->price = $other['other_price'];
                 $otherExpense->quantity = $other['other_quantity'] ?? 1;
                 $otherExpense->amount = $other['other_price'] * ($other['other_quantity'] ?? 1);
-    
+
                 $otherExpense->save();
             }
         }
 
-        if($request->tasks){
-            foreach($request->tasks as $tsk){
+        if ($request->tasks) {
+            foreach ($request->tasks as $tsk) {
                 $task = new Task();
-        
+
                 $task->wo_id = $wo->id;
                 $task->type = $tsk['type'];
                 $task->reason = $tsk['reason'];
@@ -2251,13 +2251,13 @@ class UserController extends Controller
                 $task->phone = $tsk['phone'];
                 $task->from = $tsk['from'];
                 $task->item = $tsk['item'];
-    
+
                 $task->save();
             }
         }
 
-        if($request->file('techDocs')){
-            foreach($request->file('techDocs') as $file){
+        if ($request->file('techDocs')) {
+            foreach ($request->file('techDocs') as $file) {
 
                 $originalName = $file->getClientOriginalName();
                 $fileName = time() . '_' . $file->getClientOriginalName();
@@ -2294,6 +2294,7 @@ class UserController extends Controller
             'site' => function ($query) {
                 $query->select(
                     'id',
+                    'site_id',
                     'location',
                     'address_1',
                     'city',

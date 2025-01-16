@@ -617,9 +617,11 @@ export default function WoView({ wo }) {
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
-
-              <h2 className="fw-bold text-center" style={{ fontSize: 24 }}>{wo?.customer?.company_name}</h2>
-
+              <h2 className="fw-bold text-center" style={{ fontSize: 24 }}>{wo?.customer?.company_name} ({wo?.customer?.customer_id})</h2>
+              <p style={{ color: '#808080' }} className="mb-0">Purchase Order : #{wo.p_o}</p>
+              <p style={{ color: '#808080' }} className="mb-0">Problem Code : #595</p>
+              <p style={{ color: '#808080' }} className="mb-0">Resolution Code : #59552</p>
+            </div>
               <div className="d-flex justify-content-center align-items-center gap-2">
                 <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
                 <h2 className="mb-0 fw-light" style={{ fontSize: 16 }}> Location : {wo?.site ? wo?.site?.location : <span className='fw-light'>No Location Added Yet</span>}</h2>
@@ -732,7 +734,53 @@ export default function WoView({ wo }) {
                   <p style={{ color: '#808080' }} className="mb-0 text-end"> #59552</p>
                 </div>
               </div>
-              
+              <p style={{ color: '#808080' }}>Site: {wo?.site && wo?.site?.address_1+';'} {wo?.site && wo?.site?.city+','}
+                {wo?.site?.state} {wo?.site?.zipcode}</p>
+            </div>
+
+            {
+              wo.schedule_type == 'single' ?
+
+                <div className="col-3 border-end border-bottom px-3 py-2">
+                  <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Schedule</p>
+                  {wo.schedules[0] ? (
+                    <p>{
+                      DateTime.fromISO(wo.schedules[0].on_site_by).toFormat('MM-dd-yy')
+                    } at {DateTime.fromISO(wo.schedules[0].scheduled_time).toFormat('hh:mm a')}</p>
+                  ) : (
+                    <p>No upcoming schedules.</p>
+                  )}
+                </div> :
+
+                wo.check_in_out?.[0]?.check_in ? (
+                  <div className="col-3 border-end border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Time Logged</p>
+                    <p style={{ color: '#808080' }}>
+                      {wo?.check_in_out.reduce((sum, item) => {
+                        const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
+                        return sum + hours;
+                      }, 0)} Hours
+                    </p>
+                  </div>
+                ) : (
+                  <div className="col-3 border-end border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0" style={{ fontSize: '16px' }}>Scheduled Time</p>
+                    {upcomingSchedule ? (
+                      <p>{
+                        DateTime.fromISO(upcomingSchedule.on_site_by).toFormat('MM-dd-yy')
+                      } at {scheduledTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
+                    ) : (
+                      <p>No upcoming schedules.</p>
+                    )}
+                  </div>
+                )
+
+            }
+
+
+
+            <div className="col-3 border-end border-bottom px-3 py-2">
+              <p className="fw-bold mb-0 text-center" style={{ fontSize: 16 }}>Support Ticket</p>
             </div>
 
             <div className="col-2 d-flex gap-1 px-3 py-4">
