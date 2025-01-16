@@ -439,7 +439,6 @@
                             <th>Work Order Number</th>
                         </tr>
                         <tr>
-                            @if ($invoice->order_type == 1)
                             @if ($invoice->priority == 1)
                             <td><input type="text" style="border:none" value="P1"></td>
                             @elseif($invoice->priority == 2)
@@ -453,14 +452,11 @@
                             @else
                             <td><input type="text" style="border:none" value=""></td>
                             @endif
-                            @elseif($invoice->order_type == 2)
-                            <td><input type="text" style="border:none" value="Project"></td>
-                            @elseif($invoice->order_type == 3)
-                            <td><input type="text" style="border:none" value="Install"></td>
-                            @endif
+
                             <td><input type="text"
-                                    value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '' }}"
-                                    style="border:none"></td>
+                                    value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y h:i A') : '' }}"
+                                    style="border:none">
+                            </td>
                             <td><input type="text" value="{{ @$invoice->p_o }}" style="border:none"></td>
                             <td><input type="text" value="{{ @$invoice->customer->billing_term }}"
                                     style="border:none"></td>

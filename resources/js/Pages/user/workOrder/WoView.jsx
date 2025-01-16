@@ -616,7 +616,7 @@ export default function WoView({ wo }) {
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
-              <h2 className="fw-bold text-center" style={{ fontSize: 24 }}>{wo?.customer?.company_name}</h2>
+              <h2 className="fw-bold text-center" style={{ fontSize: 24 }}>{wo?.customer?.company_name} ({wo?.customer?.customer_id})</h2>
               <p style={{ color: '#808080' }} className="mb-0">Purchase Order : #{wo.p_o}</p>
               <p style={{ color: '#808080' }} className="mb-0">Problem Code : #595</p>
               <p style={{ color: '#808080' }} className="mb-0">Resolution Code : #59552</p>
@@ -684,7 +684,7 @@ export default function WoView({ wo }) {
                 <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
                 <h2 className="fw-bold mb-0" style={{ fontSize: 16 }}>Location : {wo?.site ? wo?.site?.location : <span className='fw-light'>No Location Added Yet</span>}</h2>
               </div>
-              <p style={{ color: '#808080' }}>Site: {wo?.site && wo?.site?.address_1.AKT+';'} {wo?.site && wo?.site?.city+','}
+              <p style={{ color: '#808080' }}>Site: {wo?.site && wo?.site?.address_1+';'} {wo?.site && wo?.site?.city+','}
                 {wo?.site?.state} {wo?.site?.zipcode}</p>
             </div>
 
