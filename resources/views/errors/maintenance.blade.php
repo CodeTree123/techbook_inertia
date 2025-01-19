@@ -18,7 +18,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #55AA28, #2a5298);
             font-family: 'Arial', sans-serif;
             text-align: center;
             color: white;
@@ -76,6 +76,9 @@
         <h1>🚧 We're Under Maintenance 🚧</h1>
         <p>We're making some improvements. Please check back soon!</p>
         <div class="loader"></div>
+        <div class="logo">
+            <img src="https://techyeahinc.com/assets/media/logo/tech_yeah_logo.png" alt="" width="100%">
+        </div>
     </div>
 
 </body>

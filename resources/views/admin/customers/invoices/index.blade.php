@@ -295,6 +295,10 @@
     </style>
     <style>
         @media print {
+            .cus {
+                padding-left: 120px;
+            }
+
             .top-table {
                 width: max-content;
             }
@@ -375,40 +379,41 @@
                         </address>
                     </div>
 
-                    <div class="col-md-3 text-right d-flex justify-content-end">
-                        <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
-                            <tr>
-                                <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
-                                            class="tax">Customer ID</span></span></td>
-                                <td style="padding: 10px; text-align: right;"><span
-                                        style="color: #000000;">{{ @$invoice->customer->customer_id }}</span></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; text-align: left;"><span class="tax"
-                                        style="font-weight: bold;">Date</span></td>
-                                <td style="padding: 10px; text-align: right;"><span
-                                        style="color: #000000;"><?php
-                                                                echo date('m/d/Y'); // Outputs: 2024-12-24
-                                                                ?></span></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; text-align: left;"><span class="tax"
-                                        style=" font-weight: bold;">Site Number</span></td>
-                                <td style="padding: 10px; text-align: right;">
-                                    <span style="color: #000000;">
-                                        {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] ?? '' : '' }}
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-
+                    <div class="col-md-3 text-left">
+                        <div style="padding-left: 120px;">
+                            <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
+                                <tr>
+                                    <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
+                                                class="tax">Customer ID</span></span></td>
+                                    <td style="padding: 10px; text-align: right;"><span
+                                            style="color: #000000;">{{ @$invoice->customer->customer_id }}</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; text-align: left;"><span class="tax"
+                                            style="font-weight: bold;">Date</span></td>
+                                    <td style="padding: 10px; text-align: right;"><span
+                                            style="color: #000000;"><?php
+                                                                    echo date('m/d/Y'); // Outputs: 2024-12-24
+                                                                    ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; text-align: left;"><span class="tax"
+                                            style=" font-weight: bold;">Site Number</span></td>
+                                    <td style="padding: 10px; text-align: right;">
+                                        <span style="color: #000000;">
+                                            {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] ?? '' : '' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="row align-items-start">
                     <div class="col-md-3">
                         <h6 class="tax">Bill To:</h6>
                         <span>{{ @$invoice->customer->company_name }}<br>
-                            {{ @$invoice->customer->address->address }}<br> {{ @$invoice->customer->address->city }},
+                            {{ @$invoice->customer->address->address }}<br> {{ @$invoice->customer->address->city }}
                             {{ @$invoice->customer->address->state }}
                             {{ @$invoice->customer->address->zip_code }}</span>
                     </div>
@@ -418,7 +423,7 @@
                         </address>
                     </div>
                     <div class="col-md-3 text-left">
-                        <div class="margin-shop text-start" style="padding-left: 10px;">
+                        <div class="margin-shop text-start" style="padding-left: 130px;">
                             <h6 class="tax">Ship To:</h6>
                             <span>{{ @$invoice->site->location }}<br>{{ @$invoice->site->address_1 }}<br>
                                 {{ @$invoice->site->city }} {{ @$invoice->site->state }}
@@ -454,7 +459,7 @@
                             @endif
 
                             <td><input type="text"
-                                    value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y h:i A') : '' }}"
+                                    value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
                                     style="border:none">
                             </td>
                             <td><input type="text" value="{{ @$invoice->p_o }}" style="border:none"></td>
