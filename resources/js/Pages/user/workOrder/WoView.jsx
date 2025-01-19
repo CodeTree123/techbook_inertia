@@ -613,7 +613,7 @@ export default function WoView({ wo }) {
                 }
 
               </div>
-              <p style={{ color: '#808080' }} className="mb-0 text-start">Purchase Order : #{wo.p_o}</p>
+              <p style={{ color: '#808080' }} className="mb-0 text-start">Purchase Order : #{wo?.p_o}</p>
             </div>
 
             <div className="col-4 border-end border-bottom px-3 py-2">
@@ -631,7 +631,7 @@ export default function WoView({ wo }) {
             {
               wo.schedule_type == 'single' ?
 
-                <div className="col-4 border-end border-bottom px-3 py-2">
+                <div className="col-4 border-bottom px-3 py-2">
                   <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Schedule</p>
                   {wo.schedules[0] ? (
                     <p className='text-end'>{
@@ -643,7 +643,7 @@ export default function WoView({ wo }) {
                 </div> :
 
                 wo.check_in_out?.[0]?.check_in ? (
-                  <div className="col-4 border-end border-bottom px-3 py-2">
+                  <div className="col-4 border-bottom px-3 py-2">
                     <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Time Logged</p>
                     <p style={{ color: '#808080' }} className='text-end'>
                       {wo?.check_in_out.reduce((sum, item) => {
@@ -653,7 +653,7 @@ export default function WoView({ wo }) {
                     </p>
                   </div>
                 ) : (
-                  <div className="col-4 border-end border-bottom px-3 py-2">
+                  <div className="col-4 border-bottom px-3 py-2">
                     <p className="fw-bold mb-0 text-end" style={{ fontSize: '16px' }}>Scheduled Time</p>
                     {upcomingSchedule ? (
                       <p className='text-end'>{
@@ -718,14 +718,13 @@ export default function WoView({ wo }) {
               <p className="text-center">{wo?.employee?.name}</p>
               <p style={{ fontSize: 12, fontWeight: 600 }} className="text-center mb-0">Requested By</p>
               <p className="text-center pb-3">{wo.requested_by}</p>
-
             </div>
 
-            <div className="col-4 border-end border-bottom px-3 py-2">
+            <div className="col-4 border-bottom px-3 py-2">
               <div className='d-flex flex-column align-items-end'>
                 <div className='w-100 pb-4'>
                   <h4 style={{ fontSize: '24px' }} className='fw-bold text-end'>Problem Code</h4>
-                  <p style={{ color: '#808080' }} className="mb-0 text-end"> #595</p>
+                  <p style={{ color: '#808080' }} className="mb-0 text-end"> #{wo.problem_code}</p>
                 </div>
                 <hr className='w-25 my-0' />
                 <div className='w-100 pt-4'>

@@ -11,12 +11,11 @@ const SiteHistory = ({ id, details, onSuccessMessage, onErrorMessage }) => {
         'MT': 'America/Denver',
         'CT': 'America/Chicago',
         'ET': 'America/New_York',
-        'CT/MT': 'America/Chicago',
         'AKT': 'America/Anchorage',
         'HST': 'Pacific/Honolulu',
     };
 
-    const selectedTimezone = timezoneMap[timezone] || 'America/Chicago';
+    const selectedTimezone = timezoneMap[timezone];
 
     const [show, setShow] = useState(false);
     const [modalData, setModalData] = useState(null);
@@ -63,7 +62,7 @@ const SiteHistory = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                                         wo?.scope_work && !show &&
                                         <div className='position-absolute p-2 border rounded shadow bg-white w-100 tooltip-custom' style={{ bottom: '50px', maxHeight: '400px', overflow: 'hidden' }}>
                                             <div className='position-relative'>
-                                                <div dangerouslySetInnerHTML={{ __html: wo?.scope_work }} style={{ height: '384px', overflow: 'hidden' }} />
+                                                <div dangerouslySetInnerHTML={{ __html: wo?.scope_work }} style={{ maxHeight: '384px', overflow: 'hidden' }} />
                                                 <span className='text-primary position-absolute bottom-0 end-0' style={{ cursor: 'pointer' }} onClick={()=>handleShow(wo?.scope_work)}>
                                                     <i class="fa-solid fa-expand"></i>
                                                 </span>

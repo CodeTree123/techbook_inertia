@@ -929,7 +929,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                     <div>
                                                         <textarea name="" className='w-100 p-3 border' placeholder='Add Closeout Note' onChange={(e) => setData({ note: e.target.value })}></textarea>
                                                         <div className='d-flex justify-content-end gap-2'>
-                                                            <button className='btn btn-outline-primary' onClick={(e) => addCloseoutNote(e, tech.id)}>Save</button>
+                                                            <button className='btn btn-outline-primary' onClick={(e) => addCloseoutNote(e, tech.tech_id)}>Save</button>
                                                             <button className='btn btn-outline-danger' onClick={() => setAddCloseOut(null)}>Cancel</button>
                                                         </div>
                                                     </div> :
@@ -937,7 +937,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                             }
                                             {
                                                 details?.notes?.map((note) => (
-                                                    note.note_type == 'close_out_notes' && note.tech_id == tech.id &&
+                                                    note.note_type == 'close_out_notes' && note.tech_id == tech.tech_id &&
                                                     <div className='px-4 py-3 mt-3' style={{ backgroundColor: 'rgb(227, 242, 253)' }}>
                                                         <h6>Closeout Note:</h6>
                                                         {note.note}

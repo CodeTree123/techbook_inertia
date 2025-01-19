@@ -23,6 +23,8 @@ const CreateWorkOrder = ({ type }) => {
         'priority': '',
         'requested_by': '',
         'wo_requested': '',
+        'purchase_order': '',
+        'problem_code': '',
         'requested_date': '',
         'request_type': '',
         'wo_manager': '',

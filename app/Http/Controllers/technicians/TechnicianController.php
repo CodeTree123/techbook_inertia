@@ -13,6 +13,7 @@ use App\Models\Review;
 use App\Models\SkillCategory;
 use App\Models\Technician;
 use App\Models\WorkOrder;
+use App\Models\WorkOrderTimeLog;
 use App\Services\GeocodingService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\File;
@@ -27,6 +28,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Spatie\DbDumper\Databases\MySql;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class TechnicianController extends Controller
 {
@@ -616,9 +619,29 @@ class TechnicianController extends Controller
         return redirect()->back()->withNotify($notify);
     }
 
+    public function createWorkOrderTimeLog($tableName, $columnName, $wo_id, $date, $preLog, $value, $toUser = null, $type,  $msg, $id)
+    {
+        $wo_log = new WorkOrderTimeLog();
+        $wo_log->wo_id = $wo_id;
+        $wo_log->pre_log_id = $preLog->id ?? null;
+        $wo_log->identity = $id ?? null;
+        $wo_log->by_user = Auth::user()->firstname . ' ' . Auth::user()->lastname;
+        $wo_log->to_user = $toUser ?? null;
+        $wo_log->event_title = $msg;
+        $wo_log->table_name = $tableName;
+        $wo_log->column_name = $columnName;
+        $wo_log->value_type = $type;
+        $wo_log->value = $value;
+        $wo_log->recorded_at = $date;
+        $wo_log->save();
+    }
+
     public function assignEng(Request $request, $id)
     {
         $techs = $request->techs;
+        $totalEng = 0;
+
+        $wo = WorkOrder::find($id);
 
         if($techs){
             foreach ($techs as $tech) {
@@ -629,12 +652,13 @@ class TechnicianController extends Controller
     
                 $assingEng->save();
             }
+
+            $totalEng += count($techs);
         }
         
 
         if ($request->name) {
             $eng = new Engineer();
-            $wo = WorkOrder::find($id);
 
             $eng->tech_id = $wo->ftech_id;
             $eng->name = $request->name;
@@ -660,8 +684,11 @@ class TechnicianController extends Controller
             $newAssingEng->tech_id = $eng->id;
 
             $newAssingEng->save();
+
+            $totalEng += 1;
         }
 
+        $this->createWorkOrderTimeLog('work_orders', '', $id, Carbon::now(), '', $wo->id, '', 'id', $totalEng.' Technicians Assigned To The Work Order', $id);
 
         $notify[] = ['success', 'Technician assigned successfully'];
         return redirect()->back()->withNotify($notify);

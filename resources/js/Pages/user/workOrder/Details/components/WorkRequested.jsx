@@ -8,8 +8,8 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
     const [editable, setEditable] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'wo_requested': details.wo_requested,
-        'requested_date': details.requested_date,
-        'request_type': details.request_type || 'Email',
+        'requested_date': '',
+        'request_type': '',
     });
 
     const config = useMemo(() => ({

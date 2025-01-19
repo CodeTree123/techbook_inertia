@@ -93,7 +93,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
 
     const editTech = (e) => {
         e.preventDefault();
-        post(route('user.wo.editTech', techData.id), {
+        post(route('user.wo.editTech', [techData.id, id]), {
             preserveScroll: true,
             onSuccess: () => {
                 onSuccessMessage('Technician Updated Successfully');
@@ -125,7 +125,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
 
     const editAssignees = (e, assigneeID) => {
         e.preventDefault();
-        post(route('user.wo.editAssignees', assigneeID), {
+        post(route('user.wo.editAssignees', [assigneeID, id]), {
             preserveScroll: true,
             onSuccess: () => {
                 onSuccessMessage('Technician Updated Successfully');
@@ -152,23 +152,26 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
 
                 }
 
-                <button onClick={handleShowModal} className='btn btn-outline-danger'  disabled={stage != 3 || is_cancelled}>Remove Tech</button>
+                <button onClick={handleShowModal} className='btn btn-outline-danger' disabled={stage != 3 || is_cancelled}>Remove Tech</button>
             </div>
             <div className='mb-3 row'>
                 <div className='col-md-8 pe-5'>
                     <h2 className='fs-4'>{techData.technician_id} - {!editable && techData.company_name} {!editable && '(' + techData.tech_type + ')'} </h2>
-                    {
-                        editable &&
-                        <input type="text" name="" id="" onChange={(e) => setData({ ...data, company_name: e.target.value })} className='form-control' value={techData.company_name} />
-                    }
+                    <div className='d-flex justify-content-start gap-3 mt-3'>
+                        {
+                            editable &&
+                            <input type="text" name="" id="" onChange={(e) => setData({ ...data, company_name: e.target.value })} className='form-control p-2' defaultValue={techData.company_name} />
+                        }
 
-                    {
-                        editable &&
-                        <select name="" className='form-select mt-3' id="" onChange={(e) => setData({ ...data, tech_type: e.target.value })}>
-                            <option value="individual" selected={techData.tech_type == 'individual'}>Individual</option>
-                            <option value="company" selected={techData.tech_type == 'company'}>Company</option>
-                        </select>
-                    }
+                        {
+                            editable &&
+                            <select name="" className='form-select p-2' id="" onChange={(e) => setData({ ...data, tech_type: e.target.value })}>
+                                <option value="individual" selected={techData.tech_type == 'individual'}>Individual</option>
+                                <option value="company" selected={techData.tech_type == 'company'}>Company</option>
+                            </select>
+                        }
+                    </div>
+
 
                     <div className='d-flex justify-content-start gap-3 mt-3'>
                         {
@@ -189,11 +192,11 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
 
                         {
                             editable &&
-                            <input type="email" name="" id="" className='form-control mt-3' onChange={(e) => setData({ ...data, email: e.target.value })} placeholder='Email' value={techData.email} />
+                            <input type="email" name="" id="" className='form-control p-2' onChange={(e) => setData({ ...data, email: e.target.value })} placeholder='Email' defaultValue={techData.email} />
                         }
                         {
                             editable &&
-                            <input type="text" name="" id="" className='form-control mt-3' placeholder='Phone' onChange={(e) => setData({ ...data, phone: e.target.value })} value={techData.phone} />
+                            <input type="text" name="" id="" className='form-control p-2' placeholder='Phone' onChange={(e) => setData({ ...data, phone: e.target.value })} defaultValue={techData.phone} />
                         }
                     </div>
 
@@ -269,19 +272,19 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                                                     <div className='row ms-2'>
                                                         <input type="text" placeholder='Name'
                                                             defaultValue={eng?.engineer?.name}
-                                                            className='form-control w-75 mb-2' onChange={(e)=>setData({...data,name: e.target.value})} />
+                                                            className='form-control w-75 mb-2' onChange={(e) => setData({ ...data, name: e.target.value })} />
 
                                                         <input type="text" placeholder='Role'
                                                             defaultValue={eng?.engineer?.role}
-                                                            className='form-control w-75 mb-2' onChange={(e)=>setData({...data,role: e.target.value})} />
+                                                            className='form-control w-75 mb-2' onChange={(e) => setData({ ...data, role: e.target.value })} />
 
                                                         <input type="email" placeholder='Email'
                                                             defaultValue={eng?.engineer?.email}
-                                                            className='form-control w-75 mb-2' onChange={(e)=>setData({...data,email: e.target.value})} />
+                                                            className='form-control w-75 mb-2' onChange={(e) => setData({ ...data, email: e.target.value })} />
 
                                                         <input type="text" placeholder='Phone'
                                                             defaultValue={eng?.engineer?.phone}
-                                                            className='form-control w-75' onChange={(e)=>setData({...data,phone: e.target.value})} />
+                                                            className='form-control w-75' onChange={(e) => setData({ ...data, phone: e.target.value })} />
                                                     </div>
                                             }
 
@@ -296,11 +299,11 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                                                 }
                                                 {
                                                     assigneeEditable == index &&
-                                                    <span className='text-success mx-2' style={{ cursor: 'pointer' }} onClick={(e)=>editAssignees(e, eng?.engineer?.id)}><i class="fa-regular fa-floppy-disk"></i></span>
+                                                    <span className='text-success mx-2' style={{ cursor: 'pointer' }} onClick={(e) => editAssignees(e, eng?.engineer?.id)}><i class="fa-regular fa-floppy-disk"></i></span>
                                                 }
                                                 {
                                                     assigneeEditable == index &&
-                                                    <span className='text-danger mx-2' style={{ cursor: 'pointer' }} onClick={ handleAssigneeCancel}><i class="fa-solid fa-ban"></i></span>
+                                                    <span className='text-danger mx-2' style={{ cursor: 'pointer' }} onClick={handleAssigneeCancel}><i class="fa-solid fa-ban"></i></span>
                                                 }
                                             </div>
                                         </div>

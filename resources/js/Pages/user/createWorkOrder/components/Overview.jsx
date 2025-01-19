@@ -101,9 +101,20 @@ const Overview = ({data, setData, errors, overviewRef}) => {
                         loadOptions={loadEmployeeOptions}
                         defaultOptions
                         placeholder="Search and select employees"
+                        className='mb-3'
                         onChange={(selectedOption) => setData({ ...data, wo_manager: selectedOption?.value })}
                     />
                     {errors.wo_manager && <p className='text-danger mb-0'>{errors.wo_manager}</p>}
+
+                    <h6 style={{ fontWeight: 600 }}>
+                        Purchase Order :
+                    </h6>
+                    <input className="mb-0 border p-2 rounded mb-3 w-100" type="text" defaultValue={data.purchase_order} onChange={(e) => setData({ ...data, purchase_order: e.target.value })} name="purchase_order" />
+
+                    <h6 style={{ fontWeight: 600 }}>
+                        Problem Code :
+                    </h6>
+                    <input className="mb-0 border p-2 rounded mb-3 w-100" type="text" defaultValue={data.problem_code} onChange={(e) => setData({ ...data, problem_code: e.target.value })} name="problem_code" />
                 </div>
             </div>
         </div>

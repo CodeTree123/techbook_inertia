@@ -217,10 +217,10 @@ Route::middleware('auth')->name('user.')->group(function () {
 
                 Route::post('update-closeout-note/{id}', 'storeCloseoutNote')->name('wo.storeCloseoutNote');
 
-                Route::post('edit-ftech/{id}','editTech')->name('wo.editTech');
+                Route::post('edit-ftech/{id}/{wo_id}','editTech')->name('wo.editTech');
                 Route::post('delete-ftech/{id}','deleteTech')->name('wo.deleteTech');
 
-                Route::post('edit-assignees/{id}','editAssignees')->name('wo.editAssignees');
+                Route::post('edit-assignees/{id}/{wo_id}','editAssignees')->name('wo.editAssignees');
                 Route::delete('delete-assignees/{id}','deleteAssignees')->name('wo.deleteAssignees');
 
                 Route::post('assign-tech/{id}/{techId}','assignTechToWo')->name('wo.assignTechToWo');

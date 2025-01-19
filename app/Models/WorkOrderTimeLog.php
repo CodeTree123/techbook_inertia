@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class WorkOrderTimeLog extends Model
 {
     use HasFactory;
+
+    public function wo()
+    {
+        return $this->belongsTo(WorkOrder::class, 'wo_id');
+    }
 }
