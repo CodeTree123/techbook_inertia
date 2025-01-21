@@ -2277,7 +2277,7 @@ class UserController extends Controller
             }
         }
 
-        $this->createWorkOrderTimeLog('work_orders', 'new', $wo->id, $wo->updated_at, '', '<p>Id: '.$wo->order_id.'</p><br><p>Customer Name: '.$wo->customer->company_name.'</p>', '', 'html_text', 'New Work Order Created', $wo->id);
+        $this->createWorkOrderTimeLog('work_orders', 'new', $wo->id, $wo->updated_at, '', "<p style='margin: 0'><b>Id:</b> ".$wo->order_id."</p><br><p style='margin: 0'><b>Customer Name:</b> ".$wo->customer->company_name.'</p>', '', 'html_text', 'New Work Order Created', $wo->id);
 
         return redirect()->route('user.work.order.view.inertia', $wo->id);
     }
@@ -2312,6 +2312,7 @@ class UserController extends Controller
             'docsForTech',
             'checkInOut.engineer',
             'timeLogs.wo',
+            'timeLogs.preLog',
             'tasks',
             'shipments',
             'techProvidedParts',
@@ -2377,6 +2378,7 @@ class UserController extends Controller
         $wo = WorkOrder::find($id);
 
         $wo->stage = Status::STAGE_CANCEL;
+        $wo->status = null;
         $wo->cancelling_note = $request->cancelling_note;
 
         $wo->save();
@@ -2664,25 +2666,25 @@ class UserController extends Controller
 
         if ($request->priority) {
             $preLog = WorkOrderTimeLog::where('column_name', 'priority')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'priority', $wo->id, $wo->updated_at, $preLog, $wo->priority, '', 'nrml_text', $preLog ? 'Priority Updated' : 'Priority Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'priority', $wo->id, $wo->updated_at, $preLog, $wo->priority, '', 'nrml_text', 'Priority Updated', $id);
         }
 
         // Check for customer ID update
         if ($request->cus_id) {
             $preLog = WorkOrderTimeLog::where('column_name', 'slug')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'slug', $wo->id, $wo->updated_at, $preLog, $wo->slug, $wo->customer->company_name ?? '', 'id', $preLog ? 'Customer Updated' : 'Customer Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'slug', $wo->id, $wo->updated_at, $preLog, $wo->customer->company_name, $wo->customer->company_name ?? '', 'id', 'Customer Updated', $id);
         }
 
         // Check for requested by update
         if ($request->requested_by) {
             $preLog = WorkOrderTimeLog::where('column_name', 'requested_by')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'requested_by', $wo->id, $wo->updated_at, $preLog, $wo->requested_by, $request->requested_by, 'nrml_text', $preLog ? 'Requested User Updated' : 'Requested User Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'requested_by', $wo->id, $wo->updated_at, $preLog, $wo->requested_by, $request->requested_by, 'nrml_text', 'Requested User Updated', $id);
         }
 
         // Check for work order manager update
         if ($request->wo_manager) {
             $preLog = WorkOrderTimeLog::where('column_name', 'em_id')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'em_id', $wo->id, $wo->updated_at, $preLog, $wo->em_id, $wo->employee->name ?? '', 'id', $preLog ? 'Employee Updated' : 'Employee Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'em_id', $wo->id, $wo->updated_at, $preLog, $wo->employee->name, $wo->employee->name ?? '', 'id', 'Employee Updated', $id);
         }
     }
 
@@ -2698,17 +2700,17 @@ class UserController extends Controller
 
         if ($request->wo_requested) {
             $preLog = WorkOrderTimeLog::where('column_name', 'wo_requested')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'wo_requested', $wo->id, $wo->updated_at, $preLog, $wo->wo_requested, '', 'html_text', $preLog ? 'Work Requested Updated' : 'Work Requested Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'wo_requested', $wo->id, $wo->updated_at, $preLog, $wo->wo_requested, '', 'html_text', 'Work Requested Updated', $id);
         }
 
         if ($request->request_type) {
             $preLog = WorkOrderTimeLog::where('column_name', 'request_type')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'request_type', $wo->id, $wo->updated_at, $preLog, $wo->request_type, '', 'html_text', $preLog ? 'Requesting Method Updated' : 'Requesting Method Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'request_type', $wo->id, $wo->updated_at, $preLog, $wo->request_type, '', 'html_text', 'Requesting Method Updated', $id);
         }
 
         if ($request->requested_date) {
             $preLog = WorkOrderTimeLog::where('column_name', 'requested_date')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'requested_date', $wo->id, $wo->updated_at, $preLog, $wo->requested_date, '', 'html_text', $preLog ? 'Requesting Date Updated' : 'Requesting Date Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'requested_date', $wo->id, $wo->updated_at, $preLog, $wo->requested_date, '', 'html_text', 'Requesting Date Updated', $id);
         }
     }
 
@@ -2722,7 +2724,7 @@ class UserController extends Controller
 
         if ($request->scope_work) {
             $preLog = WorkOrderTimeLog::where('column_name', 'scope_work')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'scope_work', $wo->id, $wo->updated_at, $preLog, $wo->scope_work, '', 'html_text', $preLog ? 'Scope Of Work Updated' : 'Scope Of Work Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'scope_work', $wo->id, $wo->updated_at, $preLog, $wo->scope_work, '', 'html_text', 'Scope Of Work Updated', $id);
         }
     }
 
@@ -2736,7 +2738,7 @@ class UserController extends Controller
 
         if ($request->r_tools) {
             $preLog = WorkOrderTimeLog::where('column_name', 'r_tools')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'r_tools', $wo->id, $wo->updated_at, $preLog, $wo->r_tools, '', 'html_text', $preLog ? 'Required Tools Updated' : 'Required Tools Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'r_tools', $wo->id, $wo->updated_at, $preLog, $wo->r_tools, '', 'html_text', 'Required Tools Updated', $id);
         }
     }
 
@@ -2750,7 +2752,7 @@ class UserController extends Controller
 
         if ($request->instruction) {
             $preLog = WorkOrderTimeLog::where('column_name', 'instruction')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'instruction', $wo->id, $wo->updated_at, $preLog, $wo->instruction, '', 'html_text', $preLog ? 'Dispatched Instruction Updated' : 'Dispatched Instruction Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'instruction', $wo->id, $wo->updated_at, $preLog, $wo->instruction, '', 'html_text', 'Dispatched Instruction Updated', $id);
         }
     }
 
@@ -2781,7 +2783,7 @@ class UserController extends Controller
 
         $schdule->save();
 
-        $this->createWorkOrderTimeLog('work_order_schedules', '', $schdule->wo_id, $schdule->updated_at, '', '<p>' . $schdule->on_site_by . ' at ' . $schdule->scheduled_time . '</p><br/><p> Hours of operation: ' . $schdule->h_operation . '</p><br/><p> Estimated Hours: ' . $schdule->h_operation . '</p>', '', 'html_text', 'Schedule Added', $schdule->id);
+        $this->createWorkOrderTimeLog('work_order_schedules', 'new', $schdule->wo_id, $schdule->updated_at, '', '<p class="m-0">' . $schdule->on_site_by . ' at ' . $schdule->scheduled_time . '</p><br/><p class="m-0"><b> Hours of operation: </b>' . $schdule->h_operation . '</p><br/><p class="m-0"><b> Estimated Hours: </b>' . $schdule->estimated_time . '</p>', '', 'html_text', 'Schedule Added', $schdule->id);
     }
 
     public function updateSchedule(Request $request, $id)
@@ -2817,7 +2819,7 @@ class UserController extends Controller
     {
         $schdule = WorkOrderSchedule::find($id);
 
-        $this->createWorkOrderTimeLog('work_order_schedules', '', $schdule->wo_id, $schdule->updated_at, '', '<p>' . $schdule->on_site_by . ' at ' . $schdule->scheduled_time . '</p><br/><p> Hours of operation: ' . $schdule->h_operation . '</p><br/><p> Estimated Hours: ' . $schdule->h_operation . '</p>', '', 'html_text', 'Schedule Deleted', $id);
+        $this->createWorkOrderTimeLog('work_order_schedules', 'delete', $schdule->wo_id, $schdule->updated_at, '', '<p class="m-0">' . $schdule->on_site_by . ' at ' . $schdule->scheduled_time . '</p><br/><p class="m-0"><b> Hours of operation: </b>' . $schdule->h_operation . '</p><br/><p class="m-0"><b> Estimated Hours: </b>' . $schdule->estimated_time . '</p>', '', 'html_text', 'Schedule Deleted', $id);
 
         $schdule->delete();
     }
@@ -2832,7 +2834,8 @@ class UserController extends Controller
 
         $wo->schedule_type = $value;
 
-        $this->createWorkOrderTimeLog('work_orders', '', $id, $wo->updated_at, '', $wo->schedule_type, '', 'nrml_text', 'Schedule Type Changed', $id);
+        $preLog = WorkOrderTimeLog::where('column_name', 'schedule_type')->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog('work_orders', 'schedule_type', $id, $wo->updated_at, $preLog, $wo->schedule_type, '', 'nrml_text', 'Schedule Type Changed', $id);
 
         $wo->save();
     }
@@ -2859,7 +2862,7 @@ class UserController extends Controller
 
         $contact->save();
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('contacts', '', $contact->wo_id, $contact->updated_at, '', '<p>' . $contact->title . '</p><br/><p>' . $contact->name . '</p><br/><p>' . $contact->phone . '</p>', '', 'html_text', 'Contact Added', $contact->id);
+        $this->createWorkOrderTimeLog('contacts', 'new', $contact->wo_id, $contact->updated_at, '', '<p class="m-0"><b>Title: </b>' . $contact->title . '</p><br/><p class="m-0"><b>Name: </b>' . $contact->name . '</p><br/><p class="m-0"><b>Phone: </b>' . $contact->phone . '</p>', '', 'html_text', 'Contact Added', $contact->id);
     }
 
     public function updateContact(Request $request, $id)
@@ -2874,17 +2877,17 @@ class UserController extends Controller
 
         if ($request->title) {
             $preLog = WorkOrderTimeLog::where('column_name', 'contact-title-' . $contact->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('contacts', 'contact-title-' . $contact->id, $contact->wo_id, $contact->updated_at, $preLog, $contact->title, '', 'nrml_text', $preLog ? 'Contact Title Updated' : 'Contact Title Added', $id);
+            $this->createWorkOrderTimeLog('contacts', 'contact-title-' . $contact->id, $contact->wo_id, $contact->updated_at, $preLog, $contact->title, '', 'nrml_text', 'Contact Title Updated', $id);
         }
 
         if ($request->name) {
             $preLog = WorkOrderTimeLog::where('column_name', 'contact-name-' . $contact->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('contacts', 'contact-name-' . $contact->id, $contact->wo_id, $contact->updated_at, $preLog, $contact->name, '', 'nrml_text', $preLog ? 'Contact Name Updated' : 'Contact Name Added', $id);
+            $this->createWorkOrderTimeLog('contacts', 'contact-name-' . $contact->id, $contact->wo_id, $contact->updated_at, $preLog, $contact->name, '', 'nrml_text', 'Contact Name Updated', $id);
         }
 
         if ($request->phone) {
             $preLog = WorkOrderTimeLog::where('column_name', 'contact-phone-' . $contact->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('contacts', 'contact-phone-' . $contact->id, $contact->wo_id, $contact->updated_at, $preLog, $contact->title, '', 'nrml_text', $preLog ? 'Contact Number Updated' : 'Contact Number Added', $id);
+            $this->createWorkOrderTimeLog('contacts', 'contact-phone-' . $contact->id, $contact->wo_id, $contact->updated_at, $preLog, $contact->phone, '', 'nrml_text', 'Contact Number Updated', $id);
         }
     }
 
@@ -2893,7 +2896,7 @@ class UserController extends Controller
 
         $contact = Contact::find($id);
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('contacts', '', $contact->wo_id, $contact->updated_at, '', '<p>' . $contact->title . '</p><br/><p>' . $contact->name . '</p><br/><p>' . $contact->phone . '</p>', '', 'html_text', 'Contact Deleted', $id);
+        $this->createWorkOrderTimeLog('contacts', 'delete', $contact->wo_id, $contact->updated_at, '', '<p class="m-0"><b>Title: </b>' . $contact->title . '</p><br/><p class="m-0"><b>Name: </b>' . $contact->name . '</p><br/><p class="m-0"><b>Phone: </b>' . $contact->phone . '</p>', '', 'html_text', 'Contact Deleted', $id);
         $contact->delete();
     }
 
@@ -2917,14 +2920,13 @@ class UserController extends Controller
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
         if ($request->site_id) {
             $preLog = WorkOrderTimeLog::where('column_name', 'site_id')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'site_id', $wo->id, $wo->updated_at, $preLog, $wo->site_id, '', 'id', $preLog ? 'Site Information Updated' : 'Site Information Added', $id);
+            $this->createWorkOrderTimeLog('work_orders', 'site_id', $wo->id, $wo->updated_at, $preLog, $wo->site->site_id.','.$wo->site->location.','.$wo->site->address_1.','.$wo->site->city.','.$wo->site->state.','.$wo->site->zipcode, '', 'nrml_text', 'Site Information Updated', $id);
         }
     }
 
     public function uploadDocForTech(Request $request, $id)
     {
         try {
-            // Validation rules for files
             $rules = [
                 'file' => 'required|file|mimes:jpeg,png,pdf,doc,docx,xlsx|max:2048', // 2MB
             ];
@@ -2935,40 +2937,32 @@ class UserController extends Controller
                 'file.max' => 'Maximum file size is 2MB.',
             ];
 
-            // Validate the incoming request
             $validated = $request->validate($rules, $messages);
 
-            // Check if there is a file in the request
             if ($request->hasFile('file')) {
-                // Get the uploaded file
-                $file = $request->file('file'); // Single file, no need for foreach
+                $file = $request->file('file');
 
-                // Generate a unique file name
                 $originalName = $file->getClientOriginalName();
                 $fileName = time() . '_' . $file->getClientOriginalName();
 
-                // Move the file to the public directory
                 $file->move(public_path('docs/technician'), $fileName);
 
-                // Create a new document entry for the file
                 $doc = new DocForTechnician();
                 $wo = WorkOrder::find($id);
 
-                // Handle the case where WorkOrder might not exist
                 if (!$wo) {
                     return response()->json(['message' => 'Work order not found'], 404);
                 }
 
-                // Assign properties to the document record
                 $doc->wo_id = $id;
                 $doc->technician_id = $wo->ftech_id;
                 $doc->file = 'docs/technician/' . $fileName;
                 $doc->name = $originalName;
 
-                // Save the document record
                 $doc->save();
+                // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg, identity)
+                $this->createWorkOrderTimeLog('doc_for_technicians', 'new', $id, $doc->updated_at, '', $originalName, $wo->technician->company_name, 'nrml_text', 'Document Uploaded For Technician', $doc->id);
 
-                // Return a success response
                 return response()->json(['message' => 'Document uploaded successfully.']);
             }
 
@@ -2983,6 +2977,8 @@ class UserController extends Controller
     public function deleteDocForTech($id)
     {
         $doc = DocForTechnician::find($id);
+
+        $this->createWorkOrderTimeLog('doc_for_technicians', 'delete', $id, $doc->updated_at, '', $doc->name, $doc->technician->company_name ?? '', 'nrml_text', 'Document Deleted For Technician', $doc->id);
 
         if ($doc) {
             $filePath = public_path($doc->file);
@@ -3049,8 +3045,8 @@ class UserController extends Controller
         $newCheckInOut->checkin_note = $request->checkin_note;
         $newCheckInOut->save();
 
-        $preLog = WorkOrderTimeLog::where('column_name', 'check_in')->orderBy('id', 'desc')->first();
-        $this->createWorkOrderTimeLog('check_in_outs', 'check_in', $newCheckInOut->work_order_id, $newCheckInOut->updated_at, $preLog, '<p>time: ' . $newCheckInOut->date . ' at ' . $newCheckInOut->check_in . ' (' . $newCheckInOut->time_zone . ') </p><br/><p>note: ' . $newCheckInOut->checkin_note . '</p>', '', 'html_text', $techId ? $newCheckInOut->engineer->name . ' Checked In' : @$wo->technician->company_name . ' Checked In', $techId);
+        $preLog = WorkOrderTimeLog::where('column_name', 'check_in-'.$techId)->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog('check_in_outs', 'check_in-'.$techId, $newCheckInOut->work_order_id, $newCheckInOut->updated_at, $preLog, '<p class="m-0"><b>Time: </b>' . $newCheckInOut->date . ' at ' . $newCheckInOut->check_in . ' (' . $newCheckInOut->time_zone . ') </p><br/><p class="m-0"><b>Note: </b>' . $newCheckInOut->checkin_note . '</p>', '', 'html_text', $techId ? $newCheckInOut->engineer->name . ' Checked In' : @$wo->technician->company_name . ' Checked In', $techId);
     }
 
 
@@ -3120,15 +3116,15 @@ class UserController extends Controller
         $checkInOut->total_hours = $totalHours;
         $checkInOut->save();
 
-        $preLog = WorkOrderTimeLog::where('column_name', 'check_out')->orderBy('id', 'desc')->first();
-        $this->createWorkOrderTimeLog('check_in_outs', 'check_out', $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p>time: ' . Carbon::now()->format('m/d/y') . ' at ' . $checkInOut->check_out . ' (' . $checkInOut->time_zone . ') </p><br/><p>total hours: ' . $checkInOut->total_hours . '</p>', '', 'html_text', $techId ? $checkInOut->engineer->name . ' Checked Out' : @$wo->technician->company_name . ' Checked Out', $techId);
+        $preLog = WorkOrderTimeLog::where('column_name', 'check_out-'.$techId)->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog('check_in_outs', 'check_out-'.$techId, $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p class="m-0"><b>Time: </b>' . Carbon::now()->format('m/d/y') . ' at ' . $checkInOut->check_out . ' (' . $checkInOut->time_zone . ') </p><br/><p class="m-0"><b>Total hours: </b>' . $checkInOut->total_hours . '</p>', '', 'html_text', $techId ? $checkInOut->engineer->name . ' Checked Out' : @$wo->technician->company_name . ' Checked Out', $techId);
     }
 
     public function goAtRisk($id, Request $request)
     {
         $wo = WorkOrder::find($id);
 
-        if ($request->atRisk && $wo->stage = 3) {
+        if ($request->atRisk && $wo->stage == 3 && $wo->stage != 7) {
             $wo->stage = Status::STAGE_DISPATCH;
             $wo->status = Status::AT_RISK;
         } elseif ($wo->status == Status::AT_RISK) {
@@ -3154,7 +3150,7 @@ class UserController extends Controller
             $wo->status = null;
             $wo->save();
 
-            $this->createWorkOrderTimeLog('work_order_schedules', '', $schdule->wo_id, $schdule->updated_at, '', '<p>' . $schdule->on_site_by . ' at ' . $schdule->scheduled_time . '</p><br/><p> Hours of operation: ' . $schdule->h_operation . '</p><br/><p> Estimated Hours: ' . $schdule->h_operation . '</p>', '', 'html_text', 'Time Rescheduled', $schdule->id);
+            $this->createWorkOrderTimeLog('work_order_schedules', 'reschedule', $schdule->wo_id, $schdule->updated_at, '', '<p>' . $schdule->on_site_by . ' at ' . $schdule->scheduled_time . '</p><br/><p> Hours of operation: ' . $schdule->h_operation . '</p><br/><p> Estimated Hours: ' . $schdule->h_operation . '</p>', '', 'html_text', 'Time Rescheduled', $schdule->id);
         } catch (\Throwable $th) {
             Log::error($th);
         }
@@ -3235,18 +3231,30 @@ class UserController extends Controller
         $checkInOut->date = Carbon::parse($request->date)->format('m/d/y');
         $checkInOut->save();
 
-        $notify[] = ['success', 'Checkin/out time updated'];
-        return back()->withNotify($notify);
+        if($request->check_in){
+            $preLog = WorkOrderTimeLog::where('column_name', 'check_in-'.$checkInOut->tech_id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('check_in_outs', 'check_in-'.$checkInOut->tech_id, $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p class="m-0"><b>Time: </b>' . $checkInOut->date . ' at ' . $checkInOut->check_in . ' (' . $checkInOut->time_zone . ') </p><br/><p class="m-0"><b>Note: </b>' . $checkInOut->checkin_note . '</p>', '', 'html_text', 'Check In Time Updated', $checkInOut->tech_id);
+        }
+
+        if($request->check_out){
+            $preLog = WorkOrderTimeLog::where('column_name', 'check_out-'.$checkInOut->tech_id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('check_in_outs', 'check_out-'.$checkInOut->tech_id, $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p class="m-0"><b>Time: </b>' . Carbon::now()->format('m/d/y') . ' at ' . $checkInOut->check_out . ' (' . $checkInOut->time_zone . ') </p><br/><p class="m-0"><b>Total hours: </b>' . $checkInOut->total_hours . '</p>', '', 'html_text', 'Check Out Time Updated', $checkInOut->tech_id);
+        }
+
+        if($request->date){
+            $preLog = WorkOrderTimeLog::where('column_name', 'check_date-'.$checkInOut->tech_id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('check_in_outs', 'check_date-'.$checkInOut->tech_id, $checkInOut->work_order_id, $checkInOut->updated_at, $preLog, '<p class="m-0"><b>Date: </b>' . Carbon::parse($request->date)->format('m/d/y').'</p>', '', 'html_text', 'Check In Date Updated', $checkInOut->tech_id);
+        }
+        
     }
 
 
     public function deleteLog($id)
     {
         $checkInOut = CheckInOut::find($id);
-        $checkInOut->delete();
+        $this->createWorkOrderTimeLog('check_in_outs', 'delete', $checkInOut->work_order_id, $checkInOut->updated_at, '', '<p class="m-0"><b>Date: </b>' . Carbon::parse($checkInOut->date)->format('m/d/y').'</p><br><p class="m-0"><b>Checkin: </b>'.$checkInOut->check_in.'</p><br><p class="m-0"><b>Checkout: </b>'.$checkInOut->check_out.'</p>', '', 'html_text', 'Check In/Out Time Deleted', $checkInOut->tech_id);
 
-        $notify[] = ['success', 'Checkin/out time deleted successfully'];
-        return back()->withNotify($notify);
+        $checkInOut->delete();
     }
 
 
@@ -3294,19 +3302,19 @@ class UserController extends Controller
         $task->save();
 
         if ($request->type = 'call') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Phone: ' . $task->phone . '</p><br/><p> Reason: ' . $task->reason . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Phone: ' . $task->phone . '</p><br/><p> Reason: ' . $task->reason . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         } elseif ($request->type = 'collect_signature') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Signature from: ' . $task->from . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Signature from: ' . $task->from . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         } elseif ($request->type = 'custom_task') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         } elseif ($request->type = 'shipping_details') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Item: ' . $task->item . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Item: ' . $task->item . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         } elseif ($request->type = 'send_email') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Email: ' . $task->email . '</p><br/><p> Reason: ' . $task->reason . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Email: ' . $task->email . '</p><br/><p> Reason: ' . $task->reason . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         } elseif ($request->type = 'upload_file') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         } elseif ($request->type = 'upload_photo') {
-            $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
+            $this->createWorkOrderTimeLog('tasks', 'new', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : @$wo->technician->company_name, 'html_text', $task->tech_id ? 'Task Added For ' . $task->tech->name : 'Task Added', $id);
         }
     }
 
@@ -3596,13 +3604,12 @@ class UserController extends Controller
     {
         $task = Task::find($id);
 
-        // Update task properties if the respective field is present in the request
-        $task->reason = $request->has('reason') ? $request->reason : $task->reason;
-        $task->description = $request->has('desc') ? $request->desc : $task->description;
-        $task->email = $request->has('email') ? $request->email : $task->email;
-        $task->phone = $request->has('phone') ? $request->phone : $task->phone;
-        $task->from = $request->has('from') ? $request->from : $task->from;
-        $task->item = $request->has('item') ? $request->item : $task->item;
+        $task->reason = $request->reason ?? $task->reason;
+        $task->description = $request->desc ?? $task->description;
+        $task->email = $request->email ?? $task->email;
+        $task->phone = $request->phone ?? $task->phone;
+        $task->from = $request->from ?? $task->from;
+        $task->item = $request->item ?? $task->item;
 
         // Handle file upload if a new file is uploaded
         if ($request->hasFile('file')) {
@@ -3654,7 +3661,21 @@ class UserController extends Controller
             unlink(public_path($task->file));
         }
 
-        $this->createWorkOrderTimeLog('tasks', '', $task->wo_id, $task->updated_at, '', '', $task->tech ? $task->tech->name : '', 'nrml_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        if ($task->type = 'call') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Phone: ' . $task->phone . '</p><br/><p> Reason: ' . $task->reason . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        } elseif ($task->type = 'collect_signature') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Signature from: ' . $task->from . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        } elseif ($task->type = 'custom_task') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        } elseif ($task->type = 'shipping_details') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Item: ' . $task->item . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        } elseif ($task->type = 'send_email') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Email: ' . $task->email . '</p><br/><p> Reason: ' . $task->reason . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        } elseif ($task->type = 'upload_file') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        } elseif ($task->type = 'upload_photo') {
+            $this->createWorkOrderTimeLog('tasks', 'delete', $task->wo_id, $task->updated_at, '', '<p> Description: ' . $task->description . '</p>', $task->tech ? $task->tech->name : '', 'html_text', $task->tech_id ? 'Task Deleted For ' . $task->tech->name : 'Task Deleted', $id);
+        }
 
         $task->delete();
     }
@@ -3689,7 +3710,7 @@ class UserController extends Controller
         $shipment->save();
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('order_shipments', '', $shipment->wo_id, $shipment->updated_at, '', 'Shipment from ' . $shipment->shipment_from . ' to ' . $shipment->shipment_to . ' issued at ' . $shipment->created_at . ' by ' . $shipment->associate, '', 'nrml_text', 'Shipment Added', $shipment->id);
+        $this->createWorkOrderTimeLog('order_shipments', 'new', $shipment->wo_id, $shipment->updated_at, '', 'Shipment from ' . $shipment->shipment_from . ' to ' . $shipment->shipment_to . ' issued at ' . $shipment->created_at . ' by ' . $shipment->associate, '', 'nrml_text', 'Shipment Added', $shipment->id);
     }
 
     public function updateShipment(Request $request, $id)
@@ -3716,10 +3737,10 @@ class UserController extends Controller
             $this->createWorkOrderTimeLog('order_shipments', 'shipment_from-' . $shipment->id, $shipment->wo_id, $shipment->updated_at, $preLog, $shipment->shipment_from, '', 'nrml_text', 'Shipment From Updated', $id);
         } elseif ($request->shipment_to) {
             $preLog = WorkOrderTimeLog::where('column_name', 'shipment_to-' . $shipment->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('order_shipments', 'associate-' . $shipment->id, $shipment->wo_id, $shipment->updated_at, $preLog, $shipment->shipment_to, '', 'nrml_text', 'Shipment To Updated', $id);
+            $this->createWorkOrderTimeLog('order_shipments', 'shipment_to-' . $shipment->id, $shipment->wo_id, $shipment->updated_at, $preLog, $shipment->shipment_to, '', 'nrml_text', 'Shipment To Updated', $id);
         } elseif ($request->created_at) {
-            $preLog = WorkOrderTimeLog::where('column_name', 'created_at-' . $shipment->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('order_shipments', 'created_at-' . $shipment->id, $shipment->wo_id, $shipment->updated_at, $preLog, $shipment->created_at, '', 'time', 'Shipment Issue Date Updated', $id);
+            $preLog = WorkOrderTimeLog::where('column_name', 'shipment_created_at-' . $shipment->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('order_shipments', 'shipment_created_at-' . $shipment->id, $shipment->wo_id, $shipment->updated_at, $preLog, $shipment->created_at, '', 'time', 'Shipment Issue Date Updated', $id);
         }
     }
 
@@ -3728,7 +3749,7 @@ class UserController extends Controller
         $shipment = OrderShipment::find($id);
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('order_shipments', '', $shipment->wo_id, $shipment->updated_at, '', 'Shipment from ' . $shipment->shipment_from . ' to ' . $shipment->shipment_to . ' issued at ' . $shipment->created_at . ' by ' . $shipment->associate, '', 'nrml_text', 'Shipment Deleted', $id);
+        $this->createWorkOrderTimeLog('order_shipments', 'delete', $shipment->wo_id, $shipment->updated_at, '', 'Shipment from ' . $shipment->shipment_from . ' to ' . $shipment->shipment_to . ' issued at ' . $shipment->created_at . ' by ' . $shipment->associate, '', 'nrml_text', 'Shipment Deleted', $id);
 
         $shipment->delete();
     }
@@ -3760,7 +3781,7 @@ class UserController extends Controller
 
         $techPart->save();
 
-        $this->createWorkOrderTimeLog('tech_provided_parts', '', $wo->id, $techPart->updated_at, '',  $techPart->part_name . ' ($' . $techPart->price . ' x ' . $techPart->quantity . ') ', '', 'nrml_text', 'Parts Information Added', $techPart->id);
+        $this->createWorkOrderTimeLog('tech_provided_parts', 'new', $wo->id, $techPart->updated_at, '',  $techPart->part_name . ' ($' . $techPart->price . ' x ' . $techPart->quantity . ') ', '', 'nrml_text', 'Parts Information Added', $techPart->id);
     }
 
     public function updateTechPart(Request $request, $id)
@@ -3790,16 +3811,16 @@ class UserController extends Controller
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
         if ($request->quantity) {
-            $preLog = WorkOrderTimeLog::where('column_name', 'price-' . $techPart->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('tech_provided_parts', 'parts_number-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, '', $techPart->parts_number, $preLog, 'nrml_text', 'Parts Quantity Updated', $id);
+            $preLog = WorkOrderTimeLog::where('column_name', 'part_quantity-' . $techPart->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tech_provided_parts', 'part_quantity-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, $preLog, $techPart->parts_number, '', 'nrml_text', 'Parts Quantity Updated', $id);
         } elseif ($request->price) {
-            $preLog = WorkOrderTimeLog::where('column_name', 'price-' . $techPart->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('tech_provided_parts', 'parts_number-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, '', $techPart->price, $preLog, 'nrml_text', 'Parts Price Updated', $id);
+            $preLog = WorkOrderTimeLog::where('column_name', 'part_price-' . $techPart->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tech_provided_parts', 'part_price-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, $preLog, '$'.$techPart->price, '', 'nrml_text', 'Parts Price Updated', $id);
         } elseif ($request->part_name) {
-            $preLog = WorkOrderTimeLog::where('column_name', 'price-' . $techPart->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('tech_provided_parts', 'parts_number-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, $preLog, $techPart->part_name, '', 'nrml_text', 'Parts Name Updated', $id);
+            $preLog = WorkOrderTimeLog::where('column_name', 'part_name-' . $techPart->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('tech_provided_parts', 'part_name-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, $preLog, $techPart->part_name, '', 'nrml_text', 'Parts Name Updated', $id);
         } elseif ($request->parts_number) {
-            $preLog = WorkOrderTimeLog::where('column_name', 'price-' . $techPart->id)->orderBy('id', 'desc')->first();
+            $preLog = WorkOrderTimeLog::where('column_name', 'parts_number-' . $techPart->id)->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('tech_provided_parts', 'parts_number-' . $techPart->id, $techPart->wo_id, $techPart->updated_at, $preLog, $techPart->parts_number, '', 'nrml_text', 'Parts Number Updated', $id);
         }
     }
@@ -3808,7 +3829,7 @@ class UserController extends Controller
     {
         $techPart = TechProvidedPart::find($id);
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('tech_provided_parts', '', $techPart->wo_id, $techPart->updated_at, '', $techPart->part_name . ' ($' . $techPart->price . ' x ' . $techPart->quantity . ') ', '', 'nrml_text', 'Part Deleted', $id);
+        $this->createWorkOrderTimeLog('tech_provided_parts', 'delete', $techPart->wo_id, $techPart->updated_at, '', $techPart->part_name . ' ($' . $techPart->price . ' x ' . $techPart->quantity . ') ', '', 'nrml_text', 'Part Deleted', $id);
 
         $techPart->delete();
     }
@@ -3933,7 +3954,8 @@ class UserController extends Controller
         $wo->save();
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('work_orders', 'travel_cost', $id, $wo->updated_at, '', $wo->travel_cost, '', 'nrml_text', 'Travel Free Updated', $id);
+        $preLog = WorkOrderTimeLog::where('column_name', 'travel_cost')->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog('work_orders', 'travel_cost', $id, $wo->updated_at, $preLog, '$'.$wo->travel_cost, '', 'nrml_text', 'Travel Free Updated', $id);
     }
 
     // Field Tech
@@ -3958,7 +3980,7 @@ class UserController extends Controller
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
         $preLog = WorkOrderTimeLog::where('column_name', 'ftech_id')->orderBy('id', 'desc')->first();
-        $this->createWorkOrderTimeLog('work_orders', 'ftech_id', $id, $wo->updated_at, $preLog, $techId, $tech->company_name, 'id', 'Technician Assigned', $techId);
+        $this->createWorkOrderTimeLog('work_orders', 'ftech_id', $id, $wo->updated_at, $preLog, '#'.$tech->technician_id.'-'.$tech->company_name, $tech->company_name, 'nrml_text', 'Technician Assigned', $techId);
     }
 
     public function removeTech(Request $request, $id, $techId)
@@ -3990,8 +4012,8 @@ class UserController extends Controller
 
             AssignedEngineer::where('wo_id', $id)->delete();
 
-            $preLog = WorkOrderTimeLog::where('column_name', 'ftech_id')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'ftech_id', $id, $wo->updated_at, $preLog, $techId, $tech->company_name, 'id', 'Technician Removed', $techId);
+            $preLog = WorkOrderTimeLog::where('column_name', 'ftech_id_del')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'ftech_id_del', $id, $wo->updated_at, $preLog, '#'.$tech->technician_id.'-'.$tech->company_name, $tech->company_name, 'nrml_text', 'Technician Removed', $techId);
 
         } catch (\Exception $e) {
             Log::alert($e);
@@ -4022,7 +4044,7 @@ class UserController extends Controller
         $otherExpense->save();
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('other_expenses', '', $id, $otherExpense->updated_at, '', $otherExpense->description . ' ( ' . $otherExpense->price . ' x ' . $otherExpense->quantity . ' ) ', '', 'nrml_text', 'Other Expenses Added', $otherExpense->id);
+        $this->createWorkOrderTimeLog('other_expenses', 'new', $id, $otherExpense->updated_at, '', $otherExpense->description . ' ( $' . $otherExpense->price . ' x ' . $otherExpense->quantity . ' ) ', '', 'nrml_text', 'Other Expenses Added', $otherExpense->id);
     }
 
     public function updateExpenses(Request $request, $id)
@@ -4040,7 +4062,7 @@ class UserController extends Controller
             $this->createWorkOrderTimeLog('other_expenses', 'other-exp-description-' . $otherExpense->id, $otherExpense->wo_id, $otherExpense->updated_at, $preLog, $otherExpense->description, '', 'nrml_text', 'Other Expenses Description Updated', $otherExpense->id);
         } elseif ($request->price) {
             $preLog = WorkOrderTimeLog::where('column_name', 'other-exp-price-' . $otherExpense->id)->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('other_expenses', 'other-exp-price-' . $otherExpense->id, $otherExpense->wo_id, $otherExpense->updated_at, $preLog, $otherExpense->price, '', 'nrml_text', 'Other Expenses Price Updated', $otherExpense->id);
+            $this->createWorkOrderTimeLog('other_expenses', 'other-exp-price-' . $otherExpense->id, $otherExpense->wo_id, $otherExpense->updated_at, $preLog, '$'.$otherExpense->price, '', 'nrml_text', 'Other Expenses Price Updated', $otherExpense->id);
         } elseif ($request->quantity) {
             $preLog = WorkOrderTimeLog::where('column_name', 'other-exp-quantity-' . $otherExpense->id)->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('other_expenses', 'other-exp-quantity-' . $otherExpense->id, $otherExpense->wo_id, $otherExpense->updated_at, $preLog, $otherExpense->quantity, '', 'nrml_text', 'Other Expenses Quantity Updated', $otherExpense->id);
@@ -4052,7 +4074,7 @@ class UserController extends Controller
         $otherExpense = OtherExpense::find($id);
 
         // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg)
-        $this->createWorkOrderTimeLog('other_expenses', '', $otherExpense->wo_id, $otherExpense->updated_at, '', $otherExpense->description . ' ( ' . $otherExpense->price . ' x ' . $otherExpense->quantity . ' ) ', '', 'nrml_text', 'Other Expenses Deleted', $otherExpense->id);
+        $this->createWorkOrderTimeLog('other_expenses', 'delete', $otherExpense->wo_id, $otherExpense->updated_at, '', $otherExpense->description . ' ( $' . $otherExpense->price . ' x ' . $otherExpense->quantity . ' ) ', '', 'nrml_text', 'Other Expenses Deleted', $otherExpense->id);
 
         $otherExpense->delete();
     }

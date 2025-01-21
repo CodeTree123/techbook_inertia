@@ -25,6 +25,7 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
             onSuccess: () => {
                 onSuccessMessage('Work Requested is Updated Successfully');
                 setEditable(false);
+                setData(null)
             }
         });
     };

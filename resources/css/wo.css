@@ -275,3 +275,7 @@ textarea {
     padding: 10px;
     z-index: 1;
 }
+
+.log-accordion p{
+    margin: 0 !important;
+}

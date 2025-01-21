@@ -13,4 +13,9 @@ class WorkOrderTimeLog extends Model
     {
         return $this->belongsTo(WorkOrder::class, 'wo_id');
     }
+
+    public function preLog()
+    {
+        return $this->belongsTo(WorkOrderTimeLog::class, 'pre_log_id');
+    }
 }

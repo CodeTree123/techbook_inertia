@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class DocForTechnician extends Model
 {
     use HasFactory;
+
+    public function technician()
+    {
+        return $this->belongsTo(Technician::class, 'technician_id');
+    }
 }
