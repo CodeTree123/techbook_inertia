@@ -348,6 +348,22 @@ const OffCanvasData = ({ show, handleClose, logData }) => {
         return <p className="m-0">{logData?.pre_log?.value}</p>;
     };
 
+    const renderNoteField = (logData, fieldName) => {
+        if (logData.table_name !== 'notes' || logData.column_name !== fieldName) {
+            return null;
+        }
+
+        return <p className="m-0">{logData?.value}</p>;
+    };
+
+    const renderPreNoteField = (logData, fieldName) => {
+        if (logData?.pre_log.table_name !== 'notes' || logData?.pre_log.column_name !== fieldName) {
+            return null;
+        }
+
+        return <p className="m-0">{logData?.pre_log?.value}</p>;
+    };
+
     return (
         <Offcanvas show={show} onHide={handleClose} placement="end" className="w-25" style={{ backgroundColor: 'rgba(248, 249, 250, 1)' }}>
             <Offcanvas.Header closeButton>
@@ -418,6 +434,8 @@ const OffCanvasData = ({ show, handleClose, logData }) => {
                                         {renderPreTaskField(logData, logData.column_name)}
 
                                         {renderPreDocForTechField(logData, logData.column_name)}
+
+                                        {renderPreNoteField(logData, logData.column_name)}
                                     </Accordion.Body>
                                 </Accordion.Item>
                             }
@@ -464,6 +482,8 @@ const OffCanvasData = ({ show, handleClose, logData }) => {
                                     {renderTaskField(logData, logData.column_name)}
 
                                     {renderDocForTechField(logData, logData.column_name)}
+
+                                    {renderNoteField(logData, logData.column_name)}
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>

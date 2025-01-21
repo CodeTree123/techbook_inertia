@@ -17,9 +17,6 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
         task_file: null,
     });
 
-    console.log(data);
-    
-
     const completeTaskForm = (e, taskId, isCompleted) => {
         e.preventDefault();
 

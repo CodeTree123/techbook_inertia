@@ -425,7 +425,7 @@
                     <div class="col-md-3 text-left">
                         <div class="margin-shop text-start" style="padding-left: 130px;">
                             <h6 class="tax">Ship To:</h6>
-                            <span>{{ @$invoice->site->location }}<br>{{ @$invoice->site->address_1 }}<br>
+                            <span>{{ @$invoice->site->location }} @if(@$invoice->site->location) <br> @endif {{ @$invoice->site->address_1 }}<br>
                                 {{ @$invoice->site->city }} {{ @$invoice->site->state }}
                                 {{ @$invoice->site->zipcode }} </span>
                         </div>

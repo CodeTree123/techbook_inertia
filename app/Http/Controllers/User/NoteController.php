@@ -46,7 +46,7 @@ class NoteController extends Controller
         ($note->note_type == 'tech_support_notes' ? 'Tech Support Note' :
         ($note->note_type == 'close_out_notes' ? 'Close Out Note' : ''))));
 
-        $this->createWorkOrderTimeLog('notes', '', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $noteType.' Added', $id);
+        $this->createWorkOrderTimeLog('notes', 'new', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $noteType.' Added', $id);
     }
 
     public function storeSubNote(Request $request, $id)
@@ -69,7 +69,7 @@ class NoteController extends Controller
         ($note->note_type == 'tech_support_notes' ? 'Tech Support Note' :
         ($note->note_type == 'close_out_notes' ? 'Close Out Note' : ''))));
 
-        $this->createWorkOrderTimeLog('notes', '', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $noteType.' Added', $id);
+        $this->createWorkOrderTimeLog('notes', 'new', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $noteType.' Added', $id);
     }
 
     public function storeCloseout(Request $request, $id, $techId = null)
@@ -87,6 +87,6 @@ class NoteController extends Controller
 
         $note->save();
 
-        $this->createWorkOrderTimeLog('notes', '', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $techId ? 'Close Out Note Added For '.$eng->name : 'Close Out Note Added', $note->id);
+        $this->createWorkOrderTimeLog('notes', 'new', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $techId ? 'Close Out Note Added For '.$eng->name : 'Close Out Note Added', $note->id);
     }
 }

@@ -55,7 +55,7 @@ class Status
     const CHECKED_IN = 8;
     const CHECKED_OUT = 9;
     const NEEDS_APPROVAL = 10;
-    const ISSUE = 11;
+    const ISSUE = 11; // Needs Review
     const APPROVED = 12;
     const INVOICED = 13;
     const PAST_DUE = 14;

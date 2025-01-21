@@ -2978,17 +2978,16 @@ class UserController extends Controller
     {
         $doc = DocForTechnician::find($id);
 
-        $this->createWorkOrderTimeLog('doc_for_technicians', 'delete', $id, $doc->updated_at, '', $doc->name, $doc->technician->company_name ?? '', 'nrml_text', 'Document Deleted For Technician', $doc->id);
+        $this->createWorkOrderTimeLog('doc_for_technicians', 'delete', $doc->wo_id, $doc->updated_at, '', $doc->name, $doc->technician->company_name ?? '', 'nrml_text', 'Document Deleted For Technician', $id);
 
-        if ($doc) {
-            $filePath = public_path($doc->file);
-            if (file_exists($filePath)) {
-                unlink($filePath);
+            if ($doc) {
+                $filePath = public_path($doc->file);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+    
+                $doc->delete();
             }
-
-            $doc->delete();
-        } else {
-        }
     }
 
     public function makeCheckin(Request $request, $id, $techId = null)
