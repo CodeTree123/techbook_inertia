@@ -95,7 +95,7 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
 
                 {!editable && (
                     <p className="mb-0">
-                        <span className='fw-bold'>Requesting Date: </span> {details?.requested_date
+                        <span className=''>Requesting Date: </span> {details?.requested_date
                             ? DateTime.fromISO(details.requested_date).toFormat('MM-dd-yy')
                             : null}
                     </p>
@@ -103,7 +103,7 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled }) => {
 
                 {!editable && (
                     <p className="mb-4">
-                        <span className='fw-bold'>Requesting Method: </span> {details?.request_type}
+                        <span className=''>Requesting Method: </span> {details?.request_type}
                     </p>
                 )}
 

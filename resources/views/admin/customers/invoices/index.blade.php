@@ -643,7 +643,7 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="taxprice decimal-input" value="0.26"
+                                        <input type="text" class="taxprice decimal-input" value="0.00"
                                             style="border:none">
                                     </div>
                                 </td>
@@ -715,7 +715,7 @@
         input.addEventListener("input", (event) => {
             const target = event.target;
             if (target.value === "") {
-                target.style.width = "3.4ch"; // Reset width for empty input
+                target.style.width = "19.7ch"; // Reset width for empty input
             }
         });
     });

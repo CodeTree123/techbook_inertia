@@ -26,7 +26,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 800px;
             background: rgba(255, 255, 255, 0.1);
             padding: 40px;
             border-radius: 10px;
@@ -42,6 +42,17 @@
         p {
             font-size: 18px;
             opacity: 0.8;
+        }
+
+        /* Countdown Timer */
+        .countdown {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            display: inline-block;
         }
 
         /* Loader animation */
@@ -75,11 +86,54 @@
     <div class="container">
         <h1>🚧 We're Under Maintenance 🚧</h1>
         <p>We're making some improvements. Please check back soon!</p>
+        
+        <!-- Countdown Timer -->
+        <div class="countdown" id="countdown">Maintenance ends in: Loading...</div>
+
         <div class="loader"></div>
         <div class="logo">
             <img src="https://techyeahinc.com/assets/media/logo/tech_yeah_logo.png" alt="" width="100%">
         </div>
     </div>
+
+    @php 
+    use App\Models\GeneralSetting;
+    $time = GeneralSetting::select('maintenance_end_time')->first(); 
+    $maintenanceEndTime = $time->maintenance_end_time;
+    @endphp
+
+    <script>
+    // Get maintenance end time from Laravel
+    const maintenanceEndTime = "{{ $maintenanceEndTime }}";
+
+    if (maintenanceEndTime) {
+        const targetTime = new Date(maintenanceEndTime).getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = targetTime - now;
+
+            if (timeLeft <= 0) {
+                document.getElementById("countdown").innerHTML = "Maintenance completed!";
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown").innerHTML = 
+                `Maintenance ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // Update the countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    } else {
+        document.getElementById("countdown").innerHTML = "Maintenance end time not available.";
+    }
+</script>
 
 </body>
 </html>

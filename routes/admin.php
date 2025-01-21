@@ -34,7 +34,7 @@ Route::namespace('Auth')->group(function () {
 
 Route::middleware('admin')->group(function () {
     Route::controller('AdminController')->group(function () {
-        Route::get('/dashboard', 'dashboard')->name('dashboard');
+        Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware('adminRole');
         Route::get('/dashboard/new', 'dashboardNew')->name('dashboardNew');
         Route::get('profile', 'profile')->name('profile');
         Route::post('update/profile', 'profileUpdate')->name('profile.update');

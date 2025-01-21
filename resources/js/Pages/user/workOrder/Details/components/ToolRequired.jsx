@@ -77,7 +77,7 @@ const ToolRequired = ({ id, details, onSuccessMessage, is_cancelled }) => {
                 }
 
                 {!editable && (
-                    <div className="mb-0 fw-bold"><div dangerouslySetInnerHTML={{ __html: details.r_tools }} /></div>
+                    <div className="mb-0"><div dangerouslySetInnerHTML={{ __html: details.r_tools }} /></div>
                 )}
             </div>
         </form>
