@@ -281,7 +281,7 @@
                                 </div>
 
                                 <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
-                                   Head Office Address
+                                Corporate headquarters Address
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="address">

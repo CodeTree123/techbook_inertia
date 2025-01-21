@@ -202,7 +202,7 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                                 <h6 className='mb-0'>{customerData?.address?.country}</h6>
                             </div>
 
-                            <Shade title="Head office address" />
+                            <Shade title="Corporate headquarters address" />
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
                                 <h6 className='fw-bold pe-2 mb-0'>Address:</h6>
