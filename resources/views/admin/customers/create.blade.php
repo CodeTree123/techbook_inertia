@@ -148,10 +148,10 @@ $customers = Customer::all();
 
                                 <div class="form-group col-4">
                                     <label for="s_rate_f">
-                                        <h6>Standard rate first hour</h6>
+                                        <h6>Standard rate first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_f"
-                                        placeholder="Standard rate first hour" value="{{ old('s_rate_f') }}">
+                                        placeholder="Standard rate first two hour" value="{{ old('s_rate_f') }}">
                                     @error('s_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -168,10 +168,10 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_f">
-                                        <h6>Emergency rate first hour</h6>
+                                        <h6>Emergency rate first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_f"
-                                        placeholder="Enter Emergency rate first hour" value="{{ old('e_rate_f') }}">
+                                        placeholder="Enter Emergency rate first two hour" value="{{ old('e_rate_f') }}">
                                     @error('e_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -188,10 +188,10 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="w_rate_f">
-                                        <h6>Weekend rates first hour</h6>
+                                        <h6>Weekend rates first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="w_rate_f"
-                                        placeholder="Enter weekend rate first hour" value="{{ old('w_rate_f') }}">
+                                        placeholder="Enter weekend rate first two hour" value="{{ old('w_rate_f') }}">
                                     @error('w_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -208,10 +208,10 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="sh_rate_f">
-                                        <h6>Sunday & Holiday rates first hour</h6>
+                                        <h6>Sunday & Holiday rates first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="sh_rate_f"
-                                        placeholder="Enter sunday & holiday rate first hour" value="{{ old('sh_rate_f') }}">
+                                        placeholder="Enter sunday & holiday rate first two hour" value="{{ old('sh_rate_f') }}">
                                     @error('sh_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -294,7 +294,7 @@ $customers = Customer::all();
                                 </div>
 
                                 <div class="shade col-md-12" style="background-color: rgba(175, 225, 175, 0.5); color: black; text-align: center; padding: 10px">
-                                    Head office Address
+                                    Corporate headquarters address
                                 </div>
 
                                 <div class="form-group col-4">

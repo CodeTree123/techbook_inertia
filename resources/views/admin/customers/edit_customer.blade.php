@@ -136,10 +136,10 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="s_rate_f">
-                                        <h6>Standard rate first hour</h6>
+                                        <h6>Standard rate first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_f"
-                                        placeholder="Standard Rate First hour" value="{{ $edit->s_rate_f }}">
+                                        placeholder="Standard Rate first two hour" value="{{ $edit->s_rate_f }}">
                                     @error('s_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -156,10 +156,10 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_f">
-                                        <h6>Emergency rate first hour</h6>
+                                        <h6>Emergency rate first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_f"
-                                        placeholder="Enter Emergency rate First hour" value="{{ $edit->e_rate_f }}">
+                                        placeholder="Enter Emergency rate first two hour" value="{{ $edit->e_rate_f }}">
                                     @error('e_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -176,10 +176,10 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="w_rate_f">
-                                        <h6>Weekend rates first hour</h6>
+                                        <h6>Weekend rates first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="w_rate_f"
-                                        placeholder="Enter weekend rate First hour" value="{{ $edit->w_rate_f }}">
+                                        placeholder="Enter weekend rate first two hour" value="{{ $edit->w_rate_f }}">
                                     @error('w_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -196,10 +196,10 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="sh_rate_f">
-                                        <h6>Sunday & Holiday rates first hour</h6>
+                                        <h6>Sunday & Holiday rates first two hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="sh_rate_f"
-                                        placeholder="Enter Sunday & Holiday rate First hour" value="{{ $edit->sh_rate_f }}">
+                                        placeholder="Enter Sunday & Holiday rate first two hour" value="{{ $edit->sh_rate_f }}">
                                     @error('sh_rate_f')
                                     <span style="color:red; font-size:14px">{{ $message }}</span>
                                     @enderror
@@ -216,7 +216,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="travel">
-                                        <h6>Tavel</h6>
+                                        <h6>Travel</h6>
                                     </label>
                                     <input type="number" class="form-control" name="travel"
                                         placeholder="Enter travel" value="{{ $edit->travel }}">

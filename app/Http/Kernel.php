@@ -74,5 +74,6 @@ class Kernel extends HttpKernel
         'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
         'validate.admin.invitation' => \App\Http\Middleware\ValidateAdminInvitation::class,
         'validate.user.invitation' => \App\Http\Middleware\ValidateUserInvitation::class,
+        'adminRole' => \App\Http\Middleware\AdminRoleMiddleware::class,
     ];
 }

@@ -54,7 +54,7 @@ $customers = Customer::all();
                             <tr>
                                 <th class="text-center">#SL</th>
                                 <th class="text-center">Site ID</th>
-                                <th class="text-center">Contacts</th>
+                                <th class="text-center">Address</th>
                                 <th class="text-center">Company Name</th>
                                 <th class="text-center">Standard Rate</th>
                                 <th class="text-center">Emergency Rate</th>
