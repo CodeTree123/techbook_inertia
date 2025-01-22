@@ -358,8 +358,21 @@
             }
         }
     </style>
+    @include('admin.customers.invoices.button')
     <div class="card">
         <div class="card-header d-flex justify-content-end">
+            @if($invoice->status == 13)
+            <a href="{{route('admin.revert', $invoice->id)}}" class="btn btn-outline-secondary ml-2 no-print">Revert</a>
+            @endif
+            @if($invoice->status == 12)
+            <a href="{{route('admin.billing.invoiced', $invoice->id)}}"
+                class="btn btn-outline-secondary ml-2 no-print"
+                id="invoiceButton"
+                data-invoice-url="{{route('admin.billing.invoiced', $invoice->id)}}">
+                Invoice
+            </a>
+            @endif
+            <button class="btn btn-outline-secondary ml-2 no-print">Paid</button>
             <button class="btn btn-outline-secondary ml-2 no-print" onclick="window.print()">Convert to PDF</button>
         </div>
         <div class="card-body">
@@ -393,8 +406,9 @@
                                             style="font-weight: bold;">Date</span></td>
                                     <td style="padding: 10px; text-align: right;"><span
                                             style="color: #000000;"><?php
-                                                                    echo date('m/d/Y'); // Outputs: 2024-12-24
-                                                                    ?></span></td>
+                                                                    echo \Carbon\Carbon::now('America/Chicago')->format('m/d/Y');
+                                                                    ?>
+                                        </span></td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 10px; text-align: left;"><span class="tax"
@@ -493,7 +507,7 @@
                                 <td>
                                     <input type="text" class="total-hours p-2"
                                         value="1"
-                                        data-rate="{{ @$firstHour->calculated_rate }}" style="border:none">
+                                        data-rate="" style="border:none">
                                 </td>
                                 <td>
                                     <textarea class="wo-per w-100" style="border:none; height: 32px !important">{{ @$firstHour->description }}</textarea>
@@ -529,7 +543,7 @@
                                 <td>
                                     <input type="text" class="total-hours p-2"
                                         value="{{ str_replace(':', '.', $aRate - 1) }}"
-                                        data-rate="{{ @$wp->calculated_rate }}" style="border:none">
+                                        data-rate="" style="border:none">
                                 </td>
                                 <td>
                                     <textarea class="wo-per w-100" style="border:none; height: 32px !important">{{ @$wp->description }}</textarea>

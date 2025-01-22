@@ -148,7 +148,7 @@ $customers = Customer::all();
 
                                 <div class="form-group col-4">
                                     <label for="s_rate_f">
-                                        <h6>Standard rate first two hour</h6>
+                                        <h6>Standard rate first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="s_rate_f"
                                         placeholder="Standard rate first two hour" value="{{ old('s_rate_f') }}">
@@ -168,7 +168,7 @@ $customers = Customer::all();
                                 </div>
                                 <div class="form-group col-4">
                                     <label for="e_rate_f">
-                                        <h6>Emergency rate first two hour</h6>
+                                        <h6>Emergency rate first hour</h6>
                                     </label>
                                     <input type="number" class="form-control" name="e_rate_f"
                                         placeholder="Enter Emergency rate first two hour" value="{{ old('e_rate_f') }}">

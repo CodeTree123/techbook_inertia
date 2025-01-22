@@ -461,7 +461,6 @@ class CustomerController extends Controller
     }
     
     
-
     public function getCustomerSite(Request $request)
     {
         $search = $request->input('q');
@@ -688,7 +687,7 @@ class CustomerController extends Controller
         $workOrder->arrival = $request->arrival;
         $workOrder->leaving = $request->leaving;
         $workOrder->slug = $request->slug;
-        $workOrder->status = Status::NEW;
+        $workOrder->stage = Status::STAGE_NEW;
 
         if ($request->hasFile('pictures')) {
             $pictureFiles = $request->file('pictures');
@@ -809,7 +808,7 @@ class CustomerController extends Controller
         //dd($firstHour->work_order_id);
         $wps= $attend->get();
         $aRate = CheckInOut::with('workOrder.customer')->where('work_order_id', $id)->sum('total_hours');
-        //dd($bataRate = $hours);
+        $aRate = round($aRate * 2) / 2;
 
         // Initialize total price variable
         $totalPrice = 0;
@@ -824,23 +823,6 @@ class CustomerController extends Controller
             $startStdTime = Carbon::create($checkIn->year, $checkIn->month, $checkIn->day, 9, 0, 0); // 9 AM
             $endStdTime = Carbon::create($checkIn->year, $checkIn->month, $checkIn->day, 18, 0, 0); // 6 PM
 
-            // Get technician's rates
-            $stdRate = @$wp->technician->rate['STD'];
-            $emRate = @$wp->technician->rate['EM'];
-            $shRate = @$wp->technician->rate['SH'];
-            $otRate = @$wp->technician->rate['OT'];
-
-            // Determine the rate based on the time and day
-            if ($dayOfWeek == 5) { // Friday (Special Hours)
-                $wp->calculated_rate = $shRate;
-            } elseif ($dayOfWeek == 6 || $dayOfWeek == 0) { // Saturday and Sunday
-                $wp->calculated_rate = $otRate;
-            } elseif ($checkIn->between($startStdTime, $endStdTime)) { // Standard Hours (9 AM - 6 PM)
-                $wp->calculated_rate = $stdRate;
-            } else { // Evening hours (before 9 AM or after 6 PM)
-                $wp->calculated_rate = $emRate;
-            }
-            // Safely explode total_hours and handle cases where the format is incorrect
             list($hours, $minutes) = array_pad(explode(':', @$wp->total_hours), 2, 0);
 
             // Ensure both $hours and $minutes are numeric
@@ -858,9 +840,7 @@ class CustomerController extends Controller
             // Add to total price
             $totalPrice += $wp->amount;
         }
-
-        // Add a fixed amount (e.g., 0.26)
-        $totalPrice += 0.26;
+        //dd($wps);
 
         return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate'));
     }
