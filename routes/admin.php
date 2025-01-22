@@ -253,4 +253,8 @@ Route::middleware('admin')->group(function () {
             Route::post('manage-section/{id}', 'manageSectionUpdate')->name('manage.section.update');
         });
     });
+    Route::controller('InvoiceController')->group(function () {
+        Route::get('billing/invoiced/{id}', 'stageStatusBillingInvoiced')->name('billing.invoiced');
+        Route::get('revert/{id}', 'revert')->name('revert');
+    });
 });

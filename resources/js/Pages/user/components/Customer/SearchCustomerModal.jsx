@@ -123,7 +123,7 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                             <Shade title="Rates" />
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Standard first two hour rate
+                                <h6 className='fw-bold pe-2 mb-0'>Standard first hour rate
                                     :</h6>
                                 <h6 className='mb-0'>${customerData?.s_rate_f}</h6>
                             </div>
@@ -135,7 +135,7 @@ const SearchCustomerModal = ({ onSuccessMessage }) => {
                             </div>
 
                             <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Emergency first two hour rate
+                                <h6 className='fw-bold pe-2 mb-0'>Emergency first hour rate
                                     :</h6>
                                 <h6 className='mb-0'>{customerData?.e_rate_f}</h6>
                             </div>
