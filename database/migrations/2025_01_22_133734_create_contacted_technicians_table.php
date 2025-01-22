@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('work_order_schedules', function (Blueprint $table) {
+        Schema::create('contacted_technicians', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wo_id')->constrained('work_orders')->onDelete('cascade');
-            $table->date('on_site_by');
-            $table->time('scheduled_time');
-            $table->string('h_operation')->nullable();
-            $table->text('schedule_note')->nullable();
+            $table->bigInteger('tech_id');
+            $table->string('tech_name')->nullable();
+            $table->string('subject')->nullable();
+            $table->string('message')->nullable();
+            $table->string('res_note')->nullable();
+            $table->tinyInteger('is_responded')->default(0);
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_order_schedules');
+        Schema::dropIfExists('contacted_technicians');
     }
 };

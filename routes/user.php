@@ -135,6 +135,8 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('dispatch/work/order', 'assignTech')->name('dispatch.order');
                 Route::post('send/mail', 'sendMail')->name('sendmail.tech');
                 Route::get('site/modal/auto/autocomplete', 'siteModalAutoComplete')->name('modal.site.search');
+
+
                 // Route::get('/assigned/tech')
                 //end work order manage
                 //2FA
@@ -231,6 +233,10 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('add-expense/{id}','addExpenses')->name('wo.addExpenses');
                 Route::post('update-expense/{id}','updateExpenses')->name('wo.updateExpenses');
                 Route::delete('delete-expense/{id}','deleteExpense')->name('wo.deleteExpense');
+
+                Route::post('store-contacted-tech/{wo_id}/{tech_id}', 'storeContactedTech')->name('storeContactedTech');
+                Route::post('update-contacted-tech/{id}', 'updateContactedTech')->name('updateContactedTech');
+                Route::delete('delete-contacted-tech/{id}', 'deleteContactedTech')->name('deleteContactedTech');
             });
 
             // Notes

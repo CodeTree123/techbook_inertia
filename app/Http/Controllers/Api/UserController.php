@@ -341,7 +341,7 @@ class UserController extends Controller
     {
         $search = $request->query('search', '');
 
-        $technicians = Technician::select('id', 'company_name', 'address_data', 'email', 'phone', 'rate', 'tech_type')
+        $technicians = Technician::select('id', 'technician_id', 'company_name', 'address_data', 'email', 'phone', 'rate', 'tech_type','status','cell_phone')
             ->when($search, function ($query, $search) {
                 $query->where('company_name', 'like', "%{$search}%")
                     ->orWhere('technician_id', 'like', "%{$search}%")

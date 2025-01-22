@@ -56,6 +56,7 @@ use Inertia\Inertia;
 use App\Models\TechDeletionReason;
 use App\Models\OtherExpense;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ContactedTechnician;
 
 class UserController extends Controller
 {
@@ -2057,28 +2058,6 @@ class UserController extends Controller
         }
     }
 
-
-    public function sendMail(Request $request)
-    {
-        $to = $request->to_email;
-        $subject = $request->subject;
-        $body = $request->body_text;
-        $sender = 'Tech-Yeah';
-
-        $emailData = [
-            'subject' => $subject,
-            'body' => $body,
-            'to' => $to,
-            'sender' => $sender,
-        ];
-
-        try {
-            Mail::to($to)->send(new MyTestMail_sample($emailData));
-            return response()->json(['message' => 'Email sent successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Email failed to send', 'error' => $e->getMessage()], 500);
-        }
-    }
     public function wODelete($id)
     {
         $w = WorkOrder::find($id);
@@ -2096,7 +2075,6 @@ class UserController extends Controller
 
         return back()->withNotify($notify);
     }
-
 
 
     // New functions
@@ -2318,10 +2296,11 @@ class UserController extends Controller
             'techProvidedParts',
             'schedules',
             'assignedTech.engineer',
-            'techRemoveReasons',
+            'techRemoveReasons.deletionTechnician:id,company_name,address_data,tech_type,technician_id',
             'otherExpenses',
             'notes.user:id,firstname,lastname',
-            'notes.subNotes'
+            'notes.subNotes',
+            'contactedTechs.tech:id,technician_id,address_data,email,phone,tech_type'
         ])->find($id);
         
         if ($wo && $wo->technician) {
@@ -4001,13 +3980,11 @@ class UserController extends Controller
                 $tech->save();
             }
 
-            if ($request->reason) {
-                TechDeletionReason::create([
-                    'wo_id' => $id,
-                    'tech_id' => $techId,
-                    'reason' => $request->reason,
-                ]);
-            }
+            TechDeletionReason::create([
+                'wo_id' => $id,
+                'tech_id' => $techId,
+                'reason' => $request->reason,
+            ]);
 
             AssignedEngineer::where('wo_id', $id)->delete();
 
@@ -4079,6 +4056,59 @@ class UserController extends Controller
     }
 
 
-    // Site History
+    public function sendMail(Request $request)
+    {
+        $to = $request->to_email;
+        $subject = $request->subject;
+        $body = $request->body_text;
+        $sender = 'Tech-Yeah';
+
+        $emailData = [
+            'subject' => $subject,
+            'body' => $body,
+            'to' => $to,
+            'sender' => $sender,
+        ];
+
+        try {
+            Mail::to($to)->send(new MyTestMail_sample($emailData));
+            return response()->json(['message' => 'Email sent successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Email failed to send', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function storeContactedTech(Request $request, $woId, $techId)
+    {
+        $contactTech = new ContactedTechnician();
+        $tech = Technician::find($techId);
+
+        $contactTech->wo_id = $woId;
+        $contactTech->tech_id = $techId;
+        $contactTech->res_note = $request->res_note;
+        $contactTech->tech_name = $tech->company_name;
+
+        $contactTech->save();
+    }
+
+    public function updateContactedTech(Request $request, $id)
+    {
+        $contactTech = ContactedTechnician::find($id);
+
+        $contactTech->res_note = $request->res_note;
+        $contactTech->is_responded = $request->is_responded;
+        $contactTech->subject = $request->subject;
+        $contactTech->message = $request->message;
+
+        $contactTech->save();
+    }
+
+    public function deleteContactedTech($id)
+    {
+        $contactTech = ContactedTechnician::find($id);
+
+        $contactTech->delete();
+    }
+
 
 }

@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TechDeletionReason extends Model
+class ContactedTechnician extends Model
 {
     use HasFactory;
-    protected $guarded = [];
 
-    public function deletionTechnician()
+    public function tech()
     {
         return $this->belongsTo(Technician::class, 'tech_id');
     }

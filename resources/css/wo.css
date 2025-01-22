@@ -279,3 +279,26 @@ textarea {
 .log-accordion p{
     margin: 0 !important;
 }
+
+.contact-hov{
+    transition: 0.4s;
+}
+
+.contact-hov:hover{
+    background-color: #afe1afa6 !important;
+}
+
+.contactedTechBox{
+    transition: 0.3s;
+}
+
+.contactedTechAction{
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.3s;
+}
+
+.contactedTechBox:hover .contactedTechAction{
+    opacity: 1;
+    transform: translateY(0);
+}

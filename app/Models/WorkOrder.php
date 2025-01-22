@@ -105,6 +105,11 @@ class WorkOrder extends Model
     {
         return $this->hasMany(Note::class, 'wo_id');
     }
+
+    public function contactedTechs()
+    {
+        return $this->hasMany(ContactedTechnician::class, 'wo_id');
+    }
     //scope
     //status 
     public function scopePendingTicket($query)

@@ -39,7 +39,8 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                     check_in_out: details?.check_in_out,
                     ftech_id: details?.ftech_id,
                     tech_remove_reasons: details?.tech_remove_reasons,
-                    technician: details?.technician
+                    technician: details?.technician,
+                    contacted_techs: details?.contacted_techs
                 }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7}/>
             </TabPanel>
             <TabPanel>

@@ -2,6 +2,9 @@ import { useForm } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react'
 import TechData from './components/TechData';
 import { Modal } from 'react-bootstrap';
+import PreviousTech from './components/PreviousTech';
+import ContactedTech from './components/ContactedTech';
+import ContactModal from './components/ContactModal';
 
 const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
 
@@ -154,6 +157,19 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
         setShowModal(true);
     };
 
+    const [showContactModal, setShowContactModal] = useState(false);
+
+    const handleContactCloseModal = (setData) => {
+        setData({is_contacted: false})
+        setShowContactModal(false);
+        setSelectedTechnician(null);
+    };
+
+    const handleContactShowModal = (technician) => {
+        setSelectedTechnician(technician);
+        setShowContactModal(true);
+    };
+
     const [selectedTechnician, setSelectedTechnician] = useState(null);
 
     const totalhours = details?.check_in_out.reduce((sum, item) => {
@@ -161,15 +177,16 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
         return sum + hours;
     }, 0);
 
-    console.log(details);
-    
-
     return (
         <div>
             {
                 !details?.ftech_id ?
                     <>
                         <div className='row justify-content-end'>
+                            <div className='col-3 d-flex justify-content-end gap-2'>
+                                <ContactedTech contacted_techs={details?.contacted_techs} onSuccessMessage={onSuccessMessage}/>
+                                <PreviousTech reasons={details?.tech_remove_reasons}/>
+                            </div>
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
                                 <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null)}>
@@ -178,14 +195,6 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                             </div>
                         </div>
                         <div className='p-5 rounded-3' style={{ backgroundColor: '#F9F9F8' }}>
-                            <div className='bg-white px-4 py-4 rounded-4 border mb-3'>
-                                <h4>Technician remove reason</h4>
-                                {
-                                    details?.tech_remove_reasons?.map((reason) => (
-                                        <p className='text-danger'>{reason.reason}</p>
-                                    ))
-                                }
-                            </div>
                             {loading ? (
                                 <p>Loading...</p>
                             ) : (
@@ -246,14 +255,14 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                         tech?.address_data &&
                                                         <div className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>
                                                             <b>Address:</b> {[
-                                                                    tech?.address_data?.address,
-                                                                    tech?.address_data?.city,
-                                                                    tech?.address_data?.state,
-                                                                    tech?.address_data?.country,
-                                                                    tech?.address_data?.zip_code
-                                                                ]
-                                                                    .filter(Boolean)
-                                                                    .join(', ')}
+                                                                tech?.address_data?.address,
+                                                                tech?.address_data?.city,
+                                                                tech?.address_data?.state,
+                                                                tech?.address_data?.country,
+                                                                tech?.address_data?.zip_code
+                                                            ]
+                                                                .filter(Boolean)
+                                                                .join(', ')}
                                                         </div>
                                                     }
 
@@ -261,11 +270,11 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                 <div className='col-4 d-flex gap-2 justify-content-end'>
                                                     {
                                                         !details.ftech_id ?
-                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{height: 'max-content'}}>Assign</button> :
+                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{ height: 'max-content' }}>Assign</button> :
                                                             <button className='btn btn-light border' disabled>Assigned</button>
                                                     }
 
-                                                    <button className='btn btn-dark' disabled={is_cancelled} style={{height: 'max-content'}}>Contact</button>
+                                                    <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled} style={{ height: 'max-content' }}>Contact</button>
                                                 </div>
 
                                             </div>
@@ -297,27 +306,6 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
 
                                 </ul>
                             )}
-                            <Modal show={showModal} onHide={handleCloseModal}>
-                                <Modal.Header>
-                                    <h5 className="modal-title" id="exampleModalLabel">Assign This Technician</h5>
-                                    <button onClick={() => setShowModal(false)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                                </Modal.Header>
-                                <Modal.Body>
-                                    <h6><b>Company Name :</b> {selectedTechnician?.company_name}</h6>
-                                    <h6><b>Technician ID :</b> {selectedTechnician?.technician_id}</h6>
-                                    <h6><b>Status :</b> {selectedTechnician?.status}</h6>
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" checked={data.send_email} id="flexCheckChecked" onChange={(e) => setData({ send_email: !data.send_email })} />
-                                        <label className="form-check-label" htmlFor="flexCheckChecked">
-                                            Send email attached workorder to the tech.
-                                        </label>
-                                    </div>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <button onClick={() => setShowModal(false)} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={(e) => assignTech(e, selectedTechnician.id)} type="button" className="btn btn-dark">Assign</button>
-                                </Modal.Footer>
-                            </Modal>
                             {
                                 responseData && <p>{responseData.radiusMessage}</p>
                             }
@@ -398,11 +386,11 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                     <div className='col-4 d-flex gap-2 justify-content-end'>
                                                         {
                                                             !details.ftech_id ?
-                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{height: 'max-content'}}>Assign</button> :
+                                                                <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{ height: 'max-content' }}>Assign</button> :
                                                                 <button className='btn btn-light border' disabled>Assigned</button>
                                                         }
 
-                                                        <button className='btn btn-dark' disabled={is_cancelled} style={{height: 'max-content'}}>Contact</button>
+                                                        <button className='btn btn-dark' disabled={is_cancelled} style={{ height: 'max-content' }} onClick={() => handleContactShowModal(tech)} >Contact</button>
                                                     </div>
 
                                                 </div>
@@ -452,6 +440,31 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                     </ul>
                                 )
                             }
+
+                            <Modal show={showModal} onHide={handleCloseModal}>
+                                <Modal.Header>
+                                    <h5 className="modal-title" id="exampleModalLabel">Assign This Technician</h5>
+                                    <button onClick={() => setShowModal(false)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <h6><b>Company Name :</b> {selectedTechnician?.company_name}</h6>
+                                    <h6><b>Technician ID :</b> {selectedTechnician?.technician_id}</h6>
+                                    <h6><b>Status :</b> {selectedTechnician?.status}</h6>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" checked={data.send_email} id="flexCheckChecked" onChange={(e) => setData({ send_email: !data.send_email })} />
+                                        <label className="form-check-label" htmlFor="flexCheckChecked">
+                                            Send email attached workorder to the tech.
+                                        </label>
+                                    </div>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <button onClick={() => setShowModal(false)} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button onClick={(e) => assignTech(e, selectedTechnician.id)} type="button" className="btn btn-dark">Assign</button>
+                                </Modal.Footer>
+                            </Modal>
+
+                            
+                            <ContactModal id={id} showContactModal={showContactModal} handleContactCloseModal={handleContactCloseModal} selectedTechnician={selectedTechnician} setShowContactModal={setShowContactModal} onSuccessMessage={onSuccessMessage}/>
                         </div>
                     </> :
                     <>
