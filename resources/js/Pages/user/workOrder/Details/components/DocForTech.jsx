@@ -1,7 +1,7 @@
 import { router, useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
-const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
+const DocForTech = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) => {
     const { data, setData, delete: deleteItem, post, errors, processing, recentlySuccessful } = useForm({
     });
 
@@ -107,7 +107,7 @@ const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
                                     })()}
                                 </div>
                                 <form onSubmit={(e) => deleteDoc(e, doc.id)}>
-                                    <button type="submit" className="delete-btn" disabled={is_cancelled}>×</button>
+                                    <button type="submit" className="delete-btn" disabled={is_cancelled || is_billing}>×</button>
                                 </form>
                             </div>
                         ))
@@ -118,7 +118,7 @@ const DocForTech = ({ id, details, onSuccessMessage, is_cancelled }) => {
                 <div className="w-100 py-3">
                     <form encType="multipart/form-data">
                         {
-                            is_cancelled ?
+                            is_cancelled || is_billing ?
                                 <button className="btn btn-outline-dark" disabled>Add File</button> :
                                 <label htmlFor="technicianDoc" className="btn btn-outline-dark">Add File</label>
                         }

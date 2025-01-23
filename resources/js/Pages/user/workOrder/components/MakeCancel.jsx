@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import {route} from 'ziggy-js';
 
-const MakeCancel = ({id, is_cancelled, onSuccessMessage}) => {
+const MakeCancel = ({id, is_cancelled, onSuccessMessage, is_billing}) => {
     const [showCancel, setShowCancel] = useState(false);
 
     const handleCloseCancel = () => setShowCancel(false);
@@ -26,7 +26,7 @@ const MakeCancel = ({id, is_cancelled, onSuccessMessage}) => {
 
     return (
         <>
-            <Button variant="danger" style={{height: 'max-content'}} onClick={handleShowCancel} disabled={is_cancelled}>
+            <Button variant="danger" style={{height: 'max-content'}} onClick={handleShowCancel} disabled={is_cancelled || is_billing}>
                 {!is_cancelled ? 'Cancel' : 'Cancelled'}
             </Button>
 

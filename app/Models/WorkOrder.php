@@ -35,10 +35,6 @@ class WorkOrder extends Model
     {
         return $this->belongsTo(Technician::class, 'ftech_id', 'id');
     }
-    // public function notes()
-    // {
-    //     return $this->hasMany(TicketNotes::class, 'work_order_id', 'id');
-    // }
 
     public function subTicket()
     {

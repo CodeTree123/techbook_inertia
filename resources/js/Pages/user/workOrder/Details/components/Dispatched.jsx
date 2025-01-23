@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import JoditEditor from 'jodit-react';
 import React, { useRef, useState } from 'react'
 
-const Dispatched = ({id, details, onSuccessMessage, is_cancelled}) => {
+const Dispatched = ({id, details, onSuccessMessage, is_cancelled, is_billing}) => {
     const editor = useRef(null);
     const [editable, setEditable] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -36,7 +36,7 @@ const Dispatched = ({id, details, onSuccessMessage, is_cancelled}) => {
                             className="btn border-0"
                             type='button'
                             onClick={() => setEditable(!editable)}
-                            disabled={is_cancelled}
+                            disabled={is_cancelled || is_billing}
                         >
                             <i className="fa-solid fa-pen-to-square"></i>
                         </button>

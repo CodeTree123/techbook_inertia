@@ -2317,7 +2317,6 @@ class UserController extends Controller
             $wo->technician->co_ordinates = null; // Set or process as needed
         }
 
-
         return Inertia::render('user/workOrder/WoView', [
             'wo' => $wo,
         ]);
@@ -2444,7 +2443,7 @@ class UserController extends Controller
             $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, Status::NEEDS_APPROVAL, '', 'status', "Work order status updated: 'Needs Approval'", $id);
 
         } elseif ($wo->status == Status::NEEDS_APPROVAL) {
-            $wo->status = null;
+            $wo->status = Status::APPROVED;
             $wo->stage += 1;
 
             $preLog = WorkOrderTimeLog::where('column_name', 'stage')->orderBy('id', 'desc')->first();
@@ -2518,10 +2517,11 @@ class UserController extends Controller
             $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, Status::APPROVED, '', 'status', "Work order status updated: 'Invoiced' → 'Approved'", $id);
 
         } elseif ($wo->status == Status::APPROVED) {
-            $wo->status = null;
+            $wo->stage -= 1;
+            $wo->status = Status::NEEDS_APPROVAL;
 
-            $preLog = WorkOrderTimeLog::where('column_name', 'status')->orderBy('id', 'desc')->first();
-            $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, '', '', 'status', "Work order status updated: 'Approved' → 'No Status'", $id);
+            $preLog = WorkOrderTimeLog::where('column_name', 'stage')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'stage', $wo->id, $wo->updated_at, $preLog, 4, '', 'stage', "Work order stage updated: 'Billing' → 'Closed'", $id);
 
         } elseif ($wo->stage == 5 && $wo->status == null) {
             $wo->stage -= 1;
@@ -4080,15 +4080,19 @@ class UserController extends Controller
 
     public function storeContactedTech(Request $request, $woId, $techId)
     {
-        $contactTech = new ContactedTechnician();
-        $tech = Technician::find($techId);
+        $prevContactTech = ContactedTechnician::where('tech_id',$techId)->where('wo_id', $woId)->first();
 
-        $contactTech->wo_id = $woId;
-        $contactTech->tech_id = $techId;
-        $contactTech->res_note = $request->res_note;
-        $contactTech->tech_name = $tech->company_name;
-
-        $contactTech->save();
+        if(!$prevContactTech){
+            $contactTech = new ContactedTechnician();
+            $tech = Technician::find($techId);
+    
+            $contactTech->wo_id = $woId;
+            $contactTech->tech_id = $techId;
+            $contactTech->res_note = $request->res_note;
+            $contactTech->tech_name = $tech->company_name;
+    
+            $contactTech->save();
+        }
     }
 
     public function updateContactedTech(Request $request, $id)

@@ -12,6 +12,9 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
     const [technicians, setTechnicians] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    console.log(technicians);
+
+
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -160,7 +163,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
     const [showContactModal, setShowContactModal] = useState(false);
 
     const handleContactCloseModal = (setData) => {
-        setData({is_contacted: false})
+        setData({ is_contacted: false })
         setShowContactModal(false);
         setSelectedTechnician(null);
     };
@@ -184,8 +187,8 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                     <>
                         <div className='row justify-content-end'>
                             <div className='col-3 d-flex justify-content-end gap-2'>
-                                <ContactedTech contacted_techs={details?.contacted_techs} onSuccessMessage={onSuccessMessage}/>
-                                <PreviousTech reasons={details?.tech_remove_reasons}/>
+                                <ContactedTech contacted_techs={details?.contacted_techs} onSuccessMessage={onSuccessMessage} />
+                                <PreviousTech reasons={details?.tech_remove_reasons} />
                             </div>
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
@@ -274,7 +277,10 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                             <button className='btn btn-light border' disabled>Assigned</button>
                                                     }
 
-                                                    <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled} style={{ height: 'max-content' }}>Contact</button>
+                                                    {
+                                                        tech?.contacted ? <button className='btn btn-success' disabled>Contacted</button> : <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled} style={{ height: 'max-content' }}>Contact</button>
+                                                    }
+
                                                 </div>
 
                                             </div>
@@ -390,7 +396,9 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                                 <button className='btn btn-light border' disabled>Assigned</button>
                                                         }
 
-                                                        <button className='btn btn-dark' disabled={is_cancelled} style={{ height: 'max-content' }} onClick={() => handleContactShowModal(tech)} >Contact</button>
+                                                        {
+                                                            tech?.contacted ? <button className='btn btn-success' disabled>Contacted</button> : <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled} style={{ height: 'max-content' }}>Contact</button>
+                                                        }
                                                     </div>
 
                                                 </div>
@@ -463,8 +471,8 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                 </Modal.Footer>
                             </Modal>
 
-                            
-                            <ContactModal id={id} showContactModal={showContactModal} handleContactCloseModal={handleContactCloseModal} selectedTechnician={selectedTechnician} setShowContactModal={setShowContactModal} onSuccessMessage={onSuccessMessage}/>
+
+                            <ContactModal id={id} showContactModal={showContactModal} handleContactCloseModal={handleContactCloseModal} selectedTechnician={selectedTechnician} setShowContactModal={setShowContactModal} onSuccessMessage={onSuccessMessage} />
                         </div>
                     </> :
                     <>

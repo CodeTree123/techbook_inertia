@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 
-const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         'on_site_by': scheduleData?.on_site_by,
@@ -45,7 +45,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                     variant="warning"
                     style={{ fontWeight: 600 }}
                     onClick={handleShow}
-                    disabled={is_cancelled}
+                    disabled={is_cancelled || is_billing}
                 >
                     Reschedule
                 </Button>

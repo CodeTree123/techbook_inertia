@@ -25,6 +25,11 @@ class Technician extends Model
         return $this->belongsToMany(SkillCategory::class, 'technician_skills', 'technician_id', 'skill_id');
     }
 
+    public function contacted()
+    {
+        return $this->hasOne(ContactedTechnician::class, 'tech_id');
+    }
+
     public function review()
     {
         return $this->belongsTo(Review::class, 'id', 'technician_id');

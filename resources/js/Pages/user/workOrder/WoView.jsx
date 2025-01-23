@@ -736,8 +736,8 @@ export default function WoView({ wo }) {
             </div>
 
             <div className="col-2 d-flex gap-1 px-3 py-4">
-              <AddHold id={wo?.id} onSuccessMessage={handleSuccessMessage} stage={wo.is_hold} is_cancelled={wo.stage == 7} />
-              <MakeCancel id={wo?.id} onSuccessMessage={handleSuccessMessage} is_cancelled={wo.stage == 7} />
+              <AddHold id={wo?.id} onSuccessMessage={handleSuccessMessage} stage={wo.is_hold} is_cancelled={wo.stage == 7} is_billing={wo.status == 12}/>
+              <MakeCancel id={wo?.id} onSuccessMessage={handleSuccessMessage} is_cancelled={wo.stage == 7} is_billing={wo.status == 12}/>
             </div>
 
             <div className="col-8 px-3 py-4">
@@ -805,7 +805,7 @@ export default function WoView({ wo }) {
 
             {
               wo.status == 4 &&
-              <Reschedule id={latestAtRiskScheduleId} is_ftech={wo.ftech_id} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} is_cancelled={wo.stage == 7} />
+              <Reschedule id={latestAtRiskScheduleId} is_ftech={wo.ftech_id} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} is_cancelled={wo.stage == 7} is_billing={wo.status == 12}/>
             }
 
 

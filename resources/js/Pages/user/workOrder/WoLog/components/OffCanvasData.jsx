@@ -69,7 +69,7 @@ const OffCanvasData = ({ show, handleClose, logData }) => {
             case 'travel_cost':
             case 'ftech_id':
             case 'ftech_id_del':
-                return <p className="m-0">{logData.value}</p>;
+                return <p className="m-0">{logData?.value}</p>;
 
             default:
                 return null;
@@ -159,7 +159,7 @@ const OffCanvasData = ({ show, handleClose, logData }) => {
                 return <div dangerouslySetInnerHTML={{ __html: logData?.value }} />;
 
             default:
-                return <p className="m-0">{logData.value}</p>;
+                return <p className="m-0">{logData?.value}</p>;
         }
     };
 
@@ -171,7 +171,7 @@ const OffCanvasData = ({ show, handleClose, logData }) => {
         switch (fieldName) {
             case 'new':
             case 'delete':
-                return <div dangerouslySetInnerHTML={{ __html: logData?.pre_log.value }} />;
+                return <div dangerouslySetInnerHTML={{ __html: logData?.pre_log?.value }} />;
 
             default:
                 return <p className="m-0">{logData?.pre_log.value}</p>;

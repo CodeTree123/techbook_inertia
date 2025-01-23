@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async';
 
-const Overview = ({ id, details, onSuccessMessage, is_cancelled }) => {
+const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) => {
     const [editable, setEditable] = useState(false);
 
     const loadOptions = async (inputValue) => {
@@ -75,7 +75,7 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled }) => {
 
                     {
                         !editable ?
-                            <button type="button" className="btn edit-btn border-0" onClick={() => setEditable(!editable)} disabled={is_cancelled}>
+                            <button type="button" className="btn edit-btn border-0" onClick={() => setEditable(!editable)} disabled={is_cancelled || is_billing}>
                                 <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                             </button> : 
                             <>

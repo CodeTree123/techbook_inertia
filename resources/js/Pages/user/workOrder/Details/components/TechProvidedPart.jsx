@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import TechProvidedPartsTable from './TechProvidedPartsTable';
 
-const TechProvidedPart = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+const TechProvidedPart = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
     const [newItem, setNewItem] = useState(false);
 
     const handleNewItem = (e) => {
@@ -60,7 +60,7 @@ const TechProvidedPart = ({ id, details, onSuccessMessage, onErrorMessage, is_ca
                         Actions
                     </div>
                 </div>
-                <TechProvidedPartsTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
+                <TechProvidedPartsTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing}/>
                 {
                     newItem &&
                     <form onSubmit={submit} className="row border-bottom">
@@ -92,7 +92,7 @@ const TechProvidedPart = ({ id, details, onSuccessMessage, onErrorMessage, is_ca
                 {
                     !newItem &&
                     <div className="mt-3">
-                        <button className="btn btn-outline-dark" onClick={handleNewItem} disabled={is_cancelled}>+ Add Item</button>
+                        <button className="btn btn-outline-dark" onClick={handleNewItem} disabled={is_cancelled || is_billing}>+ Add Item</button>
                     </div>
                 }
 

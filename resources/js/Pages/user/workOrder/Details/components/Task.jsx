@@ -2,8 +2,9 @@ import { router, useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import TaskModal from './TaskModal';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DateTime } from 'luxon';
 
-const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         type: '',
         reason: '',
@@ -238,7 +239,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                         <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
                             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for ' + details?.technician?.company_name}</h3>
-                                <TaskModal id={id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
+                                <TaskModal id={id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing}/>
 
                             </div>
                             <div className="card-body bg-white">
@@ -254,7 +255,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                         className="form-check-input ms-0 me-2"
                                                         type="checkbox"
                                                         value="1"
-                                                        disabled={details.stage !== 3 || !details.ftech_id || is_cancelled}
+                                                        disabled={details.stage !== 3 || !details.ftech_id || is_cancelled || is_billing}
                                                         checked={
                                                             details.check_in_out?.some((check_in_out) => check_in_out.check_in && !check_in_out.check_out) || false
                                                         }
@@ -285,7 +286,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                             type="button"
                                                             className="btn btn-dark col-2 addReasonButton"
                                                             onClick={() => handleAddDefaultReasonClick()}
-                                                            disabled={is_cancelled}
+                                                            disabled={is_cancelled || is_billing}
                                                         >
                                                             + Add reason
                                                         </button>
@@ -336,7 +337,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                                         id={`completeTaskFileUpload-${task.id}`}
                                                                         className="invisible"
                                                                         onChange={(e) => addFilePhoto(e, task.id)}
-                                                                        disabled={is_cancelled}
+                                                                        disabled={is_cancelled || is_billing}
                                                                     />
                                                                 </form>
                                                             ) : (
@@ -350,7 +351,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                                         id={`completeTaskCheckbox-${task.id}`}
                                                                         onChange={(e) => completeTaskForm(e, task.id, task.is_completed)}
                                                                         checked={!!task.is_completed}
-                                                                        disabled={is_cancelled}
+                                                                        disabled={is_cancelled || is_billing}
                                                                     />
                                                                 </form>
                                                             )
@@ -412,8 +413,8 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
 
                                                                 <p className="mb-0 nrml-txt" style={{ fontWeight: 300, fontSize: 12, color: '#808080' }}>
                                                                     Task Assigned at
-                                                                    05:58 PM
-                                                                    (12-11-24)
+                                                                    {DateTime.fromISO(task.created_at).setZone('America/Chicago').toFormat('h:mm a')}
+                                                                    ({DateTime.fromISO(task.created_at).setZone('America/Chicago').toFormat('MM-dd-yy')})
                                                                 </p>
                                                                 {
                                                                     editable == index &&
@@ -476,7 +477,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                     <div className="d-flex action-group gap-2">
                                                         {
                                                             editable != index &&
-                                                            <button onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
+                                                            <button onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled || is_billing}>
                                                                 <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                                             </button>
                                                         }
@@ -495,7 +496,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                         }
                                                         {
                                                             editable != index &&
-                                                            <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
+                                                            <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled || is_billing}>
                                                                 <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                                             </button>
                                                         }
@@ -525,7 +526,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                         className="form-check-input ms-0 me-2"
                                                         type="checkbox"
                                                         value=""
-                                                        disabled={details.stage != 3 || is_cancelled}
+                                                        disabled={details.stage != 3 || is_cancelled || is_billing}
                                                         checked={!!details.check_in_out?.slice(-1)[0]?.check_out}
                                                     />
                                                     <div>
@@ -563,7 +564,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                         <button className='btn btn-outline-danger' onClick={() => setAddClose(false)}>Cancel</button>
                                                     </div>
                                                 </div> :
-                                                <button className='btn btn-outline-dark' onClick={handleAddClose} disabled={is_cancelled}>+ Add Closeout Note</button>
+                                                <button className='btn btn-outline-dark' onClick={handleAddClose} disabled={is_cancelled || is_billing}>+ Add Closeout Note</button>
                                         }
                                         {
                                             details?.notes?.map((note) => (
@@ -605,7 +606,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                             type="checkbox"
                                                             value="1"
                                                             id={`checkin-${tech.tech_id}`}
-                                                            disabled={details.stage != 3 || !details.ftech_id || is_cancelled}
+                                                            disabled={details.stage != 3 || !details.ftech_id || is_cancelled || is_billing}
                                                             checked={
                                                                 details.check_in_out?.some(
                                                                     (checkInOut) =>
@@ -654,7 +655,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                                 data-id={`reason-${tech.id}`}
                                                                 className="btn btn-dark col-2 addReasonButton"
                                                                 onClick={() => handleAddReasonClick(tech.id)}
-                                                                disabled={is_cancelled}
+                                                                disabled={is_cancelled || is_billing}
                                                             >
                                                                 + Add reason
                                                             </button>
@@ -703,7 +704,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                                                 id={`completeTaskFileUpload-${task.id}`}
                                                                                 className="invisible"
                                                                                 onChange={(e) => addFilePhoto(e, task.id)}
-                                                                                disabled={is_cancelled}
+                                                                                disabled={is_cancelled || is_billing}
                                                                             />
                                                                         </form>
                                                                     ) : (
@@ -717,7 +718,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                                                 id={`completeTaskCheckbox-${task.id}`}
                                                                                 onChange={(e) => completeTaskForm(e, task.id, task.is_completed)}
                                                                                 checked={!!task.is_completed}
-                                                                                disabled={is_cancelled}
+                                                                                disabled={is_cancelled || is_billing}
                                                                             />
                                                                         </form>
                                                                     )
@@ -843,7 +844,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                             <div className="d-flex action-group gap-2">
                                                                 {
                                                                     editable != index &&
-                                                                    <button onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
+                                                                    <button onClick={() => handleEdit(index)} className="btn edit-btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled || is_billing}>
                                                                         <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                                                     </button>
                                                                 }
@@ -862,7 +863,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                                 }
                                                                 {
                                                                     editable != index &&
-                                                                    <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled}>
+                                                                    <button onClick={(e) => deleteTask(e, task.id)} type="button" className="btn border-0" style={{ height: 'max-content' }} disabled={is_cancelled || is_billing}>
                                                                         <i className="fa-solid fa-trash text-danger" aria-hidden="true" />
                                                                     </button>
                                                                 }
@@ -892,7 +893,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                             type="checkbox"
                                                             value=""
                                                             id={`checkout-${tech.tech_id}`}
-                                                            disabled={details.stage != 3 || is_cancelled}
+                                                            disabled={details.stage != 3 || is_cancelled || is_billing}
                                                             checked={
                                                                 details.check_in_out
                                                                     .filter((checkInOut) => checkInOut.tech_id === tech.tech_id)
@@ -933,7 +934,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) =
                                                             <button className='btn btn-outline-danger' onClick={() => setAddCloseOut(null)}>Cancel</button>
                                                         </div>
                                                     </div> :
-                                                    <button className='btn btn-outline-dark' onClick={() => handleAddCloseout(tech.id)} disabled={is_cancelled}>+ Add Closeout Note</button>
+                                                    <button className='btn btn-outline-dark' onClick={() => handleAddCloseout(tech.id)} disabled={is_cancelled || is_billing}>+ Add Closeout Note</button>
                                             }
                                             {
                                                 details?.notes?.map((note) => (
