@@ -16,7 +16,7 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                 <Tab className={`btn tab w-100 ${tabIndex == 1 && 'tab-primary'}`} style={{border: '1px solid #9BCFF5'}}>Field Tech</Tab>
                 <Tab className={`btn tab w-100 ${tabIndex == 2 && 'tab-primary'}`} style={{border: '1px solid #9BCFF5'}}>Notes ({details?.notes.length})</Tab>
                 <Tab className={`btn tab w-100 ${tabIndex == 3 && 'tab-primary'}`} style={{border: '1px solid #9BCFF5'}}>WO Logs</Tab>
-                <Tab className={`btn tab w-100 ${tabIndex == 4 && 'tab-primary'}`} style={{border: '1px solid #9BCFF5'}}>Site History ({details?.site?.related_wo.length})</Tab>
+                <Tab className={`btn tab w-100 ${tabIndex == 4 && 'tab-primary'}`} style={{border: '1px solid #9BCFF5'}}>Site History ({details?.site?.related_wo?.length -1})</Tab>
             </TabList>
 
             <TabPanel>
