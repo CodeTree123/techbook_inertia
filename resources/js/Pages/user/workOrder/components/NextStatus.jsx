@@ -1,7 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import React from 'react'
 import { Button } from 'react-bootstrap';
-
 const NextStatus = ({id, onSuccessMessage, onErrorMessage, status, is_ftech, is_cancelled}) => {
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
@@ -12,6 +11,8 @@ const NextStatus = ({id, onSuccessMessage, onErrorMessage, status, is_ftech, is_
 
         if(is_ftech == null && status == 2){
             onErrorMessage('Assign a technician first!');
+        }else if(status == 12){
+            window.location.href = `/customer/invoice/${id}`;
         }else{
             post(route('user.wo.nextStatus', id), {
                 onSuccess: () => {

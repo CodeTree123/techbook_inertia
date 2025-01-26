@@ -179,6 +179,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
         const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
         return sum + hours;
     }, 0);
+    
 
     return (
         <div>

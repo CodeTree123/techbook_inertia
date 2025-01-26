@@ -99,6 +99,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
         }
     };
 
+
     const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -125,7 +126,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
 
         if (details.ftech_id == null) {
             onErrorMessage('Assign a technician first');
-        } else if(details?.site_id == null){
+        } else if (details?.site_id == null) {
             onErrorMessage('Add a site first');
         } else {
             post(route('user.wo.checkin', [id, taskId]), {
@@ -234,15 +235,20 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
     return (
         <div>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="task-list">
+                <Droppable droppableId="task-list" direction="vertical">
                     {(provided) => (
-                        <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
+                        <div ref={provided.innerRef} {...provided.droppableProps} className="task-container bg-white shadow mb-4"
+                            style={{
+                                padding: '16px',
+                                borderRadius: '8px',
+                                minHeight: '100px',
+                            }}>
                             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks {details?.technician?.tech_type == 'individual' && 'for ' + details?.technician?.company_name}</h3>
-                                <TaskModal id={id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing}/>
+                                <TaskModal id={id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing} />
 
                             </div>
-                            <div className="card-body bg-white">
+                            <div className="card-body p-0 bg-white">
                                 {
                                     details?.technician?.tech_type == 'individual' &&
                                     <div className="form-check px-4 py-3 mb-4 d-flex justify-content-between" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }}>
@@ -312,15 +318,19 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
                                 }
                                 {
                                     details?.tasks?.filter((task) => task.tech_id === null && task.type !== 'closeout_note').map((task, index) => (
-                                        <Draggable
-                                            key={task.id.toString()}
-                                            draggableId={task.id.toString()}
-                                            index={index}
-                                        >
-                                            {(provided) => (
-                                                <div ref={provided.innerRef}
+                                        <Draggable draggableId={task.id.toString()} index={index}>
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    ref={provided.innerRef}
                                                     {...provided.draggableProps}
-                                                    {...provided.dragHandleProps} key={task.id} className="px-4 py-3 mb-4 d-flex justify-content-between action-cards" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }} draggable >
+                                                    {...provided.dragHandleProps}
+                                                    style={{
+                                                        ...provided.draggableProps.style,
+                                                        backgroundColor: snapshot.isDragging ? '#f0f0f0' : '#e3f2fd',
+                                                        boxShadow: snapshot.isDragging ? '0px 4px 8px rgba(0,0,0,0.1)' : 'none',
+                                                    }}
+                                                    className="task-card mb-4 d-flex justify-content-between px-4 py-3"
+                                                >
                                                     <div className="d-flex">
                                                         {
                                                             (task.type === 'upload_file' || task.type === 'upload_photo') && task.file == '[]' ? (
@@ -586,15 +596,20 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
                 {
                     details?.assigned_tech?.map((tech) => (
                         details?.technician?.tech_type == 'company' &&
-                        <Droppable droppableId={tech.tech_id.toString()} key={tech.tech_id}>
+                        <Droppable droppableId={tech.tech_id.toString()} direction="vertical">
                             {(provided) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} className="card bg-white shadow border-0 mb-4">
+                                <div ref={provided.innerRef} {...provided.droppableProps} className="task-container bg-white shadow mb-4"
+                                    style={{
+                                        padding: '16px',
+                                        borderRadius: '8px',
+                                        minHeight: '100px',
+                                    }}>
                                     <div className="card-header bg-white d-flex justify-content-between align-items-center">
                                         <h3 style={{ fontSize: 20, fontWeight: 600 }}>Tasks for {tech.engineer.name}</h3>
                                         <TaskModal id={id} techId={tech.tech_id} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} />
 
                                     </div>
-                                    <div className="card-body bg-white">
+                                    <div className="card-body p-0">
                                         <div className="form-check px-4 py-3 mb-4 d-flex justify-content-between" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }}>
                                             <div className="w-100">
                                                 <form onSubmit={(e) => makeCheckin(e, tech.tech_id)} id={`checkinForm-${tech.tech_id}`} className="row">
@@ -679,15 +694,19 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
                                         }
                                         {
                                             details?.tasks?.filter((task) => task.tech_id != null && task.type !== 'closeout_note' && task.tech_id == tech.tech_id).map((task, index) => (
-                                                <Draggable
-                                                    key={task.id.toString()}
-                                                    draggableId={task.id.toString()}
-                                                    index={index}
-                                                >
-                                                    {(provided) => (
-                                                        <div ref={provided.innerRef}
+                                                <Draggable draggableId={task.id.toString()} index={index}>
+                                                    {(provided, snapshot) => (
+                                                        <div
+                                                            ref={provided.innerRef}
                                                             {...provided.draggableProps}
-                                                            {...provided.dragHandleProps} className="px-4 py-3 mb-4 d-flex justify-content-between action-cards" style={{ backgroundColor: '#E3F2FD', cursor: 'pointer' }} draggable>
+                                                            {...provided.dragHandleProps}
+                                                            style={{
+                                                                ...provided.draggableProps.style,
+                                                                backgroundColor: snapshot.isDragging ? '#f0f0f0' : '#e3f2fd',
+                                                                boxShadow: snapshot.isDragging ? '0px 4px 8px rgba(0,0,0,0.1)' : 'none',
+                                                            }}
+                                                            className="task-card mb-4 d-flex justify-content-between px-4 py-3"
+                                                        >
                                                             <div className="d-flex">
                                                                 {
                                                                     (task.type === 'upload_file' || task.type === 'upload_photo') && task.file == '[]' ? (

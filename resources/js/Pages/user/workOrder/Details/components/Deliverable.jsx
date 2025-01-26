@@ -1,7 +1,7 @@
 import { router, useForm } from '@inertiajs/react';
 import React from 'react';
 
-const Deliverable = ({ id, details, onSuccessMessage, is_cancelled }) => {
+const Deliverable = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) => {
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({});
 
     const deleteTask = (e, taskId, url) => {
@@ -178,7 +178,7 @@ const Deliverable = ({ id, details, onSuccessMessage, is_cancelled }) => {
                                 type="file"
                                 className="invisible"
                                 onChange={(e) => addFilePhoto(e, description)}
-                                disabled={is_cancelled}
+                                disabled={is_cancelled || is_billing}
                             />
                         </div>
                     </div>

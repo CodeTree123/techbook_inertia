@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import AsyncSelect from 'react-select/async';
@@ -52,6 +53,7 @@ const SearchTechnicianModal = () => {
             return [];
         }
     };
+    
     return (
         <>
             <li><a href="#" onClick={handleShowCustomer}>Search</a></li>
@@ -71,163 +73,131 @@ const SearchTechnicianModal = () => {
                     {
                         techData &&
 
-                        <div className='row mt-3 w-100 mx-auto'>
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Name:</h6>
-                                <h6 className='mb-0'>{techData?.company_name}</h6>
+                        <div className='mt-3'>
+                            <div className='d-flex'>
+                                <div className='w-50 pe-5'>
+                                    <h2 className='fs-4'>{techData.technician_id} - {techData.company_name} {'(' + techData.tech_type + ')'} </h2>
+
+                                    <div className='d-flex justify-content-start gap-3 mt-3'>
+                                        {
+                                            techData.email &&
+                                            <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`mailto:${techData.email}`}>
+                                                <i class="fa-regular fa-envelope"></i>
+                                                {techData.email}
+                                            </a>
+                                        }
+
+                                        {
+                                            techData.phone &&
+                                            <a className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }} href={`callto:${techData.phone}`}>
+                                                <i class="fa-solid fa-phone"></i>
+                                                {techData.phone}
+                                            </a>
+                                        }
+                                    </div>
+
+                                    {
+                                        techData.notes &&
+                                        <div className='rounded-3 px-2 py-2 mt-4' style={{ backgroundColor: 'rgb(238, 238, 238)' }}>
+                                            <span><b>Note: </b> {techData.notes}</span>
+                                        </div>
+                                    }
+
+
+                                    <div className='mt-4 pb-2 border-bottom'>
+                                        <h4>Attachments</h4>
+                                    </div>
+
+                                    <div className='mt-4 '>
+                                        {
+                                            techData.coi_file &&
+                                            <div>
+                                                <span style={{ color: 'grey', fontSize: '12px' }}>Coi File, Expiry date: {DateTime.fromISO(techData?.coi_expire_date).toFormat('MM-dd-yy')}</span>
+                                                <a className='border p-2 rounded d-flex align-items-center gap-2' href={'/technician/view-pdf/coi/' + techData.id} target='_blank'>
+                                                    <i class="fa-solid fa-file-pdf text-danger fs-1"></i>
+                                                    <span className='mb-0 fs-6 fw-bold'>{techData.coi_file}</span>
+                                                </a>
+                                            </div>
+                                        }
+
+                                        {
+                                            techData.msa_file &&
+                                            <div>
+                                                <span style={{ color: 'grey', fontSize: '12px' }}>Msa File, Expiry date: {DateTime.fromISO(techData?.msa_expire_date).toFormat('MM-dd-yy')}</span>
+                                                <a className='border p-2 rounded d-flex align-items-center gap-2' href={'/technician/view-pdf/msa/' + techData.id} target='_blank'>
+                                                    <i class="fa-solid fa-file-pdf text-danger fs-1"></i>
+                                                    <span className='mb-0 fs-6 fw-bold'>{techData.msa_file}</span>
+                                                </a>
+                                            </div>
+                                        }
+
+                                        {
+                                            techData.nda_file &&
+                                            <div>
+                                                <span style={{ color: 'grey', fontSize: '12px' }}>Nda File</span>
+                                                <a className='border p-2 rounded d-flex align-items-center gap-2' href={'/technician/view-pdf/nda/' + techData.id} target='_blank'>
+                                                    <i class="fa-solid fa-file-pdf text-danger fs-1"></i>
+                                                    <span className='mb-0 fs-6 fw-bold'>{techData.nda_file}</span>
+                                                </a>
+                                            </div>
+                                        }
+
+                                        {
+                                            !techData.coi_file && !techData.coi_file && !techData.coi_file &&
+                                            <p>No Attachment found</p>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div className='w-50 ps-5'>
+                                    <div className='mt-5'>
+                                        <p>Address: <b>{techData.address_data['address']}, {techData.address_data['city']}, {techData.address_data['state']} {techData.address_data['zip_code']}</b></p>
+                                        <p>Total Assignments: <b>{techData.wo_ct}</b></p>
+                                    </div>
+
+                                    <div className='mt-4 row'>
+                                        <h4>Technician Rate Charts</h4>
+                                        <div className='col-md-12'>
+                                            <table className='table border'>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Standard rate</td>
+                                                        <td>${techData?.rate?.STD ?? 0}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Emergency rate</td>
+                                                        <td>${techData?.rate?.EM ?? 0}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>OT</td>
+                                                        <td>${techData.rate?.OT ?? 0}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>SH</td>
+                                                        <td>${techData.rate?.SH ?? 0}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Travel fee</td>
+                                                        <td>${techData.travel_fee ?? 0}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                    <div className='mt-4 row'>
+                                        <h4>Skillset</h4>
+
+                                        <ul className='d-flex gap-2 flex-wrap'>
+                                            {techData?.skills?.map((skill) => (
+                                                <li className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>{skill.skill_name}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Phone:</h6>
-                                <a href={`callto:${techData?.phone}`} className='mb-0'>{techData?.phone}</a>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Preference:</h6>
-                                <h6 className='mb-0'>{techData?.preference}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Address:</h6>
-                                <h6 className='mb-0'>{techData?.address_data?.address}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Country:</h6>
-                                <h6 className='mb-0'>{techData?.address_data?.country}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>City:</h6>
-                                <h6 className='mb-0'>{techData?.address_data?.city}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>State:</h6>
-                                <h6 className='mb-0'>{techData?.address_data?.state}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Zip Code:</h6>
-                                <h6 className='mb-0'>{techData?.address_data?.zip_code}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Email:</h6>
-                                <a href={`mailto:${techData?.email}`} className='mb-0'>{techData?.email}</a>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Primary Contact Email                                :</h6>
-                                <h6 className='mb-0'>{techData?.primary_contact_email}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Primary Contact:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.primary_contact}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Title:</h6>
-                                <h6 className='mb-0'>{techData?.title}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Cell Phone:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.cell_phone}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Rate:</h6>
-                                <h6 className='mb-0'>STD: ${techData?.rate?.STD}, EM: ${techData?.rate?.EM}, OT: ${techData?.rate?.OT}, SH: ${techData?.rate?.SH}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Radius:</h6>
-                                <h6 className='mb-0'>{techData?.radius}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Travel Fee:
-                                </h6>
-                                <h6 className='mb-0'>${techData?.travel_fee}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>C WorkOrder Count:</h6>
-                                <h6 className='mb-0'>{techData?.c_wo_ct}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>WorkOrder Count:</h6>
-                                <h6 className='mb-0'>{techData?.wo_ct}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Status
-                                    :</h6>
-                                <h6 className='mb-0'>{techData?.status}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>COI Expire Date:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.coi_expire_date}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>MSA Expire Date:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.msa_expire_date}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>NDA:</h6>
-                                <h6 className='mb-0'>{techData?.nda}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Terms:</h6>
-                                <h6 className='mb-0'>{techData?.terms}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>COI File:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.coi_file}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>MSA File:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.msa_file}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>NDA File:
-                                </h6>
-                                <h6 className='mb-0'>{techData?.nda_file}</h6>
-                            </div>
-
-                            <div className='col-4 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Source:</h6>
-                                <h6 className='mb-0'>{techData?.source}</h6>
-                            </div>
-
-                            <div className='col-12 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Notes:</h6>
-                                <h6 className='mb-0'>{techData?.notes}</h6>
-                            </div>
-
-                            <div className='col-12 d-flex align-items-center gap-2 border py-2'>
-                                <h6 className='fw-bold pe-2 mb-0'>Skillsets:</h6>
-                                <h6 className='mb-0'>
-                                    {/* {techData?.skills?.map(skill => skill.skill.skill_name).join(', ')} */}
-                                </h6>
-
-                            </div>
                         </div>
                     }
                 </Modal.Body>

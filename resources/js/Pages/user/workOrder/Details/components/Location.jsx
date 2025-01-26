@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import AsyncSelect from 'react-select/async'
 
-const Location = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+const Location = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
 
     const loadSiteOptions = async (inputValue) => {
         try {
@@ -73,19 +73,19 @@ const Location = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled 
                 <div className="d-flex action-group gap-2">
                     {
                         !editable && details?.site &&
-                        <button type='button' onClick={(e) => handleEdit(e)} className="btn border-0 edit-btn" disabled={is_cancelled}>
+                        <button type='button' onClick={(e) => handleEdit(e)} className="btn border-0 edit-btn" disabled={is_cancelled || is_billing}>
                             <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                         </button>
                     }
                     {
                         editable &&
-                        <button type='submit' className="btn border-0 btn-success fw-bold" disabled={is_cancelled}>
+                        <button type='submit' className="btn border-0 btn-success fw-bold" disabled={is_cancelled || is_billing}>
                             Save
                         </button>
                     }
                     {
                         editable &&
-                        <button type='button' onClick={() => setEditable(false)} className="btn border-0 btn-danger fw-bold" disabled={is_cancelled}>
+                        <button type='button' onClick={() => setEditable(false)} className="btn border-0 btn-danger fw-bold" disabled={is_cancelled || is_billing}>
                             Cancel
                         </button>
                     }
@@ -112,7 +112,7 @@ const Location = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled 
 
                     {
                         !details?.site_id && !editable &&
-                        <button className='btn btn-outline-dark' onClick={(e) => handleEdit(e)} disabled={is_cancelled}>+ Add Site</button>
+                        <button className='btn btn-outline-dark' onClick={(e) => handleEdit(e)} disabled={is_cancelled || is_billing}>+ Add Site</button>
                     }
 
                 </div>

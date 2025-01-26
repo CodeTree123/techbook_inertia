@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import ContactTable from './ContactTable';
 
-const Contact = ({id, details, onSuccessMessage, is_cancelled}) => {
+const Contact = ({id, details, onSuccessMessage, is_cancelled, is_billing}) => {
     const [addContact, setAddContact] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'title': '',
@@ -28,7 +28,7 @@ const Contact = ({id, details, onSuccessMessage, is_cancelled}) => {
                 <h3 style={{ fontSize: 20, fontWeight: 600 }}>Contacts</h3>
             </div>
             <div className="card-body bg-white">
-                <ContactTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled}/>
+                <ContactTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing}/>
                 {
                     addContact &&
                     <form onSubmit={(e)=>submit(e)} className="py-3 border-bottom">
@@ -56,7 +56,7 @@ const Contact = ({id, details, onSuccessMessage, is_cancelled}) => {
                 {
                     !addContact &&
                     <div className="mt-3">
-                        <button onClick={() => setAddContact(true)} className="btn btn-outline-dark addContact" style={{ display: 'block' }} disabled={is_cancelled}>Add Contact</button>
+                        <button onClick={() => setAddContact(true)} className="btn btn-outline-dark addContact" style={{ display: 'block' }} disabled={is_cancelled || is_billing}>Add Contact</button>
                     </div>
                 }
 

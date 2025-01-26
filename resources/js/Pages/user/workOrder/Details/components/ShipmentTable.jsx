@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 
 const ShipmentTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) => {
@@ -29,7 +30,7 @@ const ShipmentTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
         'tracking_number': '',
         'shipment_from': '',
         'shipment_to': '',
-        'created_at': '',
+        'issue_date': '',
     });
 
     const submit = (e, id) => {
@@ -84,11 +85,7 @@ const ShipmentTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                                     <br />
                                     <i style={{ fontSize: 12 }}>
                                         Issue Date: 
-                                        ({new Date(shipment.created_at).toLocaleDateString('en-US', {
-                                            month: '2-digit',
-                                            day: '2-digit',
-                                            year: 'numeric'
-                                        })})
+                                        ({DateTime.fromISO(shipment.issue_date).toFormat('MM-dd-yy')})
                                     </i>
                                 </>
                             }
@@ -110,8 +107,8 @@ const ShipmentTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                                     <input
                                         type="date"
                                         name="date"
-                                        value={formatDate(shipment.created_at)}
-                                        onChange={(e) => setData({ ...data, created_at: e.target.value })}
+                                        defaultValue={formatDate(shipment.issue_date)}
+                                        onChange={(e) => setData({ ...data, issue_date: e.target.value })}
                                         placeholder="Enter Shipment Date"
                                         className="mt-3 border-bottom w-100"
                                     />

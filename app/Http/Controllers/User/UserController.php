@@ -2270,6 +2270,7 @@ class UserController extends Controller
         $wo = WorkOrder::with([
             'customer',
             'technician.engineers',
+            'technician.skills',
             'employee',
             'site.relatedWo:id,order_id,created_at,site_id,slug,scope_work',
             'site.relatedWo.customer:id,company_name',
@@ -3660,18 +3661,48 @@ class UserController extends Controller
 
     public function assignTechToTask($taskId, $techId = null)
     {
-        $task = Task::find($taskId);
-
-        if ($task) {
-            if (is_numeric($techId) && $techId != 'NaN' && $techId !== 'task-list') {
-                $task->tech_id = (int) $techId;
-            } else {
-                $task->tech_id = null;
-            }
-
-            $task->save();
+        // Update the tech_id directly without loading the task model
+        $updated = Task::where('id', $taskId)
+            ->when(is_numeric($techId) && $techId != 'NaN' && $techId !== 'task-list', function ($query) use ($techId) {
+                $query->update(['tech_id' => (int) $techId]);
+            }, function ($query) {
+                $query->update(['tech_id' => null]);
+            });
+    
+        // Skip further processing if no rows were updated
+        if (!$updated) {
+            return;
         }
+    
+        // Fetch only the required data to log the update
+        $task = Task::select('id', 'wo_id', 'tech_id', 'updated_at')
+            ->with('tech:id,name') // Eager load only the needed 'name' field of the tech relationship
+            ->find($taskId);
+    
+        $preLog = WorkOrderTimeLog::where('column_name', 'tech_id' . $task->id)
+            ->latest('id') // Optimized to avoid 'desc' keyword
+            ->first();
+    
+        $taskTechName = $task->tech?->name ?? '';
+        $logMessage = $task->tech_id
+            ? 'Task Assigned To ' . $taskTechName
+            : 'Task Assigned';
+    
+        $this->createWorkOrderTimeLog(
+            'tasks',
+            'tech_id-' . $task->id,
+            $task->wo_id,
+            $task->updated_at,
+            $preLog,
+            'Task Assigned',
+            $taskTechName,
+            'nrml_text',
+            $logMessage,
+            $taskId
+        );
     }
+    
+
 
     // Shipment
     public function createShipment(Request $request, $id)
@@ -3683,7 +3714,7 @@ class UserController extends Controller
         $shipment->tracking_number = $request->tracking_number;
         $shipment->shipment_from = $request->shipment_from;
         $shipment->shipment_to = $request->shipment_to;
-        $shipment->created_at = $request->created_at;
+        $shipment->issue_date = $request->issue_date;
 
         $shipment->save();
 
@@ -3699,7 +3730,7 @@ class UserController extends Controller
         $shipment->tracking_number = $request->tracking_number ?? $shipment->tracking_number;
         $shipment->shipment_from = $request->shipment_from ?? $shipment->shipment_from;
         $shipment->shipment_to = $request->shipment_to ?? $shipment->shipment_to;
-        $shipment->created_at = $request->created_at ?? $shipment->created_at;
+        $shipment->issue_date = $request->issue_date ?? $shipment->issue_date;
 
         $shipment->save();
 

@@ -78,7 +78,7 @@ const CreateTechModal = ({ onSuccessMessage }) => {
                 : prevSelectedValues.filter((item) => item !== value);
 
             // Set the form data (this will ensure the selected values are correctly passed to the backend)
-            setData({ skill_id: updatedValues });
+            setData({ ...data, skill_id: updatedValues });
 
             return updatedValues; // Return the updated state
         });
@@ -86,19 +86,6 @@ const CreateTechModal = ({ onSuccessMessage }) => {
 
     const submit = (e) => {
         e.preventDefault();
-        const formData = new FormData();
-
-        if (data.coi_file) {
-            formData.append('coi_file', data.coi_file);
-        }
-
-        if (data.msa_file) {
-            formData.append('msa_file', data.msa_file);
-        }
-
-        if (data.nda_file) {
-            formData.append('nda_file', data.nda_file);
-        }
 
         post(route('user.ftech.new'), {
             preserveScroll: true,
@@ -138,6 +125,9 @@ const CreateTechModal = ({ onSuccessMessage }) => {
             }
         });
     };
+
+    console.log(data);
+    
     return (
         <>
             <li><a href="#" onClick={handleShowHold}>New</a></li>

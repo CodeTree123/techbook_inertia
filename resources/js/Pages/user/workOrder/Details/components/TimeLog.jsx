@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 
-const TimeLog = ({ details, onSuccessMessage, is_cancelled }) => {
+const TimeLog = ({ details, onSuccessMessage, is_cancelled, is_billing }) => {
     
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         'check_in': '',
@@ -128,7 +128,7 @@ const TimeLog = ({ details, onSuccessMessage, is_cancelled }) => {
                                 <div className="d-flex action-group gap-2">
                                     {
                                         editingRow != index &&
-                                        <button onClick={() => handleEdit(index)} type="button" className="btn edit-btn" disabled={is_cancelled}>
+                                        <button onClick={() => handleEdit(index)} type="button" className="btn edit-btn" disabled={is_cancelled || is_billing}>
                                             <i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                                         </button>
                                     }
@@ -151,7 +151,7 @@ const TimeLog = ({ details, onSuccessMessage, is_cancelled }) => {
                                             onClick={(e) => deleteLog(e, check.id)}
                                             className="btn"
                                             style={{ height: "max-content" }}
-                                            disabled={is_cancelled}
+                                            disabled={is_cancelled || is_billing}
                                         >
                                             <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
                                         </button>

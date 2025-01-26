@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 
-const ScheduleTable = ({ details, onSuccessMessage, is_cancelled }) => {
+const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based
@@ -131,25 +131,25 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled }) => {
                         <div className="d-flex action-group gap-2 position-absolute end-0 top-0 p-3">
                             {
                                 editableRow !== 0 &&
-                                <button type='button' onClick={() => handleEdit(0)} disabled={is_cancelled} className="btn edit-btn border-0">
+                                <button type='button' onClick={() => handleEdit(0)} disabled={is_cancelled || is_billing} className="btn edit-btn border-0">
                                     <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                                 </button>
                             }
                             {
                                 editableRow !== 0 &&
-                                <button onClick={(e) => deleteSchedule(e, details?.schedules[0]?.id)} disabled={is_cancelled} type="button" className="btn border-0" style={{ height: "max-content;" }}>
+                                <button onClick={(e) => deleteSchedule(e, details?.schedules[0]?.id)} disabled={is_cancelled || is_billing} type="button" className="btn border-0" style={{ height: "max-content;" }}>
                                     <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
                                 </button>
                             }
                             {
                                 editableRow === 0 &&
-                                <button type='submit' className="btn btn-success border-0 fw-bold" disabled={is_cancelled}>
+                                <button type='submit' className="btn btn-success border-0 fw-bold" disabled={is_cancelled || is_billing}>
                                     Save
                                 </button>
                             }
                             {
                                 editableRow === 0 &&
-                                <button type='button' className="btn btn-danger border-0 fw-bold" onClick={() => handleCancel()} disabled={is_cancelled}>
+                                <button type='button' className="btn btn-danger border-0 fw-bold" onClick={() => handleCancel()} disabled={is_cancelled || is_billing}>
                                     Cancel
                                 </button>
                             }

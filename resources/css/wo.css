@@ -302,3 +302,15 @@ textarea {
     opacity: 1;
     transform: translateY(0);
 }
+
+.task-card {
+    cursor: grab;
+}
+.task-card:active {
+    cursor: grabbing;
+}
+.task-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

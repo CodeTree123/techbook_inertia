@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { DateTime } from 'luxon';
 import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap';
 import Select from "react-select";
@@ -134,6 +135,7 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
         });
     }
 
+
     return (
         <div className='bg-white border rounded-3 p-3 position-relative'>
             <div className='position-absolute' style={{ top: '10px', right: '10px' }}>
@@ -210,6 +212,58 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                         </div>
 
                         <h2 className='mb-0 fs-5'>{totalhours} Hours</h2>
+                    </div>
+
+                    {
+                        techData.notes &&
+                        <div className='rounded-3 px-2 py-2 mt-4' style={{ backgroundColor: 'rgb(238, 238, 238)' }}>
+                            <span><b>Note: </b> {techData.notes}</span>
+                        </div>
+                    }
+
+
+                    <div className='mt-4 pb-2 border-bottom'>
+                        <h4>Attachments</h4>
+                    </div>
+
+                    <div className='row mt-4 '>
+                        {
+                            techData.coi_file &&
+                            <div className='col-md-4'>
+                                <a className='border p-2 rounded d-flex align-items-center gap-2' href={'/technician/view-pdf/coi/' + techData.id} target='_blank'>
+                                    <i class="fa-solid fa-file-pdf text-danger fs-1"></i>
+                                    <span className='mb-0 fs-6 fw-bold'>{techData.coi_file}</span>
+                                </a>
+                                <span style={{ color: 'grey', fontSize: '12px' }}>Coi File, Expiry date: {DateTime.fromISO(techData?.coi_expire_date).toFormat('MM-dd-yy')}</span>
+                            </div>
+                        }
+
+                        {
+                            techData.msa_file &&
+                            <div className='col-md-4'>
+                                <a className='border p-2 rounded d-flex align-items-center gap-2' href={'/technician/view-pdf/msa/' + techData.id} target='_blank'>
+                                    <i class="fa-solid fa-file-pdf text-danger fs-1"></i>
+                                    <span className='mb-0 fs-6 fw-bold'>{techData.msa_file}</span>
+                                </a>
+                                <span style={{ color: 'grey', fontSize: '12px' }}>Msa File, Expiry date: {DateTime.fromISO(techData?.msa_expire_date).toFormat('MM-dd-yy')}</span>
+                            </div>
+                        }
+
+                        {
+                            techData.nda_file &&
+                            <div className='col-md-4'>
+                                <a className='border p-2 rounded d-flex align-items-center gap-2' href={'/technician/view-pdf/nda/' + techData.id} target='_blank'>
+                                    <i class="fa-solid fa-file-pdf text-danger fs-1"></i>
+                                    <span className='mb-0 fs-6 fw-bold'>{techData.nda_file}</span>
+                                </a>
+                                <span style={{ color: 'grey', fontSize: '12px' }}>Nda File</span>
+                            </div>
+                        }
+
+                        {
+                            !techData.coi_file && !techData.coi_file && !techData.coi_file &&
+                            <p>No Attachment found</p>
+                        }
                     </div>
 
                     {
@@ -350,6 +404,16 @@ const TechData = ({ id, stage, techData, onSuccessMessage, totalhours, assignedE
                             </table>
                         </div>
 
+                    </div>
+
+                    <div className='mt-4 row'>
+                        <h4>Skillset</h4>
+
+                        <ul className='d-flex gap-2 flex-wrap'>
+                            {techData?.skills?.map((skill) => (
+                                <li className='d-flex align-items-center gap-2 px-3 py-1 rounded-5' style={{ backgroundColor: 'rgb(238, 238, 238)', width: 'max-content' }}>{skill.skill_name}</li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
 

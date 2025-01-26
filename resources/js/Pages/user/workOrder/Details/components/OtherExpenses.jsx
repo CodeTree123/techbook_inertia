@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 
-const OtherExpenses = ({ id, parts, onSuccessMessage, is_cancelled }) => {
+const OtherExpenses = ({ id, parts, onSuccessMessage, is_cancelled, is_billing }) => {
 
     const [editable, setEditable] = useState(null);
 
@@ -73,13 +73,13 @@ const OtherExpenses = ({ id, parts, onSuccessMessage, is_cancelled }) => {
 
                         {
                             editable != part.id &&
-                            <button className='position-absolute border-0 rounded-5 bg-primary text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '10px', top: '-10px' }} onClick={() => handleEdit(part.id)} disabled={is_cancelled}>
+                            <button className='position-absolute border-0 rounded-5 bg-primary text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '10px', top: '-10px' }} onClick={() => handleEdit(part.id)} disabled={is_cancelled || is_billing}>
                                 <i class="fa-solid fa-pencil" style={{ fontSize: '10px' }}></i>
                             </button>
                         }
                         {
                             editable != part.id &&
-                            <button className='position-absolute border-0 rounded-5 bg-danger text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '-15px', top: '-10px' }} onClick={(e) => deleteExpense(e, part.id)} disabled={is_cancelled}>
+                            <button className='position-absolute border-0 rounded-5 bg-danger text-white justify-content-center align-items-center shadow editablePoint' style={{ width: '20px', height: '20px', cursor: 'pointer', right: '-15px', top: '-10px' }} onClick={(e) => deleteExpense(e, part.id)} disabled={is_cancelled || is_billing}>
                                 <i class="fa-solid fa-trash" style={{ fontSize: '10px' }}></i>
                             </button>
                         }
