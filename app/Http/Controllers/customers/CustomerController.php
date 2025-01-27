@@ -929,7 +929,6 @@ class CustomerController extends Controller
         $max_exec_time = ini_get('max_execution_time');
         ini_set('max_execution_time', 300);
 
-        // Fetch the last 10 sites with missing coordinates
         $sites = CustomerSite::whereRaw("ST_X(co_ordinates) IS NULL OR ST_Y(co_ordinates) IS NULL")
             ->latest('id') // Assuming 'id' is an auto-incrementing primary key
             ->take(500)
