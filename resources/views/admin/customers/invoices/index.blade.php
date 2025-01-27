@@ -361,6 +361,9 @@
     @include('admin.customers.invoices.button')
     <div class="card">
         <div class="card-header d-flex justify-content-end">
+            @if($invoice->status == 15)
+            <button class="btn btn-success">Payment Complete</button>
+            @else
             @if($invoice->status == 13)
             <a href="{{route('admin.revert', $invoice->id)}}" class="btn btn-outline-secondary ml-2 no-print">Revert</a>
             @endif
@@ -372,7 +375,10 @@
                 Invoice
             </a>
             @endif
-            <button class="btn btn-outline-secondary ml-2 no-print">Paid</button>
+            @if($invoice->status == 13)
+            <a href="{{route('admin.billing.paid', $invoice->id)}}" class="btn btn-outline-secondary ml-2 no-print" id="referCode">Paid</a>
+            @endif
+            @endif
             <button class="btn btn-outline-secondary ml-2 no-print" onclick="window.print()">Convert to PDF</button>
         </div>
         <div class="card-body">
@@ -632,6 +638,17 @@
                         <div class="p-5">
                             <h4><b><i>All Fees Shown In US Dollars</i></b></h4>
                             <h6><i>Thank you for your business!</i></h6>
+                            @php
+                            $referenceCode = optional($invoice->invoice)->reference_code;
+                            $maskedCode = $referenceCode ? str_repeat('*', max(0, strlen($referenceCode) - 4)) . substr($referenceCode, -4) : 'N/A';
+                            @endphp
+                            @if($invoice->invoice->reference_code == !null)
+                            <div class="watermark-container">
+                                <h6><i>Reference code: {{ $maskedCode }}</i></h6>
+                                <img width="100px" src="{{asset('assets/img/tpaid.jpg')}}" alt="">
+                            </div>
+                            @else
+                            @endif
                         </div>
                     </div>
 
