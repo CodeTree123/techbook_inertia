@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import ShipmentTable from './ShipmentTable';
 
 const Shipment = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) => {
+
     const [addShipment, setAddShipment] = useState(false);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'associate': 'fedex',
@@ -23,6 +24,7 @@ const Shipment = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
             }
         });
     };
+    
     return (
         <div className="card bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
