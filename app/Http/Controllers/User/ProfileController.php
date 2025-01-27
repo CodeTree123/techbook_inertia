@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class ProfileController extends Controller
 {
@@ -13,7 +14,10 @@ class ProfileController extends Controller
     {
         $pageTitle = "Profile Setting";
         $user = auth()->user();
-        return view('user.profile_setting', compact('pageTitle','user'));
+        // return view('user.profile_setting', compact('pageTitle','user'));
+        return Inertia::render('user/profile/EditProfile', [
+            'user' => $user,
+        ]);
     }
 
     public function submitProfile(Request $request)
@@ -47,7 +51,8 @@ class ProfileController extends Controller
     public function changePassword()
     {
         $pageTitle = 'Change Password';
-        return view('user.password', compact('pageTitle'));
+        // return view('user.password', compact('pageTitle'));
+        return Inertia::render('user/changePassword/ChangePassword');
     }
 
     public function submitPassword(Request $request)

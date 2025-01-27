@@ -219,7 +219,7 @@ $general = gs();
             <div class="row">
                 <div class="col-lg-7 col-md-9 mx-auto">
                     <p>
-                        &copy; 2024 All Rights Reserved By
+                        &copy; 2025 All Rights Reserved By
                         <a href="">{{$general->site_name}}</a>
                     </p>
                 </div>
