@@ -248,9 +248,9 @@ Route::middleware('auth')->name('user.')->group(function () {
             //Profile setting
             Route::controller('ProfileController')->group(function () {
                 Route::get('profile-setting', 'profile')->name('profile.setting');
-                Route::post('profile-setting', 'submitProfile');
+                Route::post('profile-setting', 'submitProfile')->name('profile.update');
                 Route::get('change-password', 'changePassword')->name('change.password');
-                Route::post('change-password', 'submitPassword');
+                Route::post('change-password', 'submitPassword')->name('password.change');
             });
             // Withdraw
             Route::controller('WithdrawController')->prefix('withdraw')->name('withdraw')->group(function () {

@@ -25,10 +25,14 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item href="/user/profile-setting" className='mb-3'>Profile Setting</Dropdown.Item>
-                        <Dropdown.Item href="/user/change-password" className='mb-3'>Change Password</Dropdown.Item>
+                        <Dropdown.Item className='mb-3 p-0'>
+                            <Link href="/user/profile-setting" className='text-dark px-3 py-2'>Profile Setting</Link>
+                        </Dropdown.Item>
+                        <Dropdown.Item className='mb-3 p-0'>
+                            <Link href="/user/change-password" className='text-dark px-3 py-2'>Change Password</Link>
+                        </Dropdown.Item>
                         <hr />
-                        <Dropdown.Item href="/user/logout" className='text-danger mt-3' onClick={(e) => {
+                        <Dropdown.Item href="/user/logout" className='text-danger mt-3 px-3' onClick={(e) => {
                             e.preventDefault();
                             document.getElementById('logout-form').submit();
                         }}>Logout</Dropdown.Item>
