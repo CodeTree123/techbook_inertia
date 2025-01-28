@@ -1917,8 +1917,12 @@ class UserController extends Controller
         $locations = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as latitude'),
-            DB::raw('ST_Y(co_ordinates) as longitude')
-        )->whereNotIn('id', $respondedTechnicians)->get();
+            DB::raw('ST_Y(co_ordinates) as longitude'),
+            'address_data'
+        )->whereNotIn('id', $respondedTechnicians)->whereNotNull('address_data->city')
+                ->whereNotNull('address_data->country')
+                ->whereNotNull('address_data->zip_code')
+                ->whereNotNull('address_data->state')->get();
 
         $destination_obj = new LatLong();
         $destination_obj->setLatitude($destination_latitude);
@@ -1939,11 +1943,19 @@ class UserController extends Controller
         }
         $filteredArray = [];
         foreach ($manual_distances as $key => $value) {
-            if ($value >= $prevRadius && $value <= $radius) {
-                $filteredArray[$key] = $value;
+            // Convert the distance from kilometers to miles
+            $valueInMiles = $value * 0.621371;
+        
+            // Apply the filtering logic based on the converted value
+            if ($valueInMiles >= $prevRadius && $valueInMiles <= $radius) {
+                $filteredArray[$key] = $valueInMiles; // Store the value in miles
             }
         }
+        
         asort($filteredArray);
+
+        $allIds = array_keys($filteredArray);
+
         $perPage = 25;
         $page = $request->get('page', 1);
 
@@ -1951,8 +1963,9 @@ class UserController extends Controller
         $limit = $perPage;
 
         $selectedIds = array_keys($filteredArray);
+        
         $selectedIds = array_slice($selectedIds, $offset, $limit);
-
+        
         $manualClosestDistances = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as longitude'),
@@ -1960,13 +1973,21 @@ class UserController extends Controller
         )->whereIn('id', $selectedIds)->get();
 
         $technicians = [];
+
         foreach ($manualClosestDistances as $manualClosestDistance) {
-            $technicians[] = Technician::availableFtech()->select('id', 'address_data')
-                ->where('id', $manualClosestDistance->id)->get();
+            $technicians[] = Technician::availableFtech()
+                ->select('id', 'address_data')
+                ->where('id', $manualClosestDistance->id)
+                ->whereNotNull('address_data->city')
+                ->whereNotNull('address_data->country')
+                ->whereNotNull('address_data->zip_code')
+                ->whereNotNull('address_data->state')
+                ->get();
         }
+
         $mergedTechnicians = collect($technicians)->flatten();
         $origins = [];
-        // processing the origin data as acceptable format for api
+        
         foreach ($mergedTechnicians as $technician) {
             $addressData['country'] = $technician->address_data->country;
             $addressData['city'] = $technician->address_data->city;
@@ -1984,11 +2005,15 @@ class UserController extends Controller
             ];
         }
         $originsString = implode('|', array_column($origins, 'origin'));
+
         $distances = new DistanceMatrixService();
         $data = $distances->getDistance($originsString, $destination);
+
         $completeInfo = [];
         $techniciansFound = false;
+        Log::alert($data['rows']);
         foreach ($data['rows'] as $index => $row) {
+            
             if ($row['elements'][0]['status'] === "OK") {
                 $technicianId = $origins[$index]['technician_id'];
                 $distanceText = $row['elements'][0]['distance']['text'];
@@ -1999,12 +2024,12 @@ class UserController extends Controller
                     $distanceTextKm = (float)$distanceTextKm;
                     $distanceTextMiles = $distanceTextKm * 0.621371;
                     if ($distanceTextMiles <= $radius) {
-                        $isWithinRadius = $ftech->radius > $distanceTextMiles;
-                        if ($isWithinRadius) {
-                            $isWithinRadius = "Yes";
-                        } else {
-                            $isWithinRadius = "No";
-                        }
+                        // $isWithinRadius = $ftech->radius > $distanceTextMiles;
+                        // if ($isWithinRadius) {
+                        //     $isWithinRadius = "Yes";
+                        // } else {
+                        //     $isWithinRadius = "No";
+                        // }
                         $completeInfo[] = [
                             'id' => $ftech->id,
                             'technician_id' => $ftech->technician_id,
@@ -2017,7 +2042,7 @@ class UserController extends Controller
                             'travel_fee' => isset($ftech->travel_fee) ? $ftech->travel_fee : "",
                             'preference' => isset($ftech->preference) ? $ftech->preference : "",
                             'duration' => $durationText,
-                            'radius' => $isWithinRadius,
+                            'radius' => "Yes",
                             'tech_type' => $ftech->tech_type,
                             'address_data' => $ftech->address_data,
                             'skills' => $ftech->skills->pluck('skill_name')->toArray(),
@@ -2030,18 +2055,22 @@ class UserController extends Controller
         if (!$techniciansFound) {
             return response()->json(['errors' => 'No technicians found in ' . $prevRadius . ' to ' . $radius . ' miles radius.'], 404);
         }
+
         usort($completeInfo, function ($a, $b) {
             return $a['distance'] <=> $b['distance'];
         });
         foreach ($completeInfo as &$info) {
             $info['distance'] = number_format($info['distance'], 2) . ' mi';
         }
+
         return response()->json([
             'technicians' => $completeInfo,
             'radiusMessage' => 'Showing result for ' . $prevRadius . '-' . $radius . ' miles distance',
-            'techCount' => count($filteredArray),
-            'allTech' => $manualClosestDistances
+            'shownTech' => count($respondedTechnicians) + count($completeInfo),
+            'techCount' => count($allIds ) + count($respondedTechnicians),
+            'filteredArray' => $filteredArray
         ], 200);
+
     }
 
     public function assignTech(Request $request)

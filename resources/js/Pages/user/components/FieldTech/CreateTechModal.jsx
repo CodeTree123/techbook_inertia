@@ -125,8 +125,6 @@ const CreateTechModal = ({ onSuccessMessage }) => {
             }
         });
     };
-
-    console.log(data);
     
     return (
         <>

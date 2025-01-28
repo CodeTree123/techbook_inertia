@@ -78,34 +78,35 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
     const [responseError, setResponseErros] = useState(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
     const [clickCount, setClickCount] = useState(0);
-    const [perPage, setPerPage] = useState(1)
-
+    const [perPage, setPerPage] = useState(1);
 
     const handleGooglePagination = (cnt) => {
-        setPerPage(perPage + cnt)
-        closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, clickCount)
-    }
-
-
-    const closestTech = async (destination, cnt) => {
-        setLoaderVisible(true);
-
-        // Use prevCount to calculate both clickCount and radiusValue
-        setClickCount(prevCount => {
-            const updatedCount = prevCount === 0 ? cnt : prevCount + cnt;
-            const radiusValue = updatedCount * 50; // Calculate based on updatedCount
-
-            // Fetch technicians after setting the clickCount
-            fetchTechnicians(destination, radiusValue);
-            return updatedCount; // Update clickCount
+        setPerPage((prevPerPage) => {
+            const newPerPage = prevPerPage + cnt;
+            // Call closestTech with the updated perPage value
+            closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, clickCount, newPerPage);
+            return newPerPage;
         });
     };
 
-    const fetchTechnicians = async (destination, radiusValue) => {
-        const respondedTechnicians = oldResponseData ? oldResponseData?.map(technician => technician.id) : [];
+    const closestTech = async (destination, cnt, newPerPage) => {
+        setLoaderVisible(true);
+
+        setClickCount((prevCount) => {
+            const updatedCount = prevCount === 0 ? cnt : prevCount + cnt;
+            const radiusValue = updatedCount * 50;
+
+            // Call fetchTechnicians with the updated clickCount and perPage values
+            fetchTechnicians(destination, radiusValue, newPerPage);
+            return updatedCount;
+        });
+    };
+
+    const fetchTechnicians = async (destination, radiusValue, page) => {
+        const respondedTechnicians = oldResponseData ? oldResponseData.map((technician) => technician.id) : [];
 
         try {
-            const response = await fetch(`/user/find/tech/for/work/worder?page=${perPage}`, {
+            const response = await fetch(`/user/find/tech/for/work/worder?page=${page}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -179,7 +180,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
         const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
         return sum + hours;
     }, 0);
-    
+
 
     return (
         <div>
@@ -193,7 +194,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                             </div>
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
-                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null)}>
+                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null, 1)}>
                                     Nearby Techs
                                 </button>
                             </div>
@@ -414,7 +415,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                     responseData && <p className='mb-0'>{responseData.radiusMessage}</p>
                                                 }
                                                 {
-                                                    responseData && <p className='mb-0 text-success'>({responseData.techCount} technician found)</p>
+                                                    responseData && <p className='mb-0 text-success'>({responseData.shownTech} from {responseData.techCount} technician found)</p>
                                                 }
                                                 <button
                                                     onClick={() => handleGooglePagination(-1)}
@@ -431,15 +432,15 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                 </button>
 
                                                 <button
-                                                    disabled={responseData.radiusMessage == 'Showing result for 0-150 miles distance'}
-                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, -1)}
+                                                    disabled={responseData?.radiusMessage === 'Showing result for 0-150 miles distance'}
+                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, -1, perPage)}
                                                     className='btn btn-outline-primary'
                                                 >
                                                     Previous 50 miles
                                                 </button>
                                                 <button
-                                                    disabled={responseData.radiusMessage == 'Showing result for 450-500 miles distance'}
-                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, 1)}
+                                                    disabled={responseData?.radiusMessage === 'Showing result for 450-500 miles distance'}
+                                                    onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, 1, perPage)}
                                                     className='btn btn-outline-primary'
                                                 >
                                                     Next 50 miles

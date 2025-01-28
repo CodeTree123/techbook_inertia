@@ -43,10 +43,19 @@ class Technician extends Model
     {
         return $query->where('available', Status::DISABLE);
     }
+    // public function scopeAvailableFtech($query)
+    // {
+    //     return $query->where('available', Status::ENABLE);
+    // }
     public function scopeAvailableFtech($query)
     {
-        return $query->where('available', Status::ENABLE);
+        return $query->where('available', Status::ENABLE)
+            ->whereNotNull('address_data->city')
+            ->whereNotNull('address_data->country')
+            ->whereNotNull('address_data->zip_code')
+            ->whereNotNull('address_data->state');
     }
+
     public function scopeDocUnverifiedFtech($query)
     {
         return $query->where('coi_file', null)->where('msa_file', null)->where('nda_file', null);
