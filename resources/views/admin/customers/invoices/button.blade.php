@@ -1,4 +1,22 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if the invoice status is 15
+        const invoiceStatus = {{ $invoice->status }};
+        if (invoiceStatus === 15) {
+            // Disable all input fields
+            const inputs = document.querySelectorAll('input, textarea ');
+            inputs.forEach(input => {
+                input.disabled = true; // Disable the input
+            });
 
+            // Optionally, hide the "Add Row" button
+            const addRowBtn = document.getElementById('addRowBtn');
+            if (addRowBtn) {
+                addRowBtn.style.display = 'none';
+            }
+        }
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const invoiceButton = document.getElementById("invoiceButton");
