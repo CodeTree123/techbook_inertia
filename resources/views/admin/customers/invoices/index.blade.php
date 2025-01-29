@@ -420,9 +420,12 @@
                                     <td style="padding: 10px; text-align: left;"><span class="tax"
                                             style=" font-weight: bold;">Site Number</span></td>
                                     <td style="padding: 10px; text-align: right;">
-                                        <span style="color: #000000;">
+                                        <span
+                                            style="color: #000000;"
+                                            contenteditable="true">
                                             {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] ?? '' : '' }}
                                         </span>
+
                                     </td>
                                 </tr>
                             </table>
@@ -594,10 +597,8 @@
                     </div>
                     <div class="w-100 px-5 py-0">
 
-                        <address class="w-100">
-                            <textarea class="w-100 p-0" name="" id="wo-desc" value="" style="border:none">{{ $invoice->scope_work }}</textarea>
-                            <div id="scope_work">{!! $invoice->scope_work !!}</div>
-                        </address>
+                        <textarea class="w-100 p-0 my-input-disable-class" name="" id="wo-desc" style="border:none">{{ $invoice->scope_work }}</textarea>
+                        <div id="scope_work">{!! $invoice->scope_work !!}</div>
 
                     </div>
                 </div>
@@ -609,7 +610,7 @@
                         <h6 class="fst-italic" style="white-space: nowrap;">Work Performed : </h6>
                     </div>
                     <div class="w-100 px-5 py-0">
-                        <textarea class="wo_close_out w-100 p-0" style="border:none">
+                        <textarea class="wo_close_out w-100 p-0 my-input-disable-class" style="border:none">
                                 @foreach ($invoice->notes as $note)
                                     @if ($note->note_type == 'close_out_notes')
                                         <p>{{ $note->note }}</p>
@@ -662,8 +663,8 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="subtotal decimal-input"
-                                            value="{{ $totalPrice }}" style="border:none">
+                                        <input type="text" class="subtotal decimal-input my-input-disable-class"
+                                            value="{{ isset($totalPrice) ? $totalPrice : '0.00' }}" placeholder="0.00" style="border:none">
                                     </div>
                                 </td>
                             </tr>
@@ -674,7 +675,7 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="taxprice decimal-input" value="0.00"
+                                        <input type="text" class="taxprice decimal-input" placeholder="0.00"
                                             style="border:none">
                                     </div>
                                 </td>
@@ -687,7 +688,7 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="shipping decimal-input" value="0.00"
+                                        <input type="text" class="shipping decimal-input" placeholder="0.00"
                                             style="border:none">
                                     </div>
                                 </td>
@@ -699,11 +700,19 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto d-flex align-items-center justify-content-end">
                                         <span class="p-2">$</span>
-                                        <span class="text-danger credit-span" style="width: 190px;">(<input
-                                                type="text" class="credit text-danger p-0 decimal-input"
+                                        <span class="text-danger credit-span" style="width: 190px;">
+                                            @if($invoice->status == 15)
+                                            (<input
+                                                type="text" class="due text-danger decimal-input my-input-disable-class"
+                                                style="border:none; width: 5.8ch; outline: 0 !important" >)
+                                            @else
+                                            (<input
+                                                type="text" class="credit text-danger p-0 decimal-input my-input-disable-class"
                                                 value="0.00"
                                                 style="border:none; width: 3.4ch; outline: 0 !important"
-                                                oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';">)</span>
+                                                oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';">)
+                                            @endif
+                                        </span>
                                     </div>
                                 </td>
                             </tr>
@@ -714,7 +723,11 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="due decimal-input" style="border:none">
+                                        @if($invoice->status == 15)
+                                        <input type="text" class="shipping decimal-input my-input-disable-class" style="border:none" placeholder="0.00">
+                                        @else
+                                        <input type="text" class="due decimal-input my-input-disable-class" style="border:none" placeholder="0.00">
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -976,8 +989,6 @@
         });
     });
 </script>
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

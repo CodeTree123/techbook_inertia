@@ -4,7 +4,7 @@
         const invoiceStatus = {{ $invoice->status }};
         if (invoiceStatus === 15) {
             // Disable all input fields
-            const inputs = document.querySelectorAll('input, textarea ');
+            const inputs = document.querySelectorAll('.my-input-disable-class');;
             inputs.forEach(input => {
                 input.disabled = true; // Disable the input
             });
