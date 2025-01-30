@@ -41,10 +41,10 @@ const WorkOrderTab = ({id, details, onSuccessMessage, onErrorMessage}) => {
                     tech_remove_reasons: details?.tech_remove_reasons,
                     technician: details?.technician,
                     contacted_techs: details?.contacted_techs,
-                }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7}/>
+                }} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7} is_billing={details.status >= 12}/>
             </TabPanel>
             <TabPanel>
-                <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7}/>
+                <Note id={id} details={details?.notes} timezone={details?.site?.time_zone} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} is_cancelled={details.stage == 7} is_billing={details.status >= 12}/>
             </TabPanel>
             <TabPanel>
                 <WoLog id={id} details={details?.time_logs} timezone={details?.site?.time_zone}/>

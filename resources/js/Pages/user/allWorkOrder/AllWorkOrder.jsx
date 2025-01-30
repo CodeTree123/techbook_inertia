@@ -72,6 +72,7 @@ const AllWorkOrder = ({ w_orders }) => {
     }
     
   };
+  
 
   return (
     <>
@@ -112,8 +113,7 @@ const AllWorkOrder = ({ w_orders }) => {
                   <th className='text-start border-0'>Technician</th>
                   <th className='text-start border-0'>Stage</th>
                   <th className='text-start border-0'>Status</th>
-                  <th className='text-start border-0'>PDf</th>
-                  <th className='text-start border-0'>Action</th>
+                  <th className='text-start border-0'>Schedule</th>
                 </tr>
               </thead>
               <tbody className='border-0'>
@@ -132,14 +132,12 @@ const AllWorkOrder = ({ w_orders }) => {
                       </td>
                       <td className='border-0 fw-bold'>{wo.status == 1 ? <span className='text-info-emphasis'>Pending</span> : wo.status == 2 ? <span className='text-warning-emphasis'>Contacted</span> : wo.status == 3 ? <span className='text-success'>Confirm</span> : wo.status == 4 ? <span className='text-danger'>At Risk</span> : wo.status == 5 ? <span className='text-primary'>Delayed</span> : wo.status == 6 ? <span className='text-primary'>On hold</span> : wo.status == 7 ? <span className='text-primary'>En route</span> : wo.status == 8 ? <span className='text-primary'>Checked in</span> : wo.status == 9 ? <span className='text-primary'>Checked out</span> : wo.status == 10 ? <span className='text-primary'>Needs Approval</span> : wo.status == 11 ? <span className='text-primary'>Issue</span> : wo.status == 12 ? <span className='text-primary'>Approved</span> : wo.status == 13 ? <span className='text-primary'>Invoiced</span> : wo.status == 14 ? <span className='text-primary'>Past due</span> : wo.status == 15 ? <span className='text-primary'>Paid</span> : 'N/A'}</td>
                       <td className='border-0'>
-                        <Link href={`/pdf/work/order/view/${wo.id}`} className='btn'><i class="fa-regular fa-eye"></i></Link>
+                        {
+                          wo?.schedules[0]?.on_site_by ?
+                          DateTime.fromISO(wo?.schedules[0]?.on_site_by).toFormat('MM-dd-yy') : 'N/A'
+                        }
                       </td>
-                      <td className='border-0' style={{ borderRadius: '0 10px 10px 0' }}>
-                        <div className='d-flex gap-1'>
-                          <a href={`/pdf/work/order/download/${wo.id}`} download className='btn'><i class="fa-solid fa-download text-primary"></i></a>
-                          
-                        </div>
-                      </td>
+                      
                     </tr>
                   ))
 

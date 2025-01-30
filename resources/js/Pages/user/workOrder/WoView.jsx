@@ -503,7 +503,7 @@ export default function WoView({ wo }) {
                           backgroundColor: '#148E6F',
                         }}
                       ></div>
-                      Issue
+                      Needs Review
                     </span>
                   )
                 }
@@ -622,16 +622,25 @@ export default function WoView({ wo }) {
 
               <div className="d-flex justify-content-center align-items-center gap-2">
                 <i className="fa-solid fa-location-dot" style={{ fontSize: 16, color: '#00BABA' }} aria-hidden="true" />
-                <h2 className="mb-0 fw-light" style={{ fontSize: 16 }}> Location : {wo?.site ? wo?.site?.location+' ('+wo?.site?.site_id+')' : <span className='fw-light'>No Location Added Yet</span>}</h2>
+                <h2 className="mb-0 fw-light" style={{ fontSize: 16 }}> Location : {wo?.site ? wo?.site?.location + ' (' + wo?.site?.site_id + ')' : <span className='fw-light'>No Location Added Yet</span>}</h2>
               </div>
               <p style={{ color: '#808080' }} className='text-center'>Site: {wo?.site && wo?.site?.address_1 + ';'} {wo?.site && wo?.site?.city + ','}
                 {wo?.site?.state} {wo?.site?.zipcode}</p>
             </div>
 
             {
-              wo.schedule_type == 'single' ?
-
-                <div className="col-4 border-bottom px-3 py-2">
+              wo.schedule_type == 'single' ? (
+                wo.check_in_out?.[0]?.check_in ? (
+                  <div className="col-4 border-bottom px-3 py-2">
+                    <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Time Log</p>
+                    <p style={{ color: '#808080' }} className='text-end'>
+                      {wo?.check_in_out.reduce((sum, item) => {
+                        const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
+                        return sum + hours;
+                      }, 0)} Hours
+                    </p>
+                  </div>
+                ) : <div className="col-4 border-bottom px-3 py-2">
                   <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Schedule</p>
                   {wo.schedules[0] ? (
                     <p className='text-end'>{
@@ -640,19 +649,12 @@ export default function WoView({ wo }) {
                   ) : (
                     <p className='text-end'>No upcoming schedules.</p>
                   )}
-                </div> :
+                </div>
+              )
 
-                wo.check_in_out?.[0]?.check_in ? (
-                  <div className="col-4 border-bottom px-3 py-2">
-                    <p className="fw-bold mb-0 text-end" style={{ fontSize: '24px' }}>Time Logged</p>
-                    <p style={{ color: '#808080' }} className='text-end'>
-                      {wo?.check_in_out.reduce((sum, item) => {
-                        const hours = Number(item?.total_hours) || 0; // Default to 0 if total_hours is not a valid number
-                        return sum + hours;
-                      }, 0)} Hours
-                    </p>
-                  </div>
-                ) : (
+                :
+
+                (
                   <div className="col-4 border-bottom px-3 py-2">
                     <p className="fw-bold mb-0 text-end" style={{ fontSize: '16px' }}>Scheduled Time</p>
                     {upcomingSchedule ? (
@@ -736,8 +738,8 @@ export default function WoView({ wo }) {
             </div>
 
             <div className="col-2 d-flex gap-1 px-3 py-4">
-              <AddHold id={wo?.id} onSuccessMessage={handleSuccessMessage} stage={wo.is_hold} is_cancelled={wo.stage == 7} is_billing={wo.status == 12}/>
-              <MakeCancel id={wo?.id} onSuccessMessage={handleSuccessMessage} is_cancelled={wo.stage == 7} is_billing={wo.status == 12}/>
+              <AddHold id={wo?.id} onSuccessMessage={handleSuccessMessage} stage={wo.is_hold} is_cancelled={wo.stage == 7} is_billing={wo.status >= 12} />
+              <MakeCancel id={wo?.id} onSuccessMessage={handleSuccessMessage} is_cancelled={wo.stage == 7} is_billing={wo.status >= 12} />
             </div>
 
             <div className="col-8 px-3 py-4">
@@ -799,13 +801,13 @@ export default function WoView({ wo }) {
               <a target='_blank' href={`${window.location.protocol}//${window.location.host}/pdf/work/order/view/${wo.id}`} className="btn" style={{ backgroundColor: '#AFE1AF', height: 'max-content' }} id="woViewButton">
                 <i className="fa fa-eye" aria-hidden="true" />
               </a>
-              <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7} />
-              <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7} />
+              <BackStatus id={wo.id} onSuccessMessage={handleSuccessMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7} is_billing={wo.status >= 12} />
+              <NextStatus id={wo.id} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} status={wo.status} is_ftech={wo.ftech_id} is_cancelled={wo.stage == 7} is_billing={wo.status >= 12} />
             </div>
 
             {
               wo.status == 4 &&
-              <Reschedule id={latestAtRiskScheduleId} is_ftech={wo.ftech_id} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} is_cancelled={wo.stage == 7} is_billing={wo.status == 12}/>
+              <Reschedule id={latestAtRiskScheduleId} is_ftech={wo.ftech_id} scheduleData={wo.schedules.find(schedule => schedule.id === latestAtRiskScheduleId)} onSuccessMessage={handleSuccessMessage} onErrorMessage={handleErrorMessage} is_cancelled={wo.stage == 7} is_billing={wo.status >= 12} />
             }
 
 

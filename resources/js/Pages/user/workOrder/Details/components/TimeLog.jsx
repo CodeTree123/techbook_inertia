@@ -128,19 +128,19 @@ const TimeLog = ({ details, onSuccessMessage, is_cancelled, is_billing }) => {
                                 <div className="d-flex action-group gap-2">
                                     {
                                         editingRow != index &&
-                                        <button onClick={() => handleEdit(index)} type="button" className="btn edit-btn" disabled={is_cancelled || is_billing}>
+                                        <button onClick={() => handleEdit(index)} type="button" className="btn edit-btn border-0" disabled={is_cancelled || is_billing}>
                                             <i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                                         </button>
                                     }
                                     {
                                         editingRow == index &&
-                                        <button type="submit" className="btn btn-success fw-bold" style={{ height: "max-content" }}>
+                                        <button type="submit" className="btn btn-success fw-bold border-0" style={{ height: "max-content" }}>
                                             Save
                                         </button>
                                     }
                                     {
                                         editingRow == index &&
-                                        <button type="button" onClick={() => setEditingRow(null)} className="btn btn-danger fw-bold" style={{ height: "max-content" }}>
+                                        <button type="button" onClick={() => setEditingRow(null)} className="btn btn-danger fw-bold border-0" style={{ height: "max-content" }}>
                                             Cancel
                                         </button>
                                     }
@@ -149,7 +149,7 @@ const TimeLog = ({ details, onSuccessMessage, is_cancelled, is_billing }) => {
                                         <button
                                             type="button"
                                             onClick={(e) => deleteLog(e, check.id)}
-                                            className="btn"
+                                            className="btn border-0"
                                             style={{ height: "max-content" }}
                                             disabled={is_cancelled || is_billing}
                                         >
