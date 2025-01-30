@@ -590,18 +590,33 @@
                 <div class="page-container d-flex justify-content-end pb-2">
                     <button type="button" class="btn btn-dark" style="z-index: 99">Page Break</button>
                 </div>
-
+                @if($invoice->status == 13 || $invoice->status == 15)
                 <div class="d-flex">
                     <div>
                         <h6 class="fst-italic" style="white-space: nowrap;">Work Requested : </h6>
                     </div>
                     <div class="w-100 px-5 py-0">
-
-                        <textarea class="w-100 p-0 my-input-disable-class" name="" id="wo-desc" style="border:none">{{ $invoice->scope_work }}</textarea>
+                        <textarea class="wo_close_out w-100 p-0 my-input-disable-class" name="" id="" style="border:none">
+                        {{ $invoice->scope_work }}
+                        </textarea>
                         <div id="scope_work" class="my-input-disable-class">{!! $invoice->scope_work !!}</div>
 
                     </div>
                 </div>
+                @else
+                <div class="d-flex">
+                    <div>
+                        <h6 class="fst-italic" style="white-space: nowrap;">Work Requested : </h6>
+                    </div>
+                    <div class="w-100 px-5 py-0">
+                        <textarea class="w-100 p-0 my-input-disable-class" name="" id="wo-desc" style="border:none">
+                        {{ $invoice->scope_work }}
+                        </textarea>
+                        <div id="scope_work" class="my-input-disable-class">{!! $invoice->scope_work !!}</div>
+                    </div>
+                </div>
+                @endif
+
                 <div class="page-container d-flex justify-content-end pb-2">
                     <button type="button" class="btn btn-dark" style="z-index: 99">Page Break</button>
                 </div>
