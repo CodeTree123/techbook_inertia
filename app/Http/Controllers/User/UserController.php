@@ -1919,7 +1919,7 @@ class UserController extends Controller
             DB::raw('ST_X(co_ordinates) as latitude'),
             DB::raw('ST_Y(co_ordinates) as longitude'),
             'address_data'
-        )->whereNotIn('id', $respondedTechnicians)->whereNotNull('address_data->city')
+        )->whereNotNull('address_data->city')
                 ->whereNotNull('address_data->country')
                 ->whereNotNull('address_data->zip_code')
                 ->whereNotNull('address_data->state')->get();
@@ -1942,42 +1942,62 @@ class UserController extends Controller
             $manual_distances[$location->id] = $haverSine->getDistance();
         }
         $filteredArray = [];
+
         foreach ($manual_distances as $key => $value) {
-            // Convert the distance from kilometers to miles
-            $valueInMiles = $value * 0.621371;
-        
-            // Apply the filtering logic based on the converted value
-            if ($valueInMiles >= $prevRadius && $valueInMiles <= $radius) {
-                $filteredArray[$key] = $valueInMiles; // Store the value in miles
+            
+            if ($value >= $prevRadius && $value <= $radius) {
+                $filteredArray[$key] = $value;
             }
         }
         
         asort($filteredArray);
 
         $allIds = array_keys($filteredArray);
+        $originsTwo = [];
 
         $allClosestDistances = Technician::select(
             'id',
+            'company_name',
             DB::raw('ST_X(co_ordinates) as longitude'),
             DB::raw('ST_Y(co_ordinates) as latitude'),
             'address_data'
-        )->whereIn('id', $allIds)->get();             
+        )->whereIn('id', $allIds)->get();
+
+        foreach ($allClosestDistances as $alltechnician) {
+            $addressData['address'] = $alltechnician->address_data->address ?? 'NA';
+            $addressData['country'] = $alltechnician->address_data->country ?? 'NA';
+            $addressData['city'] = $alltechnician->address_data->city ?? 'NA';
+            $addressData['state'] = $alltechnician->address_data->state ?? 'NA';
+            $addressData['zip_code'] = $alltechnician->address_data->zip_code ?? 'NA';
+            $formattedOrigin = implode(', ', [
+                $addressData['address'],
+                $addressData['city'],
+                $addressData['state'],
+                $addressData['country'],
+                $addressData['zip_code']
+            ]);
+            $originsTwo[] = [
+                'name' => $alltechnician->company_name,
+                'originsTwo' => $formattedOrigin,
+            ];
+        }
 
         $perPage = 25;
         $page = $request->get('page', 1);
 
+        $selectedIds = array_keys($filteredArray); // Get the technician IDs (keys)
+
         $offset = ($page - 1) * $perPage;
         $limit = $perPage;
 
-        $selectedIds = array_keys($filteredArray);
-        
-        $selectedIds = array_slice($selectedIds, $offset, $limit);
+        $paginatedTechnicianIds = array_slice($selectedIds, $offset, $limit);
         
         $manualClosestDistances = Technician::select(
             'id',
             DB::raw('ST_X(co_ordinates) as longitude'),
-            DB::raw('ST_Y(co_ordinates) as latitude')
-        )->whereIn('id', $selectedIds)->get();
+            DB::raw('ST_Y(co_ordinates) as latitude'),
+            'address_data'
+        )->whereIn('id', $paginatedTechnicianIds)->get();
 
         $technicians = [];
 
@@ -1996,14 +2016,16 @@ class UserController extends Controller
         $origins = [];
         
         foreach ($mergedTechnicians as $technician) {
+            $addressData['address'] = $technician->address_data->address;
             $addressData['country'] = $technician->address_data->country;
             $addressData['city'] = $technician->address_data->city;
             $addressData['state'] = $technician->address_data->state;
             $addressData['zip_code'] = $technician->address_data->zip_code;
             $formattedOrigin = implode(', ', [
-                $addressData['country'],
+                $addressData['address'],
                 $addressData['city'],
                 $addressData['state'],
+                $addressData['country'],
                 $addressData['zip_code']
             ]);
             $origins[] = [
@@ -2011,6 +2033,8 @@ class UserController extends Controller
                 'origin' => $formattedOrigin,
             ];
         }
+
+        
         $originsString = implode('|', array_column($origins, 'origin'));
 
         $distances = new DistanceMatrixService();
@@ -2018,7 +2042,6 @@ class UserController extends Controller
 
         $completeInfo = [];
         $techniciansFound = false;
-        Log::alert($data['rows']);
         foreach ($data['rows'] as $index => $row) {
             
             if ($row['elements'][0]['status'] === "OK") {
@@ -2073,9 +2096,10 @@ class UserController extends Controller
         return response()->json([
             'technicians' => $completeInfo,
             'radiusMessage' => 'Showing result for ' . $prevRadius . '-' . $radius . ' miles distance',
-            'shownTech' => count($respondedTechnicians) + count($completeInfo),
-            'techCount' => count($allIds ) + count($respondedTechnicians),
-            'allClosestDistances' => $allClosestDistances
+            'shownTech' => count($completeInfo) + count($respondedTechnicians),
+            'techCount' => count($allIds ),
+            'originsTwo' => $originsTwo,
+            'test' => $technicians
         ], 200);
 
     }
@@ -2506,6 +2530,12 @@ class UserController extends Controller
 
             $preLog = WorkOrderTimeLog::where('column_name', 'stage')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'stage', $wo->id, $wo->updated_at, $preLog, 5, '', 'stage', "Work order stage updated: 'Closed' → 'Billing'", $id);
+        } elseif ($wo->status == Status::ISSUE) {
+            $wo->status = Status::APPROVED;
+            $wo->stage += 1;
+
+            $preLog = WorkOrderTimeLog::where('column_name', 'stage')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'stage', $wo->id, $wo->updated_at, $preLog, 5, '', 'stage', "Work order stage updated: 'Closed' → 'Billing'", $id);
         } elseif ($wo->stage == 5 && $wo->status == null) {
             $wo->status = Status::APPROVED;
 
@@ -2568,6 +2598,11 @@ class UserController extends Controller
 
             $preLog = WorkOrderTimeLog::where('column_name', 'status')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, Status::APPROVED, '', 'status', "Work order status updated: 'Invoiced' → 'Approved'", $id);
+        } elseif ($wo->status == Status::ISSUE) {
+            $wo->status = Status::NEEDS_APPROVAL;
+
+            $preLog = WorkOrderTimeLog::where('column_name', 'status')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, Status::NEEDS_APPROVAL, '', 'status', "Work order status updated: 'Needs Review' → 'Needs Approval'", $id);
         } elseif ($wo->status == Status::APPROVED) {
             $wo->stage -= 1;
             $wo->status = Status::NEEDS_APPROVAL;
@@ -2652,6 +2687,32 @@ class UserController extends Controller
 
         $notify[] = ['success', 'Status Updated'];
         return back()->withNotify($notify);
+    }
+
+    public function makeReview(Request $request, $id)
+    {
+        $request->validate([
+            'review_note' => 'required|string',
+        ]);
+
+        $wo = WorkOrder::findOrFail($id);
+        $wo->status = Status::ISSUE;
+        $wo->review_note = $request->review_note;
+        $wo->save();
+
+        $preLog = WorkOrderTimeLog::where('column_name', 'status')->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog(
+            'work_orders', 
+            'status', 
+            $wo->id, 
+            $wo->updated_at, 
+            $preLog, 
+            Status::ISSUE, 
+            '', 
+            'status', 
+            "Work order status updated: 'Need Review'", 
+            $id
+        );
     }
 
     // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg, identity)

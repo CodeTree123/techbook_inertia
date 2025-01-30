@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react'
 import NoteList from './components/NoteList';
 
-const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
 
     const [activeFilter, setActiveFilter] = useState(0);
 
@@ -72,14 +72,14 @@ const Note = ({ id, details, timezone, onSuccessMessage, onErrorMessage, is_canc
                         <option value="close_out_notes">Closeout Notes</option>
                     </select>
                 </div>
-                <button className='btn px-5 fw-bold text-black border-0' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeNote(e)} disabled={is_cancelled}>POST</button>
+                <button className='btn px-5 fw-bold text-black border-0' style={{ backgroundColor: '#9BCFF5' }} onClick={(e) => storeNote(e)} disabled={is_cancelled || is_billing}>POST</button>
             </div>
 
             {
                 details.map((note) => (
 
                     filterByNoteType(note) && note.related_note == null && (
-                        <NoteList id={id} details={note} timezone={timezone} is_cancelled={is_cancelled} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} addNote={addNote} setAddNote={setAddNote} />
+                        <NoteList id={id} details={note} timezone={timezone} is_cancelled={is_cancelled} is_billing={is_billing} onSuccessMessage={onSuccessMessage} onErrorMessage={onErrorMessage} addNote={addNote} setAddNote={setAddNote} />
                     )
                 ))
             }

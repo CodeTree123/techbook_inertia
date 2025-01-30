@@ -164,6 +164,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('make-cancel/{id}', 'makeCancel')->name('wo.cancel');
                 Route::post('next-status/{id}', 'nextStatus')->name('wo.nextStatus');
                 Route::post('back-status/{id}', 'backStatus')->name('wo.backStatus');
+                Route::post('make-review/{id}', 'makeReview')->name('wo.makeReview');
 
                 Route::post('update-work-order/{id}', 'updateOverview')->name('wo.updateOverview');
                 Route::post('update-work-requ/{id}', 'updateWorkRequested')->name('wo.updateWorkRequested');

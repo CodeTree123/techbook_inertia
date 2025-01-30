@@ -6,14 +6,11 @@ import PreviousTech from './components/PreviousTech';
 import ContactedTech from './components/ContactedTech';
 import ContactModal from './components/ContactModal';
 
-const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled }) => {
+const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
 
     const [search, setSearch] = useState('');
     const [technicians, setTechnicians] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    console.log(technicians);
-
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -181,7 +178,6 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
         return sum + hours;
     }, 0);
 
-
     return (
         <div>
             {
@@ -194,7 +190,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                             </div>
                             <input type="text" placeholder='Search technician here' className='px-4 py-2 col-3 border border-success rounded-5' onChange={(e) => handleSearch(e)} />
                             <div className='col-2'>
-                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null, 1)}>
+                                <button className='btn w-100 d-flex align-items-center justify-content-center gap-1 border-0' disabled={is_cancelled || is_billing} style={{ backgroundColor: '#9BCFF5' }} onClick={() => closestTech(details.site.city + ', ' + details.site.state + ', ' + details.site.zipcode, null, 1)}>
                                     Nearby Techs
                                 </button>
                             </div>
@@ -275,12 +271,12 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                 <div className='col-4 d-flex gap-2 justify-content-end'>
                                                     {
                                                         !details.ftech_id ?
-                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled} style={{ height: 'max-content' }}>Assign</button> :
+                                                            <button onClick={() => handleShowModal(tech)} className='btn btn-light border' disabled={details.stage >= 3 || is_cancelled || is_billing} style={{ height: 'max-content' }}>Assign</button> :
                                                             <button className='btn btn-light border' disabled>Assigned</button>
                                                     }
 
                                                     {
-                                                        tech?.contacted ? <button className='btn btn-success' disabled>Contacted</button> : <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled} style={{ height: 'max-content' }}>Contact</button>
+                                                        tech?.contacted ? <button className='btn btn-success' disabled>Contacted</button> : <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled || is_billing} style={{ height: 'max-content' }}>Contact</button>
                                                     }
 
                                                 </div>
@@ -399,7 +395,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                                                         }
 
                                                         {
-                                                            tech?.contacted ? <button className='btn btn-success' disabled>Contacted</button> : <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled} style={{ height: 'max-content' }}>Contact</button>
+                                                            tech?.contacted ? <button className='btn btn-success' disabled>Contacted</button> : <button className='btn btn-dark' onClick={() => handleContactShowModal(tech)} disabled={is_cancelled || is_billing} style={{ height: 'max-content' }}>Contact</button>
                                                         }
                                                     </div>
 
@@ -478,7 +474,7 @@ const FieldTech = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled
                         </div>
                     </> :
                     <>
-                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} is_cancelled={is_cancelled} />
+                        <TechData id={id} stage={details.stage} techData={details?.technician} onSuccessMessage={onSuccessMessage} totalhours={totalhours} assignedEng={details.assigned_tech} setTechnicians={setTechnicians} is_cancelled={is_cancelled} is_billing={is_billing} />
                     </>
             }
         </div>
