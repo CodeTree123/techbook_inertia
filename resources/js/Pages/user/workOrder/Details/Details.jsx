@@ -33,6 +33,7 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                     <Overview id={id} details={{
                         company_name: details?.customer?.company_name,
                         priority: details?.priority,
+                        p_o: details?.p_o,
                         requested_by: details?.requested_by,
                         employee_name: details?.employee?.name
                     }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} is_billing={details.status == 12}/>
