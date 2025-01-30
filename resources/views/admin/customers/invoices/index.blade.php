@@ -598,8 +598,7 @@
                     <div class="w-100 px-5 py-0">
 
                         <textarea class="w-100 p-0 my-input-disable-class" name="" id="wo-desc" style="border:none">{{ $invoice->scope_work }}</textarea>
-                        <div id="scope_work" class="my-input-disable-class">{!! $invoice->scope_work !!}</div>
-
+                        <div id="scope_work" class="my-input-disable-class">{!! $invoice->wo_requested !!}</div>
                     </div>
                 </div>
                 <div class="page-container d-flex justify-content-end pb-2">
