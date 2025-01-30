@@ -45,6 +45,7 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'cus_id': '',
+        'p_o': '',
         'priority': '',
         'requested_by': '',
         'wo_manager': ''
@@ -65,7 +66,7 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
             }
         });
     };
-    
+
 
     return (
         <div className="card action-cards bg-white shadow border-0 mb-4">
@@ -77,7 +78,7 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                         !editable ?
                             <button type="button" className="btn edit-btn border-0" onClick={() => setEditable(!editable)} disabled={is_cancelled || is_billing}>
                                 <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
-                            </button> : 
+                            </button> :
                             <>
                                 <button onClick={submit} type='submit' className="btn btn-success fw-bold">
                                     Save
@@ -113,6 +114,16 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                             </td>
                         </tr>
                             <tr>
+                                <td style={{ fontWeight: 600 }}>Purchase order : </td>
+                                <td>
+                                    {
+                                        !editable ?
+                                            <p className="mb-0 fw-bold">{details.p_o}</p> :
+                                            <input className="mb-0 fw-bold p-0" name="p_o" type="text" defaultValue={details.p_o} onChange={(e) => setData({ ...data, p_o: e.target.value })} />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
                                 <td style={{ fontWeight: 600 }}>Priority : </td>
                                 <td>
                                     {
@@ -137,8 +148,6 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                                                 </option>
                                             </select>
                                     }
-
-
                                 </td>
                             </tr>
                             <tr>

@@ -2,7 +2,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Check if the invoice status is 15
         const invoiceStatus = {{ $invoice->status }};
-        if (invoiceStatus === 15) {
+        if (invoiceStatus === 13 || invoiceStatus === 15) {
             // Disable all input fields
             const inputs = document.querySelectorAll('.my-input-disable-class');;
             inputs.forEach(input => {
