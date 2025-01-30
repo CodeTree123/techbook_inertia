@@ -468,25 +468,25 @@
                         </tr>
                         <tr>
                             @if ($invoice->priority == 1)
-                            <td><input type="text" style="border:none" value="P1"></td>
+                            <td><input type="text" class="my-input-disable-class" style="border:none" value="P1"></td>
                             @elseif($invoice->priority == 2)
-                            <td><input type="text" style="border:none" value="P2"></td>
+                            <td><input type="text" class="my-input-disable-class" style="border:none" value="P2"></td>
                             @elseif($invoice->priority == 3)
-                            <td><input type="text" style="border:none" value="P3"></td>
+                            <td><input type="text" class="my-input-disable-class" style="border:none" value="P3"></td>
                             @elseif($invoice->priority == 4)
-                            <td><input type="text" style="border:none" value="P4"></td>
+                            <td><input type="text" class="my-input-disable-class" style="border:none" value="P4"></td>
                             @elseif($invoice->priority == 5)
-                            <td><input type="text" style="border:none" value="P5"></td>
+                            <td><input type="text" class="my-input-disable-class" style="border:none" value="P5"></td>
                             @else
-                            <td><input type="text" style="border:none" value=""></td>
+                            <td><input type="text" class="my-input-disable-class" style="border:none" value=""></td>
                             @endif
 
-                            <td><input type="text"
+                            <td><input type="text" class="my-input-disable-class"
                                     value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
                                     style="border:none">
                             </td>
-                            <td><input type="text" value="{{ @$invoice->p_o }}" style="border:none"></td>
-                            <td><input type="text" value="{{ @$invoice->customer->billing_term }}"
+                            <td><input type="text" class="my-input-disable-class" value="{{ @$invoice->p_o }}" style="border:none"></td>
+                            <td><input type="text" class="my-input-disable-class" value="{{ @$invoice->customer->billing_term }}"
                                     style="border:none"></td>
                             <td>{{ @$invoice->order_id }}</td>
                         </tr>
@@ -514,28 +514,28 @@
                             @if(@$firstHour->work_order_id == $invoice->id)
                             <tr class="calc-tr">
                                 <td>
-                                    <input type="text" class="total-hours p-2"
+                                    <input type="text" class="total-hours p-2 my-input-disable-class"
                                         value="1"
                                         data-rate="" style="border:none">
                                 </td>
                                 <td>
-                                    <textarea class="wo-per w-100" style="border:none; height: 32px !important">{{ @$firstHour->description }}</textarea>
+                                    <textarea class="wo-per w-100 my-input-disable-class" style="border:none; height: 32px !important">{{ @$firstHour->description }}</textarea>
                                 </td>
                                 <td>
-                                    <input type="text" class="date p-2" value="{{ @$firstHour->date }}"
+                                    <input type="text" class="date p-2 my-input-disable-class" value="{{ @$firstHour->date }}"
                                         style="border:none">
                                 </td>
                                 <td>
                                     <div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="calculated-rate"
+                                        <input type="text" class="calculated-rate my-input-disable-class"
                                             value="{{ @$invoice->customer->s_rate_f }}" style="border:none">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="amount" value="{{ @$firstHour->amount }}"
+                                        <input type="text" class="amount my-input-disable-class" value="{{ @$firstHour->amount }}"
                                             style="border:none" readonly>
                                     </div>
                                 </td>
@@ -550,28 +550,28 @@
                             @foreach (@$wps as $wp)
                             <tr class="calc-tr">
                                 <td>
-                                    <input type="text" class="total-hours p-2"
+                                    <input type="text" class="total-hours p-2 my-input-disable-class"
                                         value="{{ str_replace(':', '.', $aRate - 1) }}"
                                         data-rate="" style="border:none">
                                 </td>
                                 <td>
-                                    <textarea class="wo-per w-100" style="border:none; height: 32px !important">{{ @$wp->description }}</textarea>
+                                    <textarea class="wo-per w-100 my-input-disable-class" style="border:none; height: 32px !important">{{ @$wp->description }}</textarea>
                                 </td>
                                 <td>
-                                    <input type="text" class="date p-2" value="{{ @$wp->date }}"
+                                    <input type="text" class="date p-2 my-input-disable-class" value="{{ @$wp->date }}"
                                         style="border:none">
                                 </td>
                                 <td>
                                     <div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="calculated-rate"
+                                        <input type="text" class="calculated-rate my-input-disable-class"
                                             value="{{ optional($wp->workOrder?->customer)->s_rate_a ?? 'N/A' }}" style="border:none">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="amount" value="{{ @$wp->amount }}"
+                                        <input type="text" class="amoun my-input-disable-class" value="{{ @$wp->amount }}"
                                             style="border:none" readonly>
                                     </div>
                                 </td>
@@ -598,7 +598,7 @@
                     <div class="w-100 px-5 py-0">
 
                         <textarea class="w-100 p-0 my-input-disable-class" name="" id="wo-desc" style="border:none">{{ $invoice->scope_work }}</textarea>
-                        <div id="scope_work">{!! $invoice->scope_work !!}</div>
+                        <div id="scope_work" class="my-input-disable-class">{!! $invoice->scope_work !!}</div>
 
                     </div>
                 </div>
@@ -675,7 +675,7 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="taxprice decimal-input" placeholder="0.00"
+                                        <input type="text" class="taxprice decimal-input my-input-disable-class" placeholder="0.00"
                                             style="border:none">
                                     </div>
                                 </td>
@@ -688,7 +688,7 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="shipping decimal-input" placeholder="0.00"
+                                        <input type="text" class="shipping decimal-input my-input-disable-class" placeholder="0.00"
                                             style="border:none">
                                     </div>
                                 </td>
@@ -701,17 +701,11 @@
                                     <div class="input-group w-auto d-flex align-items-center justify-content-end">
                                         <span class="p-2">$</span>
                                         <span class="text-danger credit-span" style="width: 190px;">
-                                            @if($invoice->status == 15)
-                                            (<input
-                                                type="text" class="due text-danger decimal-input my-input-disable-class"
-                                                style="border:none; width: 5.8ch; outline: 0 !important" >)
-                                            @else
                                             (<input
                                                 type="text" class="credit text-danger p-0 decimal-input my-input-disable-class"
                                                 value="0.00"
                                                 style="border:none; width: 3.4ch; outline: 0 !important"
                                                 oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';">)
-                                            @endif
                                         </span>
                                     </div>
                                 </td>
@@ -723,11 +717,7 @@
                                 <td class="d-flex justify-content-end">
                                     <div class="input-group w-auto">
                                         <span class="p-2">$</span>
-                                        @if($invoice->status == 15)
-                                        <input type="text" class="shipping decimal-input my-input-disable-class" style="border:none" placeholder="0.00">
-                                        @else
                                         <input type="text" class="due decimal-input my-input-disable-class" style="border:none" placeholder="0.00">
-                                        @endif
                                     </div>
                                 </td>
                             </tr>

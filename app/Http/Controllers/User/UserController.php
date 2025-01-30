@@ -2668,10 +2668,11 @@ class UserController extends Controller
 
     public function updateOverview(Request $request, $id)
     {
-
+//dd($request->all());
         $wo = WorkOrder::find($id);
         $wo->slug = $request['cus_id'] ?? $wo->slug;
         $wo->priority = $request['priority'] ?? $wo->priority;
+        $wo->p_o = $request['p_o'] ?? $wo->p_o;
         $wo->requested_by = $request['requested_by'] ?? $wo->requested_by;
         $wo->em_id = $request['wo_manager'] ?? $wo->em_id;
 
