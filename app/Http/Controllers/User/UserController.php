@@ -1956,6 +1956,13 @@ class UserController extends Controller
 
         $allIds = array_keys($filteredArray);
 
+        $allClosestDistances = Technician::select(
+            'id',
+            DB::raw('ST_X(co_ordinates) as longitude'),
+            DB::raw('ST_Y(co_ordinates) as latitude'),
+            'address_data'
+        )->whereIn('id', $allIds)->get();             
+
         $perPage = 25;
         $page = $request->get('page', 1);
 
@@ -2068,7 +2075,7 @@ class UserController extends Controller
             'radiusMessage' => 'Showing result for ' . $prevRadius . '-' . $radius . ' miles distance',
             'shownTech' => count($respondedTechnicians) + count($completeInfo),
             'techCount' => count($allIds ) + count($respondedTechnicians),
-            'filteredArray' => $filteredArray
+            'allClosestDistances' => $allClosestDistances
         ], 200);
 
     }
