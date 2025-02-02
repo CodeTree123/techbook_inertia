@@ -423,7 +423,7 @@
                                         <span
                                             style="color: #000000;"
                                             contenteditable="true">
-                                            {{ isset($invoice->site->site_id) ? explode('-', $invoice->site->site_id)[1] ?? '' : '' }}
+                                            {{ isset($invoice->site->site_id) && strpos($invoice->site->site_id, '-') !== false ? explode('-', $invoice->site->site_id)[1] : $invoice->site->site_id }}
                                         </span>
 
                                     </td>
@@ -522,7 +522,7 @@
                                     <textarea class="wo-per w-100 my-input-disable-class" style="border:none; height: 32px !important">{{ @$firstHour->description }}</textarea>
                                 </td>
                                 <td>
-                                    <input type="text" class="date p-2 my-input-disable-class" value="{{ @$firstHour->date }}"
+                                    <input type="text" class="date p-2 my-input-disable-class" value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : ''}}"
                                         style="border:none">
                                 </td>
                                 <td>
@@ -571,7 +571,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="amoun my-input-disable-class" value="{{ @$wp->amount }}"
+                                        <input type="text" class="amount my-input-disable-class" value="{{ @$wp->amount }}"
                                             style="border:none" readonly>
                                     </div>
                                 </td>
