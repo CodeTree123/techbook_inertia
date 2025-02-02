@@ -3042,7 +3042,7 @@ class UserController extends Controller
 
                 $doc->save();
                 // (tableName, columnName, wo_id, date, preLog, value, toUser, type,  msg, identity)
-                $this->createWorkOrderTimeLog('doc_for_technicians', 'new', $id, $doc->updated_at, '', $originalName, $wo->technician->company_name, 'nrml_text', 'Document Uploaded For Technician', $doc->id);
+                $this->createWorkOrderTimeLog('doc_for_technicians', 'new', $id, $doc->updated_at, '', $originalName, $wo->technician->company_name ?? '', 'nrml_text', 'Document Uploaded For Technician', $doc->id);
 
                 return response()->json(['message' => 'Document uploaded successfully.']);
             }

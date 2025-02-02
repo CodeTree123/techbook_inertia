@@ -597,10 +597,9 @@
                     </div>
                     <div class="w-100 px-5 py-0">
                         <textarea class="wo_close_out w-100 p-0 my-input-disable-class" name="" id="" style="border:none">
-                        {{ $invoice->scope_work }}
+                        {{ $invoice->wo_requested }}
                         </textarea>
-                        <div id="scope_work" class="my-input-disable-class">{!! $invoice->scope_work !!}</div>
-
+                        <div id="scope_work" class="my-input-disable-class">{!! $invoice->wo_requested !!}</div>
                     </div>
                 </div>
                 @else
