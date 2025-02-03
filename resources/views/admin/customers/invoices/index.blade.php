@@ -408,7 +408,7 @@
                         </div>
 
                         <div class="col-md-3 text-left">
-                            <div style="padding-left: 100px;">
+                            <div style="padding-left: 60px;">
                                 <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                                     <tr>
                                         <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
@@ -453,7 +453,7 @@
                             </address>
                         </div>
                         <div class="col-md-3 text-left">
-                            <div class="margin-shop text-start" style="padding-left: 110px;">
+                            <div class="margin-shop text-start" style="padding-left: 70px;">
                                 <h6 class="tax">Ship To:</h6>
                                 <span> {{ @$invoice->site->location }} @if (@$invoice->site->location)
                                         <br>
@@ -618,7 +618,7 @@
                                             </td>
                                             <td>
                                                 <button class="btn btn-danger removeBtn"
-                                                    style="display: none; border:none;">✖</button>
+                                                    style=" border:none;">✖</button>
                                             </td> <!-- Hidden remove button -->
                                         </tr>
                                     @endforeach
@@ -684,7 +684,7 @@
                         @endif
                     </form>
 
-                    <form action="{{route('admin.invoice.updateWoPer',$invoice->id)}}" method="post">
+                    <form action="{{ route('admin.invoice.updateWoPer', $invoice->id) }}" method="post">
                         @csrf
                         <div class="page-container d-flex justify-content-end pb-2">
                             <button type="submit"
@@ -705,14 +705,14 @@
                                 <textarea class="wo_close_out w-100 p-0 my-input-disable-class" style="border:none" name="wo_per">
                                     
                                     @if ($invoice->invoice->wo_per)
-                                    {!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
-                                    @else
-                                    @foreach ($invoice->notes as $note)
-                                    @if ($note->note_type == 'close_out_notes')
-                                    <p>{{ $note->note }}</p>
-                                    @endif
-                                    @endforeach
-                                    @endif
+{!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
+@else
+@foreach ($invoice->notes as $note)
+@if ($note->note_type == 'close_out_notes')
+<p>{{ $note->note }}</p>
+@endif
+@endforeach
+@endif
                                     
                                 </textarea>
                             </div>
@@ -759,77 +759,107 @@
                         </div>
 
                         <!-- Right Side Table -->
-                        <table class="price-box table table-hover" style="width: 500px;">
-                            <tbody>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Sub-total</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto">
-                                            <span class="p-2">$</span>
-                                            <input type="text" class="subtotal decimal-input my-input-disable-class"
-                                                value="{{ isset($totalPrice) ? $totalPrice : '0.00' }}"
-                                                placeholder="0.00" style="border:none">
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Sales Tax</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto">
-                                            <span class="p-2">$</span>
-                                            <input type="text" class="taxprice decimal-input my-input-disable-class"
-                                                placeholder="0.00" style="border:none">
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="shippingField">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Shipping & Handling
-                                        </div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto">
-                                            <span class="p-2">$</span>
-                                            <input type="text" class="shipping decimal-input my-input-disable-class"
-                                                placeholder="0.00" style="border:none">
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Credit</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto d-flex align-items-center justify-content-end">
-                                            <span class="p-2">$</span>
-                                            <span class="text-danger credit-span" style="width: 190px;">
-                                                (<input type="text"
-                                                    class="credit text-danger p-0 decimal-input my-input-disable-class"
-                                                    value="0.00"
-                                                    style="border:none; width: 3.4ch; outline: 0 !important"
-                                                    oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';">)
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Balance Due</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto">
-                                            <span class="p-2">$</span>
-                                            <input type="text" class="due decimal-input my-input-disable-class"
-                                                style="border:none" placeholder="0.00">
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <form action="{{route('admin.invoice.updateInvoicePay',$invoice->id)}}" method="post">
+                            @csrf
+                            <table class="price-box table table-hover" style="width: 500px;">
+                                <tbody>
+                                    <tr class="addRowBtnCont">
+                                        <th></th>
+                                        <th class="addRowBtnCont">
+                                            <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-success mr-3 save-btn-three d-none">
+                                                    Save
+                                                </button>
+                                                <button type="button" class="btn btn-primary edit-btn-three">
+                                                    Edit
+                                                </button>
+                                            </div>
+
+                                        </th>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Sub-total</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input type="text"
+                                                    class="subtotal decimal-input my-input-disable-class editable-three d-none"
+                                                    value="{{ isset($totalPrice) ? $totalPrice : '0.00' }}"
+                                                    placeholder="0.00" style="border:none">
+                                                <p class="subtotal-text decimal-input my-input-disable-class previewable-three mb-0"
+                                                    style="width: 190px;">0.00
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Sales Tax</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input name="tax" type="text"
+                                                    class="taxprice decimal-input my-input-disable-class editable-three d-none"
+                                                    value={{$invoice->invoice->tax ?? 0.00}}
+                                                    placeholder="0.00" style="border:none">
+                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->tax ?? 0.00}}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="shippingField">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Shipping &
+                                                Handling
+                                            </div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input name="shipping" type="text"
+                                                    class="shipping decimal-input my-input-disable-class editable-three d-none"
+                                                    placeholder="0.00" value={{$invoice->invoice->shipping ?? 0.00}} style="border:none">
+                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->shipping ?? 0.00}} </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Credit</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center justify-content-end">
+                                                <span class="p-2">$</span>
+                                                <span class="text-danger credit-span" style="width: 190px !important;">
+                                                    (<input name="credit" type="text"
+                                                        class="credit text-danger p-0 decimal-input my-input-disable-class editable-three d-none"
+                                                        value={{$invoice->invoice->credit ?? 0.00}}
+                                                        style="border:none; width: 3.4ch; outline: 0 !important"
+                                                        oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
+                                                        class="previewable-three">{{$invoice->invoice->credit ?? 0.00}}</span>)
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Balance Due</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input type="text"
+                                                    class="due decimal-input my-input-disable-class editable-three d-none"
+                                                    style="border:none" placeholder="0.00">
+                                                <span class="previewable-three due-text" style="width: 190px;">0.00</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
 
                     </div>
                 </div>
@@ -974,75 +1004,65 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script>
-        $(document).ready(function() {
-
-            function updateAmount(row) {
-                var totalHours = parseFloat(row.find('.total-hours').val().replace(',', '.')) || 0;
-                var calculatedRate = parseFloat(row.find('.calculated-rate').val()) || 0;
-                var amount = totalHours * calculatedRate;
-
-                row.find('.amount').val(amount.toFixed(2));
-
-                updateSubtotal();
-            }
-
-            function updateSubtotal() {
-                var subtotal = 0;
-                // Loop through each row and accumulate the total amount
+        <script>
+            $(document).ready(function() {
+        
+                function updateAmount(row) {
+                    var totalHours = parseFloat(row.find('.total-hours').val().replace(',', '.')) || 0;
+                    var calculatedRate = parseFloat(row.find('.calculated-rate').val()) || 0;
+                    var amount = totalHours * calculatedRate;
+        
+                    row.find('.amount').val(amount.toFixed(2));
+        
+                    updateSubtotal();
+                }
+        
+                function updateSubtotal() {
+                    var subtotal = 0;
+                    // Loop through each row and accumulate the total amount
+                    $('.calc-tr').each(function() {
+                        var rowAmount = parseFloat($(this).find('.amount').val()) || 0;
+                        subtotal += rowAmount;
+                    });
+        
+                    $('.subtotal-text').text(subtotal.toFixed(2));
+                    $('.subtotal').val(subtotal.toFixed(2));
+        
+                    // Call checkoutTotal to update due amount
+                    checkoutTotal();
+                }
+        
+                function checkoutTotal() {
+                    var subtotal = parseFloat($('.subtotal').val()) || 0;
+                    var tax = parseFloat($('.taxprice').val()) || 0;
+                    var ship = parseFloat($('.shipping').val()) || 0;
+                    var credit = parseFloat($('.credit').val()) || 0;
+        
+                    var due = subtotal + tax + ship - credit;
+        
+                    $('.due').val(due.toFixed(2));
+                    $('.due-text').text(due.toFixed(2));
+                }
+        
+                // Event Listeners for input fields
                 $('.calc-tr').each(function() {
-                    var rowAmount = parseFloat($(this).find('.amount').val()) || 0;
-                    subtotal += rowAmount;
-                });
-
-                var tax = parseFloat($('.taxprice').val());
-                var ship = parseFloat($('.shipping').val());
-
-                var due = subtotal + tax + ship;
-
-                $('.subtotal').val(subtotal.toFixed(2));
-                $('.due').val(due.toFixed(2));
-            }
-
-            $('.calc-tr').each(function() {
-                var row = $(this);
-                row.find('.total-hours, .calculated-rate').on('input', function() {
+                    var row = $(this);
+                    row.find('.total-hours, .calculated-rate').on('input', function() {
+                        updateAmount(row);
+                    });
                     updateAmount(row);
                 });
-                updateAmount(row);
+        
+                $('.credit, .taxprice, .shipping').on('input', function() {
+                    checkoutTotal();
+                });
+        
+                // Initial calculations on page load
                 updateSubtotal();
             });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
+        </script>
 
-            $('.credit').on('input', function() {
-                checkoutTotal();
-            });
 
-            $('.taxprice').on('input', function() {
-                checkoutTotal();
-            });
-
-            $('.shipping').on('input', function() {
-                checkoutTotal();
-            });
-
-            function checkoutTotal() {
-                var subtotal = parseFloat($('.subtotal').val()) || 0;
-                var tax = parseFloat($('.taxprice').val()) || 0;
-                var ship = parseFloat($('.shipping').val()) || 0;
-                var credit = parseFloat($('.credit').val()) || 0;
-
-                var due = subtotal + tax + ship - credit;
-
-                $('.due').val(due.toFixed(2));
-            }
-
-            checkoutTotal();
-        });
-    </script>
     <script src="{{ asset('assetsNew/dist/js/jodit.fat.min.js') }}"></script>
     <script>
         const editor = Jodit.make('#wo-desc');
@@ -1215,6 +1235,35 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButton = document.querySelector(".edit-btn-three");
+            const saveButton = document.querySelector(".save-btn-three");
+            const editableFields = document.querySelectorAll(".editable-three");
+            const previewableFields = document.querySelectorAll(".previewable-three");
+
+            editButton.addEventListener("click", function() {
+                // Toggle visibility of input fields
+                editableFields.forEach(field => field.classList.toggle("d-none"));
+                previewableFields.forEach(field => field.classList.toggle("d-none"));
+                // Toggle Save button visibility
+                saveButton.classList.toggle("d-none");
+
+                // Toggle text and button color
+                if (editButton.textContent.trim() === "Edit") {
+                    editButton.textContent = "Cancel";
+                    editButton.classList.remove("btn-primary");
+                    editButton.classList.add("btn-danger");
+                } else {
+                    editButton.textContent = "Edit";
+                    editButton.classList.remove("btn-danger");
+                    editButton.classList.add("btn-primary");
+                }
+            });
+        });
+    </script>
+
 
 
 @endsection
