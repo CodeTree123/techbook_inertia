@@ -17,6 +17,7 @@ use App\Models\CustomerSite;
 use App\Models\Technician;
 use App\Models\WorkOrder;
 use App\Models\SkillCategory;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -26,21 +27,21 @@ class UserController extends Controller
         if ($user->profile_complete == 1) {
             $notify[] = 'You\'ve already completed your profile';
             return response()->json([
-                'remark'=>'already_completed',
-                'status'=>'error',
-                'message'=>['error'=>$notify],
+                'remark' => 'already_completed',
+                'status' => 'error',
+                'message' => ['error' => $notify],
             ]);
         }
         $validator = Validator::make($request->all(), [
-            'firstname'=>'required',
-            'lastname'=>'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'remark'=>'validation_error',
-                'status'=>'error',
-                'message'=>['error'=>$validator->errors()->all()],
+                'remark' => 'validation_error',
+                'status' => 'error',
+                'message' => ['error' => $validator->errors()->all()],
             ]);
         }
 
@@ -48,20 +49,20 @@ class UserController extends Controller
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
         $user->address = [
-            'country'=>@$user->address->country,
-            'address'=>$request->address,
-            'state'=>$request->state,
-            'zip'=>$request->zip,
-            'city'=>$request->city,
+            'country' => @$user->address->country,
+            'address' => $request->address,
+            'state' => $request->state,
+            'zip' => $request->zip,
+            'city' => $request->city,
         ];
         $user->profile_complete = 1;
         $user->save();
 
         $notify[] = 'Profile completed successfully';
         return response()->json([
-            'remark'=>'profile_completed',
-            'status'=>'success',
-            'message'=>['success'=>$notify],
+            'remark' => 'profile_completed',
+            'status' => 'success',
+            'message' => ['success' => $notify],
         ]);
     }
 
@@ -70,34 +71,34 @@ class UserController extends Controller
         if (auth()->user()->kv == 2) {
             $notify[] = 'Your KYC is under review';
             return response()->json([
-                'remark'=>'under_review',
-                'status'=>'error',
-                'message'=>['error'=>$notify],
+                'remark' => 'under_review',
+                'status' => 'error',
+                'message' => ['error' => $notify],
             ]);
         }
         if (auth()->user()->kv == 1) {
             $notify[] = 'You are already KYC verified';
             return response()->json([
-                'remark'=>'already_verified',
-                'status'=>'error',
-                'message'=>['error'=>$notify],
+                'remark' => 'already_verified',
+                'status' => 'error',
+                'message' => ['error' => $notify],
             ]);
         }
-        $form = Form::where('act','kyc')->first();
+        $form = Form::where('act', 'kyc')->first();
         $notify[] = 'KYC field is below';
         return response()->json([
-            'remark'=>'kyc_form',
-            'status'=>'success',
-            'message'=>['success'=>$notify],
-            'data'=>[
-                'form'=>$form->form_data
+            'remark' => 'kyc_form',
+            'status' => 'success',
+            'message' => ['success' => $notify],
+            'data' => [
+                'form' => $form->form_data
             ]
         ]);
     }
 
     public function kycSubmit(Request $request)
     {
-        $form = Form::where('act','kyc')->first();
+        $form = Form::where('act', 'kyc')->first();
         $formData = $form->form_data;
         $formProcessor = new FormProcessor();
         $validationRule = $formProcessor->valueValidation($formData);
@@ -106,9 +107,9 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'remark'=>'validation_error',
-                'status'=>'error',
-                'message'=>['error'=>$validator->errors()->all()],
+                'remark' => 'validation_error',
+                'status' => 'error',
+                'message' => ['error' => $validator->errors()->all()],
             ]);
         }
 
@@ -120,27 +121,26 @@ class UserController extends Controller
 
         $notify[] = 'KYC data submitted successfully';
         return response()->json([
-            'remark'=>'kyc_submitted',
-            'status'=>'success',
-            'message'=>['success'=>$notify],
+            'remark' => 'kyc_submitted',
+            'status' => 'success',
+            'message' => ['success' => $notify],
         ]);
-
     }
 
     public function depositHistory(Request $request)
     {
         $deposits = auth()->user()->deposits();
         if ($request->search) {
-            $deposits = $deposits->where('trx',$request->search);
+            $deposits = $deposits->where('trx', $request->search);
         }
-        $deposits = $deposits->with(['gateway'])->orderBy('id','desc')->paginate(getPaginate());
+        $deposits = $deposits->with(['gateway'])->orderBy('id', 'desc')->paginate(getPaginate());
         $notify[] = 'Deposit data';
         return response()->json([
-            'remark'=>'deposits',
-            'status'=>'success',
-            'message'=>['success'=>$notify],
-            'data'=>[
-                'deposits'=>$deposits
+            'remark' => 'deposits',
+            'status' => 'success',
+            'message' => ['success' => $notify],
+            'data' => [
+                'deposits' => $deposits
             ]
         ]);
     }
@@ -148,31 +148,31 @@ class UserController extends Controller
     public function transactions(Request $request)
     {
         $remarks = Transaction::distinct('remark')->get('remark');
-        $transactions = Transaction::where('user_id',auth()->id());
+        $transactions = Transaction::where('user_id', auth()->id());
 
         if ($request->search) {
-            $transactions = $transactions->where('trx',$request->search);
+            $transactions = $transactions->where('trx', $request->search);
         }
 
 
         if ($request->type) {
             $type = $request->type == 'plus' ? '+' : '-';
-            $transactions = $transactions->where('trx_type',$type);
+            $transactions = $transactions->where('trx_type', $type);
         }
 
         if ($request->remark) {
-            $transactions = $transactions->where('remark',$request->remark);
+            $transactions = $transactions->where('remark', $request->remark);
         }
 
-        $transactions = $transactions->orderBy('id','desc')->paginate(getPaginate());
+        $transactions = $transactions->orderBy('id', 'desc')->paginate(getPaginate());
         $notify[] = 'Transactions data';
         return response()->json([
-            'remark'=>'transactions',
-            'status'=>'success',
-            'message'=>['success'=>$notify],
-            'data'=>[
-                'transactions'=>$transactions,
-                'remarks'=>$remarks,
+            'remark' => 'transactions',
+            'status' => 'success',
+            'message' => ['success' => $notify],
+            'data' => [
+                'transactions' => $transactions,
+                'remarks' => $remarks,
             ]
         ]);
     }
@@ -180,15 +180,15 @@ class UserController extends Controller
     public function submitProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'firstname'=>'required',
-            'lastname'=>'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'remark'=>'validation_error',
-                'status'=>'error',
-                'message'=>['error'=>$validator->errors()->all()],
+                'remark' => 'validation_error',
+                'status' => 'error',
+                'message' => ['error' => $validator->errors()->all()],
             ]);
         }
 
@@ -197,19 +197,19 @@ class UserController extends Controller
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
         $user->address = [
-            'country'=>@$user->address->country,
-            'address'=>$request->address,
-            'state'=>$request->state,
-            'zip'=>$request->zip,
-            'city'=>$request->city,
+            'country' => @$user->address->country,
+            'address' => $request->address,
+            'state' => $request->state,
+            'zip' => $request->zip,
+            'city' => $request->city,
         ];
         $user->save();
 
         $notify[] = 'Profile updated successfully';
         return response()->json([
-            'remark'=>'profile_updated',
-            'status'=>'success',
-            'message'=>['success'=>$notify],
+            'remark' => 'profile_updated',
+            'status' => 'success',
+            'message' => ['success' => $notify],
         ]);
     }
 
@@ -223,14 +223,14 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'current_password' => 'required',
-            'password' => ['required','confirmed',$passwordValidation]
+            'password' => ['required', 'confirmed', $passwordValidation]
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'remark'=>'validation_error',
-                'status'=>'error',
-                'message'=>['error'=>$validator->errors()->all()],
+                'remark' => 'validation_error',
+                'status' => 'error',
+                'message' => ['error' => $validator->errors()->all()],
             ]);
         }
 
@@ -241,16 +241,16 @@ class UserController extends Controller
             $user->save();
             $notify[] = 'Password changed successfully';
             return response()->json([
-                'remark'=>'password_changed',
-                'status'=>'success',
-                'message'=>['success'=>$notify],
+                'remark' => 'password_changed',
+                'status' => 'success',
+                'message' => ['success' => $notify],
             ]);
         } else {
             $notify[] = 'The password doesn\'t match!';
             return response()->json([
-                'remark'=>'validation_error',
-                'status'=>'error',
-                'message'=>['error'=>$notify],
+                'remark' => 'validation_error',
+                'status' => 'error',
+                'message' => ['error' => $notify],
             ]);
         }
     }
@@ -272,7 +272,7 @@ class UserController extends Controller
             'message' => 'Customers fetched successfully'
         ]);
     }
-    
+
     public function allEmployees(Request $request)
     {
         $search = $request->query('search', '');
@@ -314,21 +314,21 @@ class UserController extends Controller
         $search = $request->query('search', '');
 
         $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
-    ->where('customer_id', $id)
-    ->when($search, function ($query, $search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('site_id', 'like', "%{$search}%")
-              ->orWhere('location', 'like', "%{$search}%")
-              ->orWhere('address_1', 'like', "%{$search}%")
-              ->orWhere('city', 'like', "%{$search}%")
-              ->orWhere('state', 'like', "%{$search}%")
-              ->orWhere('zipcode', 'like', "%{$search}%");
-        });
-    })
-    ->orderBy('site_id', 'asc')
-    ->paginate(10);
+            ->where('customer_id', $id)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('site_id', 'like', "%{$search}%")
+                        ->orWhere('location', 'like', "%{$search}%")
+                        ->orWhere('address_1', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('state', 'like', "%{$search}%")
+                        ->orWhere('zipcode', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('site_id', 'asc')
+            ->paginate(10);
 
-     // Limit results to avoid overloading data
+        // Limit results to avoid overloading data
 
         return response()->json([
             'success' => true,
@@ -341,7 +341,7 @@ class UserController extends Controller
     {
         $search = $request->query('search', '');
 
-        $technicians = Technician::select('id', 'technician_id', 'company_name', 'address_data', 'email', 'phone', 'rate', 'tech_type','status','cell_phone')->with('contacted:tech_id')
+        $technicians = Technician::select('id', 'technician_id', 'company_name', 'address_data', 'email', 'phone', 'rate', 'tech_type', 'status', 'cell_phone')->with('contacted:tech_id')
             ->when($search, function ($query, $search) {
                 $query->where('company_name', 'like', "%{$search}%")
                     ->orWhere('technician_id', 'like', "%{$search}%")
@@ -366,12 +366,21 @@ class UserController extends Controller
 
     public function allWoList(Request $request)
     {
-        
         $search = $request->query('search', '');
         $stage = $request->query('stage', '');
-        $w_orders = WorkOrder::select('id', 'order_id', 'created_at', 'slug', 'ftech_id', 'stage', 'status','site_id','is_hold')
-            ->with(['customer:id,company_name', 'technician:id,company_name','site:id,site_id,zipcode', 'schedules:wo_id,on_site_by,scheduled_time'])
-            ->when($search, function ($query, $search) {
+    
+        $formatted_date = null;
+        if ($search && preg_match('/^\d{2}-\d{2}-\d{2}$/', $search)) {
+            try {
+                $formatted_date = Carbon::createFromFormat('m-d-y', $search)->format('Y-m-d');
+            } catch (\Exception $e) {
+                $formatted_date = null;
+            }
+        }
+    
+        $w_orders = WorkOrder::select('id', 'order_id', 'created_at', 'slug', 'ftech_id', 'stage', 'status', 'site_id', 'is_hold')
+            ->with(['customer:id,company_name', 'technician:id,company_name,technician_id', 'site:id,site_id,zipcode', 'schedules:wo_id,on_site_by,scheduled_time'])
+            ->when($search, function ($query) use ($search, $formatted_date) {
                 $query->where('order_id', 'like', "%{$search}%")
                     ->orWhereHas('customer', function ($query) use ($search) {
                         $query->where('company_name', 'like', "%{$search}%")
@@ -385,8 +394,16 @@ class UserController extends Controller
                     })
                     ->orWhereHas('site', function ($query) use ($search) {
                         $query->where('site_id', 'like', "%{$search}%")
-                        ->orWhere('address_1', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")
+                            ->orWhere('address_1', 'like', "%{$search}%")
+                            ->orWhere('location', 'like', "%{$search}%")
                             ->orWhere('zipcode', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('schedules', function ($query) use ($search, $formatted_date) {
+                        if ($formatted_date) {
+                            $query->whereDate('on_site_by', $formatted_date);
+                        } else {
+                            $query->where('on_site_by', 'like', "%{$search}%");
+                        }
                     });
             })
             ->when($stage && $stage != 0, function ($query) use ($stage) {
@@ -398,14 +415,14 @@ class UserController extends Controller
         return response()->json([
             'w_orders' => $w_orders
         ]);
-    } 
-    
+    }
+
     public function singleSite($id)
     {
         $site = CustomerSite::select('id', 'location', 'address_1', 'city', 'state', 'zipcode', 'time_zone', 'customer_id')
-    ->with('customer:id,company_name')
-    ->where('id', $id)
-    ->first();
+            ->with('customer:id,company_name')
+            ->where('id', $id)
+            ->first();
 
         return response()->json([
             'success' => true,
@@ -417,7 +434,7 @@ class UserController extends Controller
 
     public function singleCustomer($id)
     {
-        $customer = Customer::find($id); 
+        $customer = Customer::find($id);
 
         return response()->json([
             'success' => true,
@@ -456,6 +473,4 @@ class UserController extends Controller
             'message' => 'Skills fetched successfully',
         ]);
     }
-    
-
 }

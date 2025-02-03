@@ -59,7 +59,7 @@ const AllWorkOrder = ({ w_orders }) => {
   const getStatus = (wo) => {
     if (wo.is_hold === 1) {
       return <span className="text-secondary">On Hold</span>;
-    }else{
+    } else {
       const stageMap = {
         1: <span className="text-info-emphasis">New</span>,
         2: <span className="text-warning-emphasis">Need Dispatch</span>,
@@ -70,9 +70,9 @@ const AllWorkOrder = ({ w_orders }) => {
       };
       return stageMap[wo.stage] || '';
     }
-    
+
   };
-  
+
 
   return (
     <>
@@ -126,7 +126,16 @@ const AllWorkOrder = ({ w_orders }) => {
                       <td className='border-0 fw-bold' style={{ borderRadius: '10px 0 0 10px' }}><Link href={`/user/work/order/view/layout/user/dashboard/inertia/${wo.id}`}>{wo.order_id}</Link></td>
                       <td className='border-0 fw-bold'>{DateTime.fromISO(wo.created_at).toRelative()}</td>
                       <td className='border-0 fw-bold'>{wo?.customer?.company_name ?? <i class="fa-regular fa-clock text-success"></i>}</td>
-                      <td className='border-0 fw-bold'>{wo?.technician?.company_name ?? <i class="fa-regular fa-clock text-success"></i>}</td>
+                      <td className='border-0 fw-bold'>
+                        {wo?.technician ? (
+                          <>
+                            {wo.technician.company_name} (ID: {wo.technician.technician_id})
+                          </>
+                        ) : (
+                          <i className="fa-regular fa-clock text-success"></i>
+                        )}
+                      </td>
+
                       <td className='border-0 fw-bold'>
                         {getStatus(wo)}
                       </td>
@@ -134,10 +143,10 @@ const AllWorkOrder = ({ w_orders }) => {
                       <td className='border-0'>
                         {
                           wo?.schedules[0]?.on_site_by ?
-                          DateTime.fromISO(wo?.schedules[0]?.on_site_by).toFormat('MM-dd-yy') : 'N/A'
+                            DateTime.fromISO(wo?.schedules[0]?.on_site_by).toFormat('MM-dd-yy') : 'N/A'
                         }
                       </td>
-                      
+
                     </tr>
                   ))
 
