@@ -803,7 +803,7 @@
                                                 <span class="p-2">$</span>
                                                 <input name="tax" type="text"
                                                     class="taxprice decimal-input my-input-disable-class editable-three d-none"
-                                                    value={{$invoice->invoice->tax ?? 0.00}}
+                                                    value="{{$invoice->invoice->tax ?? 0.00}}"
                                                     placeholder="0.00" style="border:none">
                                                 <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->tax ?? 0.00}}</span>
                                             </div>
@@ -820,7 +820,7 @@
                                                 <span class="p-2">$</span>
                                                 <input name="shipping" type="text"
                                                     class="shipping decimal-input my-input-disable-class editable-three d-none"
-                                                    placeholder="0.00" value={{$invoice->invoice->shipping ?? 0.00}} style="border:none">
+                                                    placeholder="0.00" value="{{$invoice->invoice->shipping ?? 0.00}}" style="border:none">
                                                 <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->shipping ?? 0.00}} </span>
                                             </div>
                                         </td>
@@ -835,7 +835,7 @@
                                                 <span class="text-danger credit-span" style="width: 190px !important;">
                                                     (<input name="credit" type="text"
                                                         class="credit text-danger p-0 decimal-input my-input-disable-class editable-three d-none"
-                                                        value={{$invoice->invoice->credit ?? 0.00}}
+                                                        value="{{$invoice->invoice->credit ?? 0.00}}"
                                                         style="border:none; width: 3.4ch; outline: 0 !important"
                                                         oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
                                                         class="previewable-three">{{$invoice->invoice->credit ?? 0.00}}</span>)
