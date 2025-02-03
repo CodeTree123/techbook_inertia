@@ -368,6 +368,7 @@
             <a href="{{route('admin.revert', $invoice->id)}}" class="btn btn-outline-secondary ml-2 no-print">Revert</a>
             @endif
             @if($invoice->status == 12)
+            <a href="{{route('admin.closed.needs-approval', $invoice->id)}}" class="btn btn-outline-secondary ml-2 no-print">Revert</a>
             <a href="{{route('admin.billing.invoiced', $invoice->id)}}"
                 class="btn btn-outline-secondary ml-2 no-print"
                 id="invoiceButton"
@@ -399,7 +400,7 @@
                     </div>
 
                     <div class="col-md-3 text-left">
-                        <div style="padding-left: 120px;">
+                        <div style="padding-left: 100px;">
                             <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                                 <tr>
                                     <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
@@ -446,7 +447,7 @@
                         </address>
                     </div>
                     <div class="col-md-3 text-left">
-                        <div class="margin-shop text-start" style="padding-left: 130px;">
+                        <div class="margin-shop text-start" style="padding-left: 110px;">
                             <h6 class="tax">Ship To:</h6>
                             <span> {{ @$invoice->site->location }} @if(@$invoice->site->location) <br> @endif {{ @$invoice->site->address_1 }}<br>
                                 {{ @$invoice->site->city }} {{ @$invoice->site->state }}
