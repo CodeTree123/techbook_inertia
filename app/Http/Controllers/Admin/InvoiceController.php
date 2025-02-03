@@ -17,7 +17,7 @@ class InvoiceController extends Controller
         $invoice->status = Status::NEEDS_APPROVAL;
         $invoice->save();
         $notify[] = ['success', 'Invoice updated successfully'];
-        return back()->withNotify($notify);
+        return to_route('customer.invoice.history')->withNotify($notify);
     }
     
     public function stageStatusBillingInvoiced($id)
