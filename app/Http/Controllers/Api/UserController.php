@@ -369,18 +369,17 @@ class UserController extends Controller
         $search = $request->query('search', '');
         $stage = $request->query('stage', '');
     
-        // ইউজার ইনপুট যদি MM-DD-YY ফরম্যাটে থাকে, তাহলে সেটাকে Y-M-D তে কনভার্ট করবো
         $formatted_date = null;
-        if ($search && preg_match('/^\d{2}-\d{2}-\d{2}$/', $search)) { // যদি MM-DD-YY ফরম্যাট হয়
+        if ($search && preg_match('/^\d{2}-\d{2}-\d{2}$/', $search)) {
             try {
-                $formatted_date = Carbon::createFromFormat('m-d-y', $search)->format('Y-m-d'); // Y-M-D তে রূপান্তর
+                $formatted_date = Carbon::createFromFormat('m-d-y', $search)->format('Y-m-d');
             } catch (\Exception $e) {
                 $formatted_date = null;
             }
         }
     
         $w_orders = WorkOrder::select('id', 'order_id', 'created_at', 'slug', 'ftech_id', 'stage', 'status', 'site_id', 'is_hold')
-            ->with(['customer:id,company_name', 'technician:id,company_name', 'site:id,site_id,zipcode', 'schedules:wo_id,on_site_by,scheduled_time'])
+            ->with(['customer:id,company_name', 'technician:id,company_name,technician_id', 'site:id,site_id,zipcode', 'schedules:wo_id,on_site_by,scheduled_time'])
             ->when($search, function ($query) use ($search, $formatted_date) {
                 $query->where('order_id', 'like', "%{$search}%")
                     ->orWhereHas('customer', function ($query) use ($search) {

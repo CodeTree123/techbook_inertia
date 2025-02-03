@@ -803,6 +803,7 @@ class CustomerController extends Controller
     {
         $pageTitle = "Customer Invoice";
         $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes')->find($id);
+        
         $attend = CheckInOut::where('work_order_id', $id)->with('technician');
         $firstHour = $attend->first();
         //dd($firstHour->work_order_id);
@@ -812,6 +813,10 @@ class CustomerController extends Controller
 
         // Initialize total price variable
         $totalPrice = 0;
+
+        $invoice->invoice->toArray();
+        $invoice->invoice->jsonSerialize();
+        $invoice->invoice->toJson();
 
         // Loop through each work process (wp) and calculate the rate
         foreach ($wps as $wp) {
