@@ -92,4 +92,18 @@ class InvoiceController extends Controller
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
     }
+
+    public function updateInvoicePay(Request $request, $id)
+    {
+        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+
+        $invoice->tax = $request->tax;
+        $invoice->shipping = $request->shipping;
+        $invoice->credit = $request->credit;
+
+        $invoice->save();
+
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
 }
