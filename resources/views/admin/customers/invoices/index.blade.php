@@ -408,7 +408,7 @@
                         </div>
 
                         <div class="col-md-3 text-left">
-                            <div style="padding-left: 60px;">
+                            <div style="padding-left: 120px;">
                                 <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                                     <tr>
                                         <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
@@ -453,7 +453,7 @@
                             </address>
                         </div>
                         <div class="col-md-3 text-left">
-                            <div class="margin-shop text-start" style="padding-left: 70px;">
+                            <div class="margin-shop text-start" style="padding-left: 130px;">
                                 <h6 class="tax">Ship To:</h6>
                                 <span> {{ @$invoice->site->location }} @if (@$invoice->site->location)
                                         <br>
