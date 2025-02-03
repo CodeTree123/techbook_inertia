@@ -10,6 +10,16 @@ use App\Constants\Status;
 
 class InvoiceController extends Controller
 {
+    public function stageStatusClosedNeedsApproval($id)
+    {
+        $invoice = WorkOrder::find($id);
+        $invoice->stage = Status::STAGE_CLOSED;
+        $invoice->status = Status::NEEDS_APPROVAL;
+        $invoice->save();
+        $notify[] = ['success', 'Invoice updated successfully'];
+        return back()->withNotify($notify);
+    }
+    
     public function stageStatusBillingInvoiced($id)
     {
 

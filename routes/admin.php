@@ -255,6 +255,7 @@ Route::middleware('admin')->group(function () {
     });
     Route::controller('InvoiceController')->group(function () {
         Route::get('billing/invoiced/{id}', 'stageStatusBillingInvoiced')->name('billing.invoiced');
+        Route::get('closed/needs/approved/{id}', 'stageStatusClosedNeedsApproval')->name('closed.needs-approval');
         Route::post('billing/paid/{id}', 'stageStatusBillingPaid')->name('billing.paid');
         Route::get('revert/{id}', 'revert')->name('revert');
     });
