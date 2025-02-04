@@ -146,7 +146,7 @@
                     line-height: 14px;
                 }
 
-                td {
+                .price-table td {
                     padding: 0 12px !important;
                 }
 
@@ -411,14 +411,20 @@
                             <div style="padding-left: 120px;">
                                 <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                                     <tr>
-                                        <td style="padding: 10px; text-align: left;"><span style="font-weight: bold;"><span
-                                                    class="tax">Customer ID</span></span></td>
-                                        <td style="padding: 10px; text-align: right;"><span style="color: #000000;">
-                                                {{ @$invoice->customer->customer_id }} </span></td>
+                                        <td style="padding: 10px; text-align: left;">
+                                            <span style="font-weight: bold;">
+                                                <span class="tax" style="white-space: nowrap">Customer ID</span>
+                                            </span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: right;">
+                                            <span style="color: #000000; white-space: nowrap">
+                                                {{ @$invoice->customer->customer_id }} </span>
+                                            </td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 10px; text-align: left;"><span class="tax"
-                                                style="font-weight: bold;">Date</span></td>
+                                        <td style="padding: 10px; text-align: left;">
+                                            <span class="tax"
+                                                style="font-weight: bold; white-space: nowrap">Date</span></td>
                                         <td style="padding: 10px; text-align: right;"><span
                                                 style="color: #000000;"><?php
                                                 echo \Carbon\Carbon::now('America/Chicago')->format('m/d/Y');
@@ -427,7 +433,7 @@
                                     </tr>
                                     <tr>
                                         <td style="padding: 10px; text-align: left;"><span class="tax"
-                                                style=" font-weight: bold;">Site Number</span></td>
+                                                style=" font-weight: bold; white-space: nowrap">Site Number</span></td>
                                         <td style="padding: 10px; text-align: right;">
                                             <span style="color: #000000;" contenteditable="true">
                                                 {{ isset($invoice->site->site_id) && strpos($invoice->site->site_id, '-') !== false ? explode('-', $invoice->site->site_id)[1] : $invoice->site->site_id }}
@@ -540,7 +546,7 @@
                     <div>
                         <table class="table mt-5 price-table mr-0" style="width:100%; justify-content: center;">
                             <thead>
-                                <tr class="bg-teal-table2" style="background-color: rgba(61, 135, 188, 0.1);">
+                                <tr class="bg-teal-table2" style="background-color: rgba(61, 135, 188, 0.1); border-bottom: 0">
                                     <th>Qty.</th>
                                     <th>Description</th>
                                     <th>Date</th>
@@ -616,7 +622,7 @@
                                                         value="{{ @$wp->amount }}" style="border:none" readonly>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td class="addRowBtnCont">
                                                 <button class="btn btn-danger removeBtn"
                                                     style=" border:none;">✖</button>
                                             </td> <!-- Hidden remove button -->
@@ -705,15 +711,14 @@
                                 <textarea class="wo_close_out w-100 p-0 my-input-disable-class" style="border:none" name="wo_per">
                                     
                                     @if ($invoice->invoice->wo_per)
-{!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
-@else
-@foreach ($invoice->notes as $note)
-@if ($note->note_type == 'close_out_notes')
-<p>{{ $note->note }}</p>
-@endif
-@endforeach
-@endif
-                                    
+                                    {!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
+                                    @else
+                                    @foreach ($invoice->notes as $note)
+                                    @if ($note->note_type == 'close_out_notes')
+                                    <p>{{ $note->note }}</p>
+                                    @endif
+                                    @endforeach
+                                    @endif
                                 </textarea>
                             </div>
                             <div id="inv_note" class="inv_note w-100 px-5 py-0 previewable-tw work-performed-preview">
@@ -805,7 +810,7 @@
                                                     class="taxprice decimal-input my-input-disable-class editable-three d-none"
                                                     value="{{$invoice->invoice->tax ?? 0.00}}"
                                                     placeholder="0.00" style="border:none">
-                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->tax ?? 0.00}}</span>
+                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->tax ?? '0.00'}}</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -821,7 +826,7 @@
                                                 <input name="shipping" type="text"
                                                     class="shipping decimal-input my-input-disable-class editable-three d-none"
                                                     placeholder="0.00" value="{{$invoice->invoice->shipping ?? 0.00}}" style="border:none">
-                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->shipping ?? 0.00}} </span>
+                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->shipping ?? '0.00'}} </span>
                                             </div>
                                         </td>
                                     </tr>
@@ -838,7 +843,7 @@
                                                         value="{{$invoice->invoice->credit ?? 0.00}}"
                                                         style="border:none; width: 3.4ch; outline: 0 !important"
                                                         oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
-                                                        class="previewable-three">{{$invoice->invoice->credit ?? 0.00}}</span>)
+                                                        class="previewable-three">{{$invoice->invoice->credit ?? '0.00'}}</span>)
                                                 </span>
                                             </div>
                                         </td>
@@ -942,7 +947,7 @@
                 <span class="p-2">$</span>
                 <input type="text" class="amount" value="" style="border:none" readonly>
             </div></td>
-            <td><button class="btn btn-danger removeBtn" style="border:none;">✖</button></td>
+            <td class="addRowBtnCont"><button class="btn btn-danger removeBtn" style="border:none;">✖</button></td>
         `;
 
             tableBody.appendChild(newRow);
@@ -975,8 +980,10 @@
 
                 var due = subtotal + tax + ship - credit;
 
+                $('.subtotal-text').text(subtotal.toFixed(2));
                 $('.subtotal').val(subtotal.toFixed(2));
                 $('.due').val(due.toFixed(2));
+                $('.due-text').text(due.toFixed(2));
             }
 
             totalHoursInput.addEventListener('input', updateAmount);
