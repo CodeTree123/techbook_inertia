@@ -372,11 +372,11 @@
                 @else
                     @if ($invoice->status == 13)
                         <a href="{{ route('admin.revert', $invoice->id) }}"
-                            class="btn btn-outline-secondary ml-2 no-print">Revert</a>
+                            class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
                     @endif
                     @if ($invoice->status == 12)
                         <a href="{{ route('admin.closed.needs-approval', $invoice->id) }}"
-                            class="btn btn-outline-secondary ml-2 no-print">Revert</a>
+                            class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
                         <a href="{{ route('admin.billing.invoiced', $invoice->id) }}"
                             class="btn btn-outline-secondary ml-2 no-print" id="invoiceButton"
                             data-invoice-url="{{ route('admin.billing.invoiced', $invoice->id) }}">
