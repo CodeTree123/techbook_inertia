@@ -789,9 +789,9 @@ export default function WoView({ wo }) {
               )}
 
               {
-                wo.stage == 7 && wo.holding_note &&
-                <div className="alert alert-dark mb-0 mt-2" style={{ paddingTop: '0.375rem', paddingBottom: '0.375rem' }} role="alert">
-                  <i>Note: xcfvbxcxcv</i>
+                wo.stage == 4 && wo.status == 11 &&
+                <div className="alert alert-warning mb-0 mt-2" style={{ paddingTop: '0.375rem', paddingBottom: '0.375rem' }} role="alert">
+                  <i>Review Note: {wo.review_note}</i>
                 </div>
               }
 

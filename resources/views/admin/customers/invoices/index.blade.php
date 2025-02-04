@@ -172,7 +172,7 @@
                 }
 
                 .addRowBtnCont {
-                    display: none;
+                    display: none !important;
                 }
 
                 .price-box td {
@@ -301,6 +301,10 @@
         </style>
         <style>
             @media print {
+                .edit-site {
+                    display: none !important
+                }
+
                 .cus {
                     padding-left: 120px;
                 }
@@ -408,7 +412,7 @@
                         </div>
 
                         <div class="col-md-3 text-left">
-                            <div style="padding-left: 120px;">
+                            <div style="padding-left: 100px;">
                                 <table class="top-table table mt-0 mb-3" style="border-collapse: collapse; width: 100%;">
                                     <tr>
                                         <td style="padding: 10px; text-align: left;">
@@ -419,12 +423,12 @@
                                         <td style="padding: 10px; text-align: right;">
                                             <span style="color: #000000; white-space: nowrap">
                                                 {{ @$invoice->customer->customer_id }} </span>
-                                            </td>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 10px; text-align: left;">
-                                            <span class="tax"
-                                                style="font-weight: bold; white-space: nowrap">Date</span></td>
+                                            <span class="tax" style="font-weight: bold; white-space: nowrap">Date</span>
+                                        </td>
                                         <td style="padding: 10px; text-align: right;"><span
                                                 style="color: #000000;"><?php
                                                 echo \Carbon\Carbon::now('America/Chicago')->format('m/d/Y');
@@ -434,11 +438,31 @@
                                     <tr>
                                         <td style="padding: 10px; text-align: left;"><span class="tax"
                                                 style=" font-weight: bold; white-space: nowrap">Site Number</span></td>
-                                        <td style="padding: 10px; text-align: right;">
-                                            <span style="color: #000000;" contenteditable="true">
-                                                {{ isset($invoice->site->site_id) && strpos($invoice->site->site_id, '-') !== false ? explode('-', $invoice->site->site_id)[1] : $invoice->site->site_id }}
+                                        <td style="padding: 10px; text-align: right;" class="position-relative">
+                                            <span style="color: #000000;" class="site-preview">
+                                                @if ($invoice->invoice->site_num)
+                                                    {{ $invoice->invoice->site_num }}
+                                                @else
+                                                    {{ isset($invoice->site->site_id) && strpos($invoice->site->site_id, '-') !== false ? explode('-', $invoice->site->site_id)[1] : $invoice->site->site_id }}
+                                                @endif
                                             </span>
+                                            <form id="siteNumForm"
+                                                action="{{ route('admin.invoice.updateSiteNumber', $invoice->id) }}"
+                                                method="post">
+                                                @csrf
+                                                <input name="site_num" type="text"
+                                                    class="site-input border text-end outline-0 d-none"
+                                                    value="{{ $invoice->invoice->site_num ?? (isset($invoice->site->site_id) && strpos($invoice->site->site_id, '-') !== false ? explode('-', $invoice->site->site_id)[1] : $invoice->site->site_id) }}">
+                                            </form>
 
+                                            <button
+                                                class="edit-site addRowBtnCont bg-primary rounded-circle d-flex align-items-center justify-content-center position-absolute border-0"
+                                                style="font-size: 10px; width: 20px; height: 20px; top: -3px; right: -3px"><i
+                                                    class="fas fa-pencil-alt"></i></button>
+                                            <button onclick="document.getElementById('siteNumForm').submit()"
+                                                class="save-site addRowBtnCont bg-success rounded-circle d-none align-items-center justify-content-center position-absolute border-0"
+                                                style="font-size: 10px; width: 20px; height: 20px; top: -3px; right: -3px"><i
+                                                    class="fas fa-save"></i></button>
                                         </td>
                                     </tr>
                                 </table>
@@ -459,7 +483,7 @@
                             </address>
                         </div>
                         <div class="col-md-3 text-left">
-                            <div class="margin-shop text-start" style="padding-left: 130px;">
+                            <div class="margin-shop text-start" style="padding-left: 110px;">
                                 <h6 class="tax">Ship To:</h6>
                                 <span> {{ @$invoice->site->location }} @if (@$invoice->site->location)
                                         <br>
@@ -546,87 +570,122 @@
                     <div>
                         <table class="table mt-5 price-table mr-0" style="width:100%; justify-content: center;">
                             <thead>
-                                <tr class="bg-teal-table2" style="background-color: rgba(61, 135, 188, 0.1); border-bottom: 0">
+                                <tr class="bg-teal-table2"
+                                    style="background-color: rgba(61, 135, 188, 0.1); border-bottom: 0">
                                     <th>Qty.</th>
                                     <th>Description</th>
                                     <th>Date</th>
                                     <th>Price</th>
                                     <th>Amount</th>
-                                    <th class="addRowBtnCont"><button id="addRowBtn"
-                                            class="btn btn-success plus-button">Add</button></th>
+                                    <th class="addRowBtnCont">
+                                        <button id="addRowBtn" class="btn btn-success plus-button float-end">Add</button>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
                                 @if (@$firstHour->work_order_id == $invoice->id)
-                                    <tr class="calc-tr">
-                                        <td>
-                                            <input type="text" class="total-hours p-2 my-input-disable-class"
-                                                value="1" data-rate="" style="border:none">
-                                        </td>
-                                        <td>
-                                            <textarea class="wo-per w-100 my-input-disable-class" style="border:none; height: 32px !important">{{ @$firstHour->description }}</textarea>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="date p-2 my-input-disable-class"
-                                                value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
-                                                style="border:none">
-                                        </td>
-                                        <td>
-                                            <div class="input-group">
-                                                <span class="p-2">$</span>
-                                                <input type="text" class="calculated-rate my-input-disable-class"
-                                                    value="{{ @$invoice->customer->s_rate_f }}" style="border:none">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="input-group">
-                                                <span class="p-2">$</span>
-                                                <input type="text" class="amount my-input-disable-class"
-                                                    value="{{ @$firstHour->amount }}" style="border:none" readonly>
-                                            </div>
-                                        </td>
-                                        <td class="addRowBtnCont">
-                                            <button class="btn btn-danger removeBtn"
-                                                style="display: none; border:none;">✖</button>
-                                        </td>
-                                    </tr>
+                                    <form action="{{ route('admin.invoice.updateFirstHourProduct', $invoice->id) }}"
+                                        method="post">
+                                        @csrf
+                                        <tr class="calc-tr">
+                                            <td>
+                                                <input type="text"
+                                                    class="total-hours p-2 my-input-disable-class bg-white" value="1"
+                                                    data-rate="" style="border:none" disabled>
+                                            </td>
+                                            <td>
+                                                <textarea class="wo-per w-100 my-input-disable-class editable-three d-none"
+                                                    style="border:none; height: 32px !important" name="desc">{{ $firstHourProduct->desc ?? @$firstHour->description }}</textarea>
+                                                <span class="previewable-three">{{  $firstHourProduct->desc ?? @$firstHour->description }}</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="date p-2 my-input-disable-class bg-white"
+                                                    value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                                    style="border:none" disabled>
+                                            </td>
+                                            <td>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text"
+                                                        class="calculated-rate my-input-disable-class editable-three d-none"
+                                                        value="{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}"
+                                                        style="border:none" name="price">
+                                                    <span class="previewable-three">{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text" class="amount my-input-disable-class bg-white"
+                                                        value="{{ @$firstHour->amount }}" style="border:none" readonly>
+                                                </div>
+                                            </td>
+                                            <td class="addRowBtnCont d-flex gap-3">
+                                                <button type="submit"
+                                                    class="btn btn-success save-btn-three d-none">Save</button>
+                                                <button type="button"
+                                                    class="btn btn-primary edit-btn-three">Edit</button>
+                                            </td>
+                                        </tr>
+                                    </form>
                                 @endif
 
                                 @if ($aRate > 1)
                                     @foreach (@$wps as $wp)
-                                        <tr class="calc-tr">
-                                            <td>
-                                                <input type="text" class="total-hours p-2 my-input-disable-class"
-                                                    value="{{ str_replace(':', '.', $aRate - 1) }}" data-rate=""
-                                                    style="border:none">
-                                            </td>
-                                            <td>
-                                                <textarea class="wo-per w-100 my-input-disable-class" style="border:none; height: 32px !important">{{ @$wp->description }}</textarea>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="date p-2 my-input-disable-class"
-                                                    value="{{ @$wp->date }}" style="border:none">
-                                            </td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <span class="p-2">$</span>
-                                                    <input type="text" class="calculated-rate my-input-disable-class"
-                                                        value="{{ optional($wp->workOrder?->customer)->s_rate_a ?? 'N/A' }}"
-                                                        style="border:none">
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <span class="p-2">$</span>
-                                                    <input type="text" class="amount my-input-disable-class"
-                                                        value="{{ @$wp->amount }}" style="border:none" readonly>
-                                                </div>
-                                            </td>
-                                            <td class="addRowBtnCont">
-                                                <button class="btn btn-danger removeBtn"
-                                                    style=" border:none;">✖</button>
-                                            </td> <!-- Hidden remove button -->
-                                        </tr>
+                                        <form
+                                            action="{{ route('admin.invoice.updateAdditionalHourProduct', $invoice->id) }}"
+                                            method="post">
+                                            @csrf
+                                            <tr class="calc-tr">
+                                                <td>
+                                                    <input type="text"
+                                                        class="total-hours p-2 my-input-disable-class bg-white editable-four d-none"
+                                                        value="{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}" data-rate=""
+                                                        style="border:none" name="qty">
+                                                        
+                                                    <div class="input-group d-flex align-items-center">
+                                                        <span class="previewable-four">{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <textarea name="desc" class="wo-per w-100 my-input-disable-class bg-white editable-four d-none"
+                                                        style="border:none; height: 32px !important">{{ $additionalHourProduct->desc ?? @$wp->description }}</textarea>
+                                                    <span class="previewable-four">{{ $additionalHourProduct->desc ?? @$wp->description }}</span>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="date p-2 my-input-disable-class bg-white"
+                                                        value="{{ @$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                                        style="border:none" disabled>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group d-flex align-items-center">
+                                                        <span class="p-2">$</span>
+                                                        <input type="text"
+                                                            class="calculated-rate my-input-disable-class bg-white editable-four d-none"
+                                                            value="{{ $additionalHourProduct->price ?? (optional($wp->workOrder?->customer)->s_rate_a ?? '0.00') }}"
+                                                            style="border:none" name="price">
+                                                        <span
+                                                            class="previewable-four">{{ $additionalHourProduct->price ?? (optional($wp->workOrder?->customer)->s_rate_a ?? '0.00') }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="p-2">$</span>
+                                                        <input type="text"
+                                                            class="amount my-input-disable-class bg-white"
+                                                            value="{{ @$wp->amount }}" style="border:none" readonly>
+                                                    </div>
+                                                </td>
+                                                <td class="addRowBtnCont d-flex gap-3">
+                                                    <button type="submit"
+                                                        class="btn btn-success save-btn-four d-none">Save</button>
+                                                    <button type="button"
+                                                        class="btn btn-primary edit-btn-four">Edit</button>
+                                                    <button type="submit" class="btn btn-danger removeBtn"
+                                                        style=" border:none;">Delete</button>
+                                                </td> <!-- Hidden remove button -->
+                                            </tr>
+                                        </form>
                                     @endforeach
                                 @endif
 
@@ -711,14 +770,14 @@
                                 <textarea class="wo_close_out w-100 p-0 my-input-disable-class" style="border:none" name="wo_per">
                                     
                                     @if ($invoice->invoice->wo_per)
-                                    {!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
-                                    @else
-                                    @foreach ($invoice->notes as $note)
-                                    @if ($note->note_type == 'close_out_notes')
-                                    <p>{{ $note->note }}</p>
-                                    @endif
-                                    @endforeach
-                                    @endif
+{!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
+@else
+@foreach ($invoice->notes as $note)
+@if ($note->note_type == 'close_out_notes')
+<p>{{ $note->note }}</p>
+@endif
+@endforeach
+@endif
                                 </textarea>
                             </div>
                             <div id="inv_note" class="inv_note w-100 px-5 py-0 previewable-tw work-performed-preview">
@@ -764,7 +823,7 @@
                         </div>
 
                         <!-- Right Side Table -->
-                        <form action="{{route('admin.invoice.updateInvoicePay',$invoice->id)}}" method="post">
+                        <form action="{{ route('admin.invoice.updateInvoicePay', $invoice->id) }}" method="post">
                             @csrf
                             <table class="price-box table table-hover" style="width: 500px;">
                                 <tbody>
@@ -808,9 +867,10 @@
                                                 <span class="p-2">$</span>
                                                 <input name="tax" type="text"
                                                     class="taxprice decimal-input my-input-disable-class editable-three d-none"
-                                                    value="{{$invoice->invoice->tax ?? 0.00}}"
-                                                    placeholder="0.00" style="border:none">
-                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->tax ?? '0.00'}}</span>
+                                                    value="{{ $invoice->invoice->tax ?? 0.0 }}" placeholder="0.00"
+                                                    style="border:none">
+                                                <span class="previewable-three"
+                                                    style="width: 190px;">{{ $invoice->invoice->tax ?? '0.00' }}</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -825,8 +885,11 @@
                                                 <span class="p-2">$</span>
                                                 <input name="shipping" type="text"
                                                     class="shipping decimal-input my-input-disable-class editable-three d-none"
-                                                    placeholder="0.00" value="{{$invoice->invoice->shipping ?? 0.00}}" style="border:none">
-                                                <span class="previewable-three" style="width: 190px;">{{$invoice->invoice->shipping ?? '0.00'}} </span>
+                                                    placeholder="0.00" value="{{ $invoice->invoice->shipping ?? 0.0 }}"
+                                                    style="border:none">
+                                                <span class="previewable-three"
+                                                    style="width: 190px;">{{ $invoice->invoice->shipping ?? '0.00' }}
+                                                </span>
                                             </div>
                                         </td>
                                     </tr>
@@ -840,10 +903,10 @@
                                                 <span class="text-danger credit-span" style="width: 190px !important;">
                                                     (<input name="credit" type="text"
                                                         class="credit text-danger p-0 decimal-input my-input-disable-class editable-three d-none"
-                                                        value="{{$invoice->invoice->credit ?? 0.00}}"
+                                                        value="{{ $invoice->invoice->credit ?? 0.0 }}"
                                                         style="border:none; width: 3.4ch; outline: 0 !important"
                                                         oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
-                                                        class="previewable-three">{{$invoice->invoice->credit ?? '0.00'}}</span>)
+                                                        class="previewable-three">{{ $invoice->invoice->credit ?? '0.00' }}</span>)
                                                 </span>
                                             </div>
                                         </td>
@@ -1011,63 +1074,63 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <script>
-            $(document).ready(function() {
-        
-                function updateAmount(row) {
-                    var totalHours = parseFloat(row.find('.total-hours').val().replace(',', '.')) || 0;
-                    var calculatedRate = parseFloat(row.find('.calculated-rate').val()) || 0;
-                    var amount = totalHours * calculatedRate;
-        
-                    row.find('.amount').val(amount.toFixed(2));
-        
-                    updateSubtotal();
-                }
-        
-                function updateSubtotal() {
-                    var subtotal = 0;
-                    // Loop through each row and accumulate the total amount
-                    $('.calc-tr').each(function() {
-                        var rowAmount = parseFloat($(this).find('.amount').val()) || 0;
-                        subtotal += rowAmount;
-                    });
-        
-                    $('.subtotal-text').text(subtotal.toFixed(2));
-                    $('.subtotal').val(subtotal.toFixed(2));
-        
-                    // Call checkoutTotal to update due amount
-                    checkoutTotal();
-                }
-        
-                function checkoutTotal() {
-                    var subtotal = parseFloat($('.subtotal').val()) || 0;
-                    var tax = parseFloat($('.taxprice').val()) || 0;
-                    var ship = parseFloat($('.shipping').val()) || 0;
-                    var credit = parseFloat($('.credit').val()) || 0;
-        
-                    var due = subtotal + tax + ship - credit;
-        
-                    $('.due').val(due.toFixed(2));
-                    $('.due-text').text(due.toFixed(2));
-                }
-        
-                // Event Listeners for input fields
+    <script>
+        $(document).ready(function() {
+
+            function updateAmount(row) {
+                var totalHours = parseFloat(row.find('.total-hours').val().replace(',', '.')) || 0;
+                var calculatedRate = parseFloat(row.find('.calculated-rate').val()) || 0;
+                var amount = totalHours * calculatedRate;
+
+                row.find('.amount').val(amount.toFixed(2));
+
+                updateSubtotal();
+            }
+
+            function updateSubtotal() {
+                var subtotal = 0;
+                // Loop through each row and accumulate the total amount
                 $('.calc-tr').each(function() {
-                    var row = $(this);
-                    row.find('.total-hours, .calculated-rate').on('input', function() {
-                        updateAmount(row);
-                    });
+                    var rowAmount = parseFloat($(this).find('.amount').val()) || 0;
+                    subtotal += rowAmount;
+                });
+
+                $('.subtotal-text').text(subtotal.toFixed(2));
+                $('.subtotal').val(subtotal.toFixed(2));
+
+                // Call checkoutTotal to update due amount
+                checkoutTotal();
+            }
+
+            function checkoutTotal() {
+                var subtotal = parseFloat($('.subtotal').val()) || 0;
+                var tax = parseFloat($('.taxprice').val()) || 0;
+                var ship = parseFloat($('.shipping').val()) || 0;
+                var credit = parseFloat($('.credit').val()) || 0;
+
+                var due = subtotal + tax + ship - credit;
+
+                $('.due').val(due.toFixed(2));
+                $('.due-text').text(due.toFixed(2));
+            }
+
+            // Event Listeners for input fields
+            $('.calc-tr').each(function() {
+                var row = $(this);
+                row.find('.total-hours, .calculated-rate').on('input', function() {
                     updateAmount(row);
                 });
-        
-                $('.credit, .taxprice, .shipping').on('input', function() {
-                    checkoutTotal();
-                });
-        
-                // Initial calculations on page load
-                updateSubtotal();
+                updateAmount(row);
             });
-        </script>
+
+            $('.credit, .taxprice, .shipping').on('input', function() {
+                checkoutTotal();
+            });
+
+            // Initial calculations on page load
+            updateSubtotal();
+        });
+    </script>
 
 
     <script src="{{ asset('assetsNew/dist/js/jodit.fat.min.js') }}"></script>
@@ -1268,6 +1331,54 @@
                     editButton.classList.add("btn-primary");
                 }
             });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButton = document.querySelector(".edit-btn-four");
+            const saveButton = document.querySelector(".save-btn-four");
+            const editableFields = document.querySelectorAll(".editable-four");
+            const previewableFields = document.querySelectorAll(".previewable-four");
+
+            editButton.addEventListener("click", function() {
+                // Toggle visibility of input fields
+                editableFields.forEach(field => field.classList.toggle("d-none"));
+                previewableFields.forEach(field => field.classList.toggle("d-none"));
+                // Toggle Save button visibility
+                saveButton.classList.toggle("d-none");
+
+                // Toggle text and button color
+                if (editButton.textContent.trim() === "Edit") {
+                    editButton.textContent = "Cancel";
+                    editButton.classList.remove("btn-primary");
+                    editButton.classList.add("btn-danger");
+                } else {
+                    editButton.textContent = "Edit";
+                    editButton.classList.remove("btn-danger");
+                    editButton.classList.add("btn-primary");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButton = document.querySelector(".edit-site");
+            const saveButton = document.querySelector(".save-site");
+            const editIcon = editButton.querySelector("i"); // Select the <i> tag inside the button
+            const sitePreview = document.querySelector(".site-preview");
+            const siteInput = document.querySelector(".site-input");
+
+            if (editButton && editIcon && sitePreview && siteInput) {
+                editButton.addEventListener("click", function() {
+                    editButton.classList.toggle("d-none");
+                    saveButton.classList.add("d-flex");
+                    sitePreview.classList.toggle("d-none");
+                    siteInput.classList.toggle("d-none");
+
+                });
+            }
         });
     </script>
 

@@ -168,6 +168,12 @@ class WorkOrder extends Model
     {
         return $query->where('status', Status::PAID);
     }
+
+    public function invoiceProducts()
+    {
+        return $this->hasMany(InvoiceProduct::class, 'wo_id');
+    }
+
     // public function scopePaidInvoice($query)
     // {
     //     return $query->whereHas('invoice', function ($paid) {

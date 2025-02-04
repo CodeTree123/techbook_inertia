@@ -803,7 +803,7 @@ class CustomerController extends Controller
     public function viewInvoice(Request $request,$id)
     {
         $pageTitle = "Customer Invoice";
-        $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes')->find($id);
+        $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes', 'invoiceProducts')->find($id);
         
         $attend = CheckInOut::where('work_order_id', $id)->with('technician');
         $firstHour = $attend->first();
@@ -811,17 +811,6 @@ class CustomerController extends Controller
         $wps= $attend->get();
         $aRate = CheckInOut::with('workOrder.customer')->where('work_order_id', $id)->sum('total_hours');
         $aRate = round($aRate * 2) / 2;
-
-        // if($aRate == 1){
-        //     $invoiceProduct = new InvoiceProduct();
-        //     $invoiceProduct->wo_id = $id;
-        //     $invoiceProduct->qty = $request->qty;
-        //     $invoiceProduct->desc = $request->desc;
-        //     $invoiceProduct->price = $request->price;
-        //     $invoiceProduct->save();
-        // }else{
-
-        // }
 
         // Initialize total price variable
         $totalPrice = 0;
@@ -857,9 +846,11 @@ class CustomerController extends Controller
             // Add to total price
             $totalPrice += $wp->amount;
         }
-        //dd($wps);
 
-        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate'));
+        $firstHourProduct = $invoice->invoiceProducts->where('is_primary', 1)->first();
+        $additionalHourProduct = $invoice->invoiceProducts->where('is_additional', 1)->first();
+
+        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct'));
     }
 
 

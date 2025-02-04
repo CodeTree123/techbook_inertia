@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\WorkOrder;
 use App\Models\CustomerInvoice;
 use App\Constants\Status;
+use App\Models\InvoiceProduct;
 
 class InvoiceController extends Controller
 {
@@ -102,6 +103,76 @@ class InvoiceController extends Controller
         $invoice->credit = $request->credit;
 
         $invoice->save();
+
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
+
+    public function updateSiteNumber(Request $request, $id)
+    {
+        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+
+        $invoice->site_num = $request->site_num;
+
+        $invoice->save();
+
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
+
+    public function updateFirstHourProduct(Request $request, $woId)
+    {
+        $existInvoiceProduct = InvoiceProduct::where('wo_id',$woId)->where('is_primary',1)->first();
+
+        if($existInvoiceProduct)
+        {
+            $existInvoiceProduct->wo_id = $woId;
+            $existInvoiceProduct->qty = 1;
+            $existInvoiceProduct->desc = $request->desc;
+            $existInvoiceProduct->price = $request->price;
+            $existInvoiceProduct->is_primary = 1;
+
+            $existInvoiceProduct->save();
+        }else{
+            $invoiceProduct = new InvoiceProduct();
+
+            $invoiceProduct->wo_id = $woId;
+            $invoiceProduct->qty = 1;
+            $invoiceProduct->desc = $request->desc;
+            $invoiceProduct->price = $request->price;
+            $invoiceProduct->is_primary = 1;
+
+            $invoiceProduct->save();
+        }
+
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
+
+    public function updateAdditionalHourProduct(Request $request, $woId)
+    {
+        $existInvoiceProduct = InvoiceProduct::where('wo_id',$woId)->where('is_additional',1)->first();
+
+        if($existInvoiceProduct)
+        {
+            $existInvoiceProduct->wo_id = $woId;
+            $existInvoiceProduct->qty = $request->qty;
+            $existInvoiceProduct->desc = $request->desc;
+            $existInvoiceProduct->price = $request->price;
+            $existInvoiceProduct->is_additional = 1;
+
+            $existInvoiceProduct->save();
+        }else{
+            $invoiceProduct = new InvoiceProduct();
+
+            $invoiceProduct->wo_id = $woId;
+            $invoiceProduct->qty = $request->qty;
+            $invoiceProduct->desc = $request->desc;
+            $invoiceProduct->price = $request->price;
+            $invoiceProduct->is_additional = 1;
+
+            $invoiceProduct->save();
+        }
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);

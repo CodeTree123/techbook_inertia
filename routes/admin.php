@@ -264,5 +264,9 @@ Route::middleware('admin')->group(function () {
         Route::post('update-invoice-wo-req/{id}', 'updateWoReq')->name('invoice.updateWoReq');
         Route::post('update-invoice-wo-per/{id}', 'updateWoPer')->name('invoice.updateWoPer');
         Route::post('update-invoice-pay/{id}', 'updateInvoicePay')->name('invoice.updateInvoicePay');
+        Route::post('update-invoice-site_num/{id}', 'updateSiteNumber')->name('invoice.updateSiteNumber');
+
+        Route::post('update-invoice-primaryProduct/{id}', 'updateFirstHourProduct')->name('invoice.updateFirstHourProduct');
+        Route::post('update-invoice-additionalProduct/{id}', 'updateAdditionalHourProduct')->name('invoice.updateAdditionalHourProduct');
     });
 });
