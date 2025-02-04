@@ -15,6 +15,7 @@ use App\Models\CustomerInvoice;
 use App\Models\TicketNotes;
 use App\Models\workOrderPerformed;
 use App\Models\CheckInOut;
+use App\Models\InvoiceProduct;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -799,7 +800,7 @@ class CustomerController extends Controller
         return view('admin.customers.invoices.due_invoice', compact('pageTitle', 'invoices'));
     }
 
-    public function viewInvoice($id)
+    public function viewInvoice(Request $request,$id)
     {
         $pageTitle = "Customer Invoice";
         $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes')->find($id);
@@ -810,6 +811,17 @@ class CustomerController extends Controller
         $wps= $attend->get();
         $aRate = CheckInOut::with('workOrder.customer')->where('work_order_id', $id)->sum('total_hours');
         $aRate = round($aRate * 2) / 2;
+
+        // if($aRate == 1){
+        //     $invoiceProduct = new InvoiceProduct();
+        //     $invoiceProduct->wo_id = $id;
+        //     $invoiceProduct->qty = $request->qty;
+        //     $invoiceProduct->desc = $request->desc;
+        //     $invoiceProduct->price = $request->price;
+        //     $invoiceProduct->save();
+        // }else{
+
+        // }
 
         // Initialize total price variable
         $totalPrice = 0;
