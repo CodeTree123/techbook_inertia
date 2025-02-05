@@ -371,8 +371,8 @@
         @include('admin.customers.invoices.button')
         <div class="card">
             <div class="card-header d-flex justify-content-end">
-            <a href="{{ route('admin.invoice.log', $invoice->id) }}"
-            class="btn btn-outline-secondary ml-2 no-print me-auto">Kanban</a>
+                <a href="{{ route('admin.invoice.log', $invoice->id) }}"
+                    class="btn btn-outline-secondary ml-2 no-print me-auto">Kanban</a>
                 @if ($invoice->status == 15)
                     <button class="btn btn-success">Payment Complete</button>
                 @else
@@ -570,7 +570,7 @@
                         <button type="button" class="btn btn-dark" style="z-index: 99">Page Break</button>
                     </div>
                     <div>
-                        <table class="table mt-5 price-table mr-0" style="width:100%; justify-content: center;">
+                        <table class="table mt-5 mb-0 price-table mr-0" style="width:100%; justify-content: center;">
                             <thead>
                                 <tr class="bg-teal-table2"
                                     style="background-color: rgba(61, 135, 188, 0.1); border-bottom: 0">
@@ -580,11 +580,13 @@
                                     <th>Price</th>
                                     <th>Amount</th>
                                     <th class="addRowBtnCont">
+                                        <button onclick="document.getElementById('extraForm').submit()"
+                                            class="btn btn-success save-extra d-none">Save</button>
                                         <button id="addRowBtn" class="btn btn-success plus-button float-end">Add</button>
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
+                            <tbody>
                                 @if (@$firstHour->work_order_id == $invoice->id)
                                     <form action="{{ route('admin.invoice.updateFirstHourProduct', $invoice->id) }}"
                                         method="post">
@@ -598,7 +600,10 @@
                                             <td>
                                                 <textarea class="wo-per w-100 my-input-disable-class editable-three d-none"
                                                     style="border:none; height: 32px !important" name="desc">{{ $firstHourProduct->desc ?? @$firstHour->description }}</textarea>
-                                                <span class="previewable-three">{{  $firstHourProduct->desc ?? @$firstHour->description }}</span>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span
+                                                        class="previewable-three p-2">{{ $firstHourProduct->desc ?? @$firstHour->description }}</span>
+                                                </div>
                                             </td>
                                             <td>
                                                 <input type="text" class="date p-2 my-input-disable-class bg-white"
@@ -612,7 +617,8 @@
                                                         class="calculated-rate my-input-disable-class editable-three d-none"
                                                         value="{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}"
                                                         style="border:none" name="price">
-                                                    <span class="previewable-three">{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}</span>
+                                                    <span
+                                                        class="previewable-three">{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}</span>
                                                 </div>
                                             </td>
                                             <td>
@@ -642,17 +648,21 @@
                                                 <td>
                                                     <input type="text"
                                                         class="total-hours p-2 my-input-disable-class bg-white editable-four d-none"
-                                                        value="{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}" data-rate=""
-                                                        style="border:none" name="qty">
-                                                        
+                                                        value="{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}"
+                                                        data-rate="" style="border:none" name="qty">
+
                                                     <div class="input-group d-flex align-items-center">
-                                                        <span class="previewable-four">{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}</span>
+                                                        <span
+                                                            class="previewable-four p-2">{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <textarea name="desc" class="wo-per w-100 my-input-disable-class bg-white editable-four d-none"
                                                         style="border:none; height: 32px !important">{{ $additionalHourProduct->desc ?? @$wp->description }}</textarea>
-                                                    <span class="previewable-four">{{ $additionalHourProduct->desc ?? @$wp->description }}</span>
+                                                    <div class="input-group d-flex align-items-center">
+                                                        <span
+                                                            class="previewable-four p-2">{{ $additionalHourProduct->desc ?? @$wp->description }}</span>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <input type="text" class="date p-2 my-input-disable-class bg-white"
@@ -691,8 +701,73 @@
                                     @endforeach
                                 @endif
 
+                                @foreach ($extraHourProducts as $extraHourProduct)
+                                    <form action="{{ route('admin.invoice.updateExtraHour', $extraHourProduct->id) }}"
+                                        method="post">
+                                        @csrf
+                                        <tr class="calc-tr">
+                                            <td>
+                                                <input type="text"
+                                                    class="total-hours p-2 my-input-disable-class bg-white editable-five d-none"
+                                                    value="{{ $extraHourProduct->qty }}" data-rate=""
+                                                    style="border:none" name="qty">
+
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span class="previewable-five p-2">{{ $extraHourProduct->qty }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <textarea name="desc" class="wo-per w-100 my-input-disable-class bg-white editable-five d-none"
+                                                    style="border:none; height: 32px !important">{{ $extraHourProduct->desc }}</textarea>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span
+                                                        class="previewable-five p-2">{{ $extraHourProduct->desc }}</span>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <input type="text" class="date p-2 my-input-disable-class bg-white"
+                                                    value="{{ @$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                                    style="border:none" disabled>
+                                            </td>
+                                            <td>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text"
+                                                        class="calculated-rate my-input-disable-class bg-white editable-five d-none"
+                                                        value="{{ $extraHourProduct->price ?? '0.00' }}"
+                                                        style="border:none" name="price">
+                                                    <span
+                                                        class="previewable-five">{{ $extraHourProduct->price ?? '0.00' }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text" class="amount my-input-disable-class bg-white"
+                                                        value="{{ @$wp->amount }}" style="border:none" readonly>
+                                                </div>
+                                            </td>
+                                            <td class="addRowBtnCont d-flex gap-3">
+                                                <button type="submit"
+                                                    class="btn btn-success save-btn-five d-none">Save</button>
+                                                <button type="button" class="btn btn-primary edit-btn-five">Edit</button>
+                                                <button type="button" class="btn btn-danger removeBtn"
+                                                    style=" border:none;">Delete</button>
+                                            </td> <!-- Hidden remove button -->
+                                        </tr>
+                                    </form>
+                                @endforeach
+
                             </tbody>
                         </table>
+                        <form id="extraForm" action="{{ route('admin.invoice.extraHourProduct', $invoice->id) }}"
+                            method="post">
+                            @csrf
+                            <table class="table price-table mr-0 mt-0" style="width:100%; justify-content: center;">
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </form>
                     </div>
 
                     <form action="{{ route('admin.invoice.updateWoReq', $invoice->id) }}" method="post">
@@ -833,10 +908,10 @@
                                         <th></th>
                                         <th class="addRowBtnCont">
                                             <div class="d-flex justify-content-end">
-                                                <button type="submit" class="btn btn-success mr-3 save-btn-three d-none">
+                                                <button type="submit" class="btn btn-success mr-3 save-btn-pay d-none">
                                                     Save
                                                 </button>
-                                                <button type="button" class="btn btn-primary edit-btn-three">
+                                                <button type="button" class="btn btn-primary edit-btn-pay">
                                                     Edit
                                                 </button>
                                             </div>
@@ -851,10 +926,10 @@
                                             <div class="input-group w-auto d-flex align-items-center">
                                                 <span class="p-2">$</span>
                                                 <input type="text"
-                                                    class="subtotal decimal-input my-input-disable-class editable-three d-none"
+                                                    class="subtotal decimal-input my-input-disable-class editable-pay d-none"
                                                     value="{{ isset($totalPrice) ? $totalPrice : '0.00' }}"
                                                     placeholder="0.00" style="border:none">
-                                                <p class="subtotal-text decimal-input my-input-disable-class previewable-three mb-0"
+                                                <p class="subtotal-text decimal-input my-input-disable-class previewable-pay mb-0"
                                                     style="width: 190px;">0.00
                                                 </p>
                                             </div>
@@ -868,10 +943,10 @@
                                             <div class="input-group w-auto d-flex align-items-center">
                                                 <span class="p-2">$</span>
                                                 <input name="tax" type="text"
-                                                    class="taxprice decimal-input my-input-disable-class editable-three d-none"
+                                                    class="taxprice decimal-input my-input-disable-class editable-pay d-none"
                                                     value="{{ $invoice->invoice->tax ?? 0.0 }}" placeholder="0.00"
                                                     style="border:none">
-                                                <span class="previewable-three"
+                                                <span class="previewable-pay"
                                                     style="width: 190px;">{{ $invoice->invoice->tax ?? '0.00' }}</span>
                                             </div>
                                         </td>
@@ -886,10 +961,10 @@
                                             <div class="input-group w-auto d-flex align-items-center">
                                                 <span class="p-2">$</span>
                                                 <input name="shipping" type="text"
-                                                    class="shipping decimal-input my-input-disable-class editable-three d-none"
+                                                    class="shipping decimal-input my-input-disable-class editable-pay d-none"
                                                     placeholder="0.00" value="{{ $invoice->invoice->shipping ?? 0.0 }}"
                                                     style="border:none">
-                                                <span class="previewable-three"
+                                                <span class="previewable-pay"
                                                     style="width: 190px;">{{ $invoice->invoice->shipping ?? '0.00' }}
                                                 </span>
                                             </div>
@@ -904,11 +979,11 @@
                                                 <span class="p-2">$</span>
                                                 <span class="text-danger credit-span" style="width: 190px !important;">
                                                     (<input name="credit" type="text"
-                                                        class="credit text-danger p-0 decimal-input my-input-disable-class editable-three d-none"
+                                                        class="credit text-danger p-0 decimal-input my-input-disable-class editable-pay d-none"
                                                         value="{{ $invoice->invoice->credit ?? 0.0 }}"
                                                         style="border:none; width: 3.4ch; outline: 0 !important"
                                                         oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
-                                                        class="previewable-three">{{ $invoice->invoice->credit ?? '0.00' }}</span>)
+                                                        class="previewable-pay">{{ $invoice->invoice->credit ?? '0.00' }}</span>)
                                                 </span>
                                             </div>
                                         </td>
@@ -921,9 +996,9 @@
                                             <div class="input-group w-auto d-flex align-items-center">
                                                 <span class="p-2">$</span>
                                                 <input type="text"
-                                                    class="due decimal-input my-input-disable-class editable-three d-none"
+                                                    class="due decimal-input my-input-disable-class editable-pay d-none"
                                                     style="border:none" placeholder="0.00">
-                                                <span class="previewable-three due-text" style="width: 190px;">0.00</span>
+                                                <span class="previewable-pay due-text" style="width: 190px;">0.00</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -962,6 +1037,24 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function toggleSaveExtraVisibility() {
+                // Check if any element with the class 'extra-tr' exists
+                const extraTr = document.querySelector('.extra-tr');
+
+                // If the element exists, remove the 'd-none' class from '.save-extra'
+                if (extraTr) {
+                    const saveExtra = document.querySelector('.save-extra');
+                    if (saveExtra) {
+                        saveExtra.classList.remove('d-none');
+                    }
+                }
+            }
+
+            toggleSaveExtraVisibility();
+        });
+    </script>
 
 
     <script>
@@ -999,20 +1092,24 @@
         document.getElementById('addRowBtn').addEventListener('click', function() {
             const tableBody = document.getElementById('tableBody');
             const newRow = document.createElement('tr');
-            newRow.classList.add('calc-tr'); // Add class to identify rows for subtotal calculation
+            newRow.classList.add('calc-tr');
+            newRow.classList.add('extra-tr');
             newRow.innerHTML = `
-            <td><input type="text" class="total-hours p-2" value="" style="border:none"></td>
-            <td><textarea class="wo-per w-100" style="border:none;"></textarea></td>
-            <td><input type="text" class="p-2" value="" style="border:none"></td>
+            <td><input type="text" name='qty[]' class="total-hours p-2 bg-white" value="" style="border:none"></td>
+            <td><textarea class="wo-per w-100 bg-white" name='desc[]' style="border:none;"></textarea></td>
+            <td><input type="text" class="p-2 bg-white" value="" style="border:none"></td>
             <td><div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="calculated-rate" value="{{ @$wp->calculated_rate }}" style="border:none">
+                                        <input type="text" name='price[]' class="calculated-rate bg-white" value="{{ @$wp->calculated_rate }}" style="border:none">
                                     </div></td>
             <td><div class="input-group">
                 <span class="p-2">$</span>
-                <input type="text" class="amount" value="" style="border:none" readonly>
+                <input type="text" class="amount bg-white" value="" style="border:none" readonly>
             </div></td>
-            <td class="addRowBtnCont"><button class="btn btn-danger removeBtn" style="border:none;">✖</button></td>
+            <td class="addRowBtnCont d-flex gap-3">
+                <button class="btn bg-transparent text-white">Edit</button>
+                <button class="btn btn-danger removeBtn" style="border:none;">Delete</button>
+            </td>
         `;
 
             tableBody.appendChild(newRow);
@@ -1022,6 +1119,11 @@
             const totalHoursInput = newRow.querySelector('.total-hours');
             const calculatedRateInput = newRow.querySelector('.calculated-rate');
             const amountInput = newRow.querySelector('.amount');
+
+            const saveExtra = document.querySelector('.save-extra');
+            if (saveExtra) {
+                saveExtra.classList.remove('d-none');
+            }
 
             function updateAmount() {
                 const totalHours = parseFloat(totalHoursInput.value.replace(',', '.')) || 0;
@@ -1061,16 +1163,27 @@
             updateSubtotal();
         });
 
-        document.querySelectorAll('.removeBtn').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
+
+        document.getElementById('tableBody').addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('removeBtn')) {
+                const extraTr = document.querySelectorAll('.extra-tr')
+                    .length; // Get the current number of extra-tr rows
+                console.log(extraTr); // Log the current count
+
+                if (extraTr === 0) { // If no extra rows are left, hide the 'save-extra' button
+                    const saveExtra = document.querySelector('.save-extra');
+                    if (saveExtra) {
+                        saveExtra.classList.add('d-none');
+                    }
+                }
+
+                const row = event.target.closest('tr');
                 const tableBody = document.getElementById('tableBody');
                 tableBody.removeChild(row);
-                updateSubtotal(); // Update subtotal after removing the row
-            });
+                updateSubtotal();
+            }
         });
     </script>
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -1338,6 +1451,34 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const editButtonPay = document.querySelector(".edit-btn-pay");
+            const saveButtonPay = document.querySelector(".save-btn-pay");
+            const editableFieldsPay = document.querySelectorAll(".editable-pay");
+            const previewableFieldsPay = document.querySelectorAll(".previewable-pay");
+
+            editButtonPay.addEventListener("click", function() {
+                // Toggle visibility of input fields
+                editableFieldsPay.forEach(field => field.classList.toggle("d-none"));
+                previewableFieldsPay.forEach(field => field.classList.toggle("d-none"));
+                // Toggle Save button visibility
+                saveButtonPay.classList.toggle("d-none");
+
+                // Toggle text and button color
+                if (editButtonPay.textContent.trim() === "Edit") {
+                    editButtonPay.textContent = "Cancel";
+                    editButtonPay.classList.remove("btn-primary");
+                    editButtonPay.classList.add("btn-danger");
+                } else {
+                    editButtonPay.textContent = "Edit";
+                    editButtonPay.classList.remove("btn-danger");
+                    editButtonPay.classList.add("btn-primary");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
             const editButton = document.querySelector(".edit-btn-four");
             const saveButton = document.querySelector(".save-btn-four");
             const editableFields = document.querySelectorAll(".editable-four");
@@ -1360,6 +1501,45 @@
                     editButton.classList.remove("btn-danger");
                     editButton.classList.add("btn-primary");
                 }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select all edit buttons (for each row)
+            const editButtons = document.querySelectorAll(".edit-btn-five");
+
+            editButtons.forEach((editButton) => {
+                editButton.addEventListener("click", function() {
+                    // Get the parent row (tr) for this button
+                    const row = this.closest("tr");
+
+                    // Select the editable and previewable fields in this row
+                    const editableFields = row.querySelectorAll(".editable-five");
+                    const previewableFields = row.querySelectorAll(".previewable-five");
+
+                    // Select the Save button for this row
+                    const saveButton = row.querySelector(".save-btn-five");
+
+                    // Toggle visibility of input fields
+                    editableFields.forEach(field => field.classList.toggle("d-none"));
+                    previewableFields.forEach(field => field.classList.toggle("d-none"));
+
+                    // Toggle Save button visibility
+                    saveButton.classList.toggle("d-none");
+
+                    // Toggle the text and button color of the edit button
+                    if (editButton.textContent.trim() === "Edit") {
+                        editButton.textContent = "Cancel";
+                        editButton.classList.remove("btn-primary");
+                        editButton.classList.add("btn-danger");
+                    } else {
+                        editButton.textContent = "Edit";
+                        editButton.classList.remove("btn-danger");
+                        editButton.classList.add("btn-primary");
+                    }
+                });
             });
         });
     </script>
