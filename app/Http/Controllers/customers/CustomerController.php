@@ -849,8 +849,9 @@ class CustomerController extends Controller
 
         $firstHourProduct = $invoice->invoiceProducts->where('is_primary', 1)->first();
         $additionalHourProduct = $invoice->invoiceProducts->where('is_additional', 1)->first();
+        $extraHourProducts = $invoice->invoiceProducts->where('is_additional', 0)->where('is_primary', 0);
 
-        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct'));
+        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct', 'extraHourProducts'));
     }
 
 

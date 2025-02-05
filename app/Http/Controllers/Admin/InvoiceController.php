@@ -254,4 +254,53 @@ class InvoiceController extends Controller
 
         return view('admin.customers.invoices.logs', compact('pageTitle','logs','invoice'));
     }
+
+    public function extraHourProduct(Request $request, $woId)
+    {
+        $qty = $request->input('qty');
+        $desc = $request->input('desc');
+        $price = $request->input('price');
+
+        $productsArray = [];
+        foreach ($qty as $index => $quantity) {
+            $productsArray[] = [
+                'qty' => $quantity,
+                'desc' => $desc[$index],
+                'price' => $price[$index],
+            ];
+        }
+
+        if (!empty($productsArray)) 
+        {
+            foreach($productsArray as $product)
+            {
+                $invoiceProduct = new InvoiceProduct();
+
+                $invoiceProduct->wo_id = $woId;
+                $invoiceProduct->qty = $product['qty'];
+                $invoiceProduct->desc = $product['desc'];
+                $invoiceProduct->price = $product['price'];
+        
+                $invoiceProduct->save();
+            }
+        } 
+
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
+
+    public function updateExtraHour(Request $request, $id)
+    {
+
+        $invoiceProduct = InvoiceProduct::find($id);
+
+        $invoiceProduct->qty = $request->qty;
+        $invoiceProduct->desc = $request->desc;
+        $invoiceProduct->price = $request->price;
+
+        $invoiceProduct->save();
+
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
 }
