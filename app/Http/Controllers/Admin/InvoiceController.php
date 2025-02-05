@@ -18,6 +18,12 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_CLOSED;
         $invoice->status = Status::NEEDS_APPROVAL;
         $invoice->save();
+
+        $action = "Closed";
+        $changes = "Closed Needs Approval";
+
+        invoiceLog($id, $action, $changes);
+
         $notify[] = ['success', 'Invoice updated successfully'];
         return to_route('customer.invoice.history')->withNotify($notify);
     }
@@ -28,6 +34,11 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::INVOICED;
         $invoice->save();
+
+        $action = "Invoice";
+        $changes = "Billing Invoice";
+
+        invoiceLog($id, $action, $changes);
         $notify[] = ['success', 'Invoice updated successfully'];
         return back()->withNotify($notify);
     }
@@ -42,6 +53,12 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::PAID;
         $invoice->save();
+
+        $action = "Paid";
+        $changes = "Billing Paid " ."Reference code: " .$request->reference_code;
+
+        invoiceLog($id, $action, $changes);
+
         return response()->json(['message' => 'Invoice updated successfully']);
     }
 
@@ -52,6 +69,12 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::APPROVED;
         $invoice->save();
+
+        $action = "Revert";
+        $changes = "Billing Approved";
+
+        invoiceLog($id, $action, $changes);
+
         $notify[] = ['success', 'Revert successfully'];
         return back()->withNotify($notify);
     }
@@ -59,17 +82,27 @@ class InvoiceController extends Controller
     public function updateInvoiceOverview(Request $request, $id)
     {
         $invoice = CustomerInvoice::where('work_order_id', $id)->first();
-
+    
         $invoice->job = $request->job;
         $invoice->date = $request->date;
         $invoice->p_o = $request->p_o;
         $invoice->terms = $request->terms;
-
+    
         $invoice->save();
+  
+        $action = "Edit";
+        $changes = "Manual entry" . 
+                   " Job: " ."P" . ($request->job ?? '') . 
+                   " Date: " . ($request->date ?? '') . 
+                   " Purchase order: " . ($request->p_o ?? '') . 
+                   " Term: " . ($request->terms ?? '');
+
+        invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
     }
+    
 
     public function updateWoReq(Request $request, $id)
     {
@@ -113,6 +146,11 @@ class InvoiceController extends Controller
 
         $invoice->save();
 
+        $action = "Edit";
+        $changes = "Manual entry" . " Sales tax " ."$" . ($request->tax ?? '') . " Shipping cost " ."$" . ($request->shipping ?? '') . " Credit " ."$" . ($request->credit ?? '');
+
+        invoiceLog($id, $action, $changes);
+
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
     }
@@ -147,7 +185,7 @@ class InvoiceController extends Controller
 
             $existInvoiceProduct->save();
             $action = "Edit";
-            $changes = "Manual edit first hour" . "Description" . $request->desc . "Price" . $request->price;
+            $changes = "Manual edit first hour" . " Description " . ($request->desc ?? '') . " Price: " ."$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
         } else {
@@ -161,7 +199,7 @@ class InvoiceController extends Controller
 
             $invoiceProduct->save();
             $action = "Created";
-            $changes = "Manual created first hour" . "-" . $request->desc . "Price" . $request->price;
+            $changes = "Manual created first hour" . "-" . ($request->desc ?? '') . "Price: " ."$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
         }
@@ -183,7 +221,7 @@ class InvoiceController extends Controller
 
             $existInvoiceProduct->save();
             $action = "Edit";
-            $changes = "Manual edit additional hour" . "Quantity" . $request->qty . "Description" . $request->desc . "Price" . $request->price;
+            $changes = "Manual edit additional hour " . "Quantity" . $request->qty ?? '' . "Description" . $request->desc ?? '' . "Price: " ."$" . $request->price ?? '';
 
             invoiceLog($woId, $action, $changes);
         } else {
@@ -197,7 +235,7 @@ class InvoiceController extends Controller
 
             $invoiceProduct->save();
             $action = "Edit";
-            $changes = "Manual created additional hour" . "Quantity" . $request->qty  . "Description" . $request->desc . "Price" . $request->price;
+            $changes = "Manual created additional hour" . "Quantity" . $request->qty ?? ''  . "Description" . $request->desc ?? '' . "Price: " ."$" . $request->price ?? '';
 
             invoiceLog($woId, $action, $changes);
         }
@@ -210,8 +248,8 @@ class InvoiceController extends Controller
     {
         $pageTitle = "Invoice Logs";
         $logs = CustomerInvoiceLog::where('wo_id', $id)
-            ->with('user') // To get the user info (if necessary)
-            ->paginate(20); // Paginate 20 logs per page
+            ->with('user')
+            ->latest()->paginate(8); 
 
         return view('admin.customers.invoices.logs', compact('pageTitle','logs'));
     }
