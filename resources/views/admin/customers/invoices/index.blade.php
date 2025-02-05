@@ -381,6 +381,8 @@
                     @if ($invoice->status == 12)
                         <a href="{{ route('admin.closed.needs-approval', $invoice->id) }}"
                             class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
+                            <a href="{{ route('admin.invoice.log', $invoice->id) }}"
+                            class="btn btn-outline-secondary ml-2 no-print me-auto">Logs</a>
                         <a href="{{ route('admin.billing.invoiced', $invoice->id) }}"
                             class="btn btn-outline-secondary ml-2 no-print" id="invoiceButton"
                             data-invoice-url="{{ route('admin.billing.invoiced', $invoice->id) }}">

@@ -5,6 +5,7 @@ use App\Lib\GoogleAuthenticator;
 use App\Models\Extension;
 use App\Models\Frontend;
 use App\Models\GeneralSetting;
+use App\Models\CustomerInvoiceLog;
 use Carbon\Carbon;
 use App\Lib\Captcha;
 use App\Lib\ClientInfo;
@@ -328,4 +329,15 @@ function verifyG2fa($user, $code, $secret = null)
     } else {
         return false;
     }
+}
+
+function invoiceLog($wId,$action,$changes)
+{
+    $aId = auth('admin')->user()->id;
+    $logs = new CustomerInvoiceLog();
+    $logs->wo_id = $wId;
+    $logs->admin_id = $aId;
+    $logs->action = $action;
+    $logs->changes = $changes;
+    $logs->save();
 }
