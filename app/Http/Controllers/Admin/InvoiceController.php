@@ -247,10 +247,11 @@ class InvoiceController extends Controller
     public function viewInvoiceLogs($id)
     {
         $pageTitle = "Invoice Logs";
+        $invoice = $id;
         $logs = CustomerInvoiceLog::where('wo_id', $id)
             ->with('user')
             ->latest()->paginate(8); 
 
-        return view('admin.customers.invoices.logs', compact('pageTitle','logs'));
+        return view('admin.customers.invoices.logs', compact('pageTitle','logs','invoice'));
     }
 }
