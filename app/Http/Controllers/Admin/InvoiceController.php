@@ -8,6 +8,7 @@ use App\Models\WorkOrder;
 use App\Models\CustomerInvoice;
 use App\Constants\Status;
 use App\Models\InvoiceProduct;
+use App\Models\CustomerInvoiceLog;
 
 class InvoiceController extends Controller
 {
@@ -20,7 +21,7 @@ class InvoiceController extends Controller
         $notify[] = ['success', 'Invoice updated successfully'];
         return to_route('customer.invoice.history')->withNotify($notify);
     }
-    
+
     public function stageStatusBillingInvoiced($id)
     {
         $invoice = WorkOrder::find($id);
@@ -57,7 +58,7 @@ class InvoiceController extends Controller
 
     public function updateInvoiceOverview(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
 
         $invoice->job = $request->job;
         $invoice->date = $request->date;
@@ -72,11 +73,15 @@ class InvoiceController extends Controller
 
     public function updateWoReq(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
 
         $invoice->wo_req = $request->wo_req;
 
         $invoice->save();
+        $action = "Edit";
+        $changes = "Manual edit work requested: " . "-" . $request->wo_req;
+
+        invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
@@ -84,11 +89,15 @@ class InvoiceController extends Controller
 
     public function updateWoPer(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
 
         $invoice->wo_per = $request->wo_per;
 
         $invoice->save();
+        $action = "Edit";
+        $changes = "Manual edit work performed: " . "-" . $request->wo_per;
+
+        invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
@@ -96,7 +105,7 @@ class InvoiceController extends Controller
 
     public function updateInvoicePay(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
 
         $invoice->tax = $request->tax;
         $invoice->shipping = $request->shipping;
@@ -110,11 +119,16 @@ class InvoiceController extends Controller
 
     public function updateSiteNumber(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id',$id)->first();
+        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
 
         $invoice->site_num = $request->site_num;
 
         $invoice->save();
+
+        $action = "Edit";
+        $changes = "Manual edit customer site" . "-" . $request->site_num;
+
+        invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
@@ -122,10 +136,9 @@ class InvoiceController extends Controller
 
     public function updateFirstHourProduct(Request $request, $woId)
     {
-        $existInvoiceProduct = InvoiceProduct::where('wo_id',$woId)->where('is_primary',1)->first();
+        $existInvoiceProduct = InvoiceProduct::where('wo_id', $woId)->where('is_primary', 1)->first();
 
-        if($existInvoiceProduct)
-        {
+        if ($existInvoiceProduct) {
             $existInvoiceProduct->wo_id = $woId;
             $existInvoiceProduct->qty = 1;
             $existInvoiceProduct->desc = $request->desc;
@@ -133,7 +146,11 @@ class InvoiceController extends Controller
             $existInvoiceProduct->is_primary = 1;
 
             $existInvoiceProduct->save();
-        }else{
+            $action = "Edit";
+            $changes = "Manual edit first hour" . "Description" . $request->desc . "Price" . $request->price;
+
+            invoiceLog($woId, $action, $changes);
+        } else {
             $invoiceProduct = new InvoiceProduct();
 
             $invoiceProduct->wo_id = $woId;
@@ -143,6 +160,10 @@ class InvoiceController extends Controller
             $invoiceProduct->is_primary = 1;
 
             $invoiceProduct->save();
+            $action = "Created";
+            $changes = "Manual created first hour" . "-" . $request->desc . "Price" . $request->price;
+
+            invoiceLog($woId, $action, $changes);
         }
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
@@ -151,10 +172,9 @@ class InvoiceController extends Controller
 
     public function updateAdditionalHourProduct(Request $request, $woId)
     {
-        $existInvoiceProduct = InvoiceProduct::where('wo_id',$woId)->where('is_additional',1)->first();
+        $existInvoiceProduct = InvoiceProduct::where('wo_id', $woId)->where('is_additional', 1)->first();
 
-        if($existInvoiceProduct)
-        {
+        if ($existInvoiceProduct) {
             $existInvoiceProduct->wo_id = $woId;
             $existInvoiceProduct->qty = $request->qty;
             $existInvoiceProduct->desc = $request->desc;
@@ -162,7 +182,11 @@ class InvoiceController extends Controller
             $existInvoiceProduct->is_additional = 1;
 
             $existInvoiceProduct->save();
-        }else{
+            $action = "Edit";
+            $changes = "Manual edit additional hour" . "Quantity" . $request->qty . "Description" . $request->desc . "Price" . $request->price;
+
+            invoiceLog($woId, $action, $changes);
+        } else {
             $invoiceProduct = new InvoiceProduct();
 
             $invoiceProduct->wo_id = $woId;
@@ -172,9 +196,23 @@ class InvoiceController extends Controller
             $invoiceProduct->is_additional = 1;
 
             $invoiceProduct->save();
+            $action = "Edit";
+            $changes = "Manual created additional hour" . "Quantity" . $request->qty  . "Description" . $request->desc . "Price" . $request->price;
+
+            invoiceLog($woId, $action, $changes);
         }
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
+    }
+
+    public function viewInvoiceLogs($id)
+    {
+        $pageTitle = "Invoice Logs";
+        $logs = CustomerInvoiceLog::where('wo_id', $id)
+            ->with('user') // To get the user info (if necessary)
+            ->paginate(20); // Paginate 20 logs per page
+
+        return view('admin.customers.invoices.logs', compact('pageTitle','logs'));
     }
 }
