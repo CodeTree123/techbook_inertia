@@ -804,9 +804,10 @@ class CustomerController extends Controller
     public function viewInvoice(Request $request,$id)
     {
         $pageTitle = "Customer Invoice";
+        $wId = $id;
         $logs = CustomerInvoiceLog::where('wo_id', $id)
         ->with('user')
-        ->latest()->get();
+        ->latest()->paginate(3);
         $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes', 'invoiceProducts')->find($id);
         
         $attend = CheckInOut::where('work_order_id', $id)->with('technician');
@@ -855,7 +856,7 @@ class CustomerController extends Controller
         $additionalHourProduct = $invoice->invoiceProducts->where('is_additional', 1)->first();
         $extraHourProducts = $invoice->invoiceProducts->where('is_additional', 0)->where('is_primary', 0);
 
-        return view('admin.customers.invoices.index', compact('pageTitle', 'logs', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct', 'extraHourProducts'));
+        return view('admin.customers.invoices.index', compact('pageTitle','wId', 'logs', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct', 'extraHourProducts'));
     }
 
 

@@ -313,15 +313,13 @@ class InvoiceController extends Controller
         return back()->withNotify($notify);
     }
 
-    public function viewInvoiceLogs($id)
+    public function getLogs($id,$page)
     {
-        $pageTitle = "Invoice Logs";
-        $invoice = $id;
-        $logs = CustomerInvoiceLog::where('wo_id', $id)
-            ->with('user')
-            ->latest()->paginate(8);
-        return view('admin.customers.invoices.logs', compact('pageTitle','logs','invoice'));
+        $logs = CustomerInvoiceLog::where('wo_id', $id)->with('user')
+        ->latest()->paginate(5, ['*'], 'page', $page);
+        return view('admin.customers.invoices.logs', compact('logs'))->render();
     }
+
 
     public function extraHourProduct(Request $request, $woId)
     {
@@ -338,20 +336,18 @@ class InvoiceController extends Controller
             ];
         }
 
-        if (!empty($productsArray)) 
-        {
-            foreach($productsArray as $product)
-            {
+        if (!empty($productsArray)) {
+            foreach ($productsArray as $product) {
                 $invoiceProduct = new InvoiceProduct();
 
                 $invoiceProduct->wo_id = $woId;
                 $invoiceProduct->qty = $product['qty'];
                 $invoiceProduct->desc = $product['desc'];
                 $invoiceProduct->price = $product['price'];
-        
+
                 $invoiceProduct->save();
             }
-        } 
+        }
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);
