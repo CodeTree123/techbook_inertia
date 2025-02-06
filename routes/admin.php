@@ -258,7 +258,6 @@ Route::middleware('admin')->group(function () {
         Route::get('closed/needs/approved/{id}', 'stageStatusClosedNeedsApproval')->name('closed.needs-approval');
         Route::post('billing/paid/{id}', 'stageStatusBillingPaid')->name('billing.paid');
         Route::get('revert/{id}', 'revert')->name('revert');
-        Route::get('invoice/logs/{id}', 'viewInvoiceLogs')->name('invoice.log');
 
         // invoice updated
         Route::post('update-invoice-overview/{id}', 'updateInvoiceOverview')->name('invoice.updateInvoiceOverview');
@@ -271,5 +270,8 @@ Route::middleware('admin')->group(function () {
         Route::post('update-invoice-additionalProduct/{id}', 'updateAdditionalHourProduct')->name('invoice.updateAdditionalHourProduct');
         Route::post('create-invoice-extraProduct/{id}', 'extraHourProduct')->name('invoice.extraHourProduct');
         Route::post('update-invoice-extraProduct/{id}', 'updateExtraHour')->name('invoice.updateExtraHour');
+
+        //offcanvas ajax
+        Route::get('/logs/page/{id}/{page}', 'getLogs')->name('logs.paginate');
     });
 });
