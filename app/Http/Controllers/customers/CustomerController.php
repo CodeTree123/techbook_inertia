@@ -15,6 +15,7 @@ use App\Models\CustomerInvoice;
 use App\Models\TicketNotes;
 use App\Models\workOrderPerformed;
 use App\Models\CheckInOut;
+use App\Models\CustomerInvoiceLog;
 use App\Models\InvoiceProduct;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -803,6 +804,9 @@ class CustomerController extends Controller
     public function viewInvoice(Request $request,$id)
     {
         $pageTitle = "Customer Invoice";
+        $logs = CustomerInvoiceLog::where('wo_id', $id)
+        ->with('user')
+        ->latest()->get();
         $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes', 'invoiceProducts')->find($id);
         
         $attend = CheckInOut::where('work_order_id', $id)->with('technician');
@@ -850,7 +854,7 @@ class CustomerController extends Controller
         $firstHourProduct = $invoice->invoiceProducts->where('is_primary', 1)->first();
         $additionalHourProduct = $invoice->invoiceProducts->where('is_additional', 1)->first();
 
-        return view('admin.customers.invoices.index', compact('pageTitle', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct'));
+        return view('admin.customers.invoices.index', compact('pageTitle','logs', 'invoice', 'wps', 'totalPrice','firstHour','aRate', 'firstHourProduct','additionalHourProduct'));
     }
 
 

@@ -55,7 +55,7 @@ class InvoiceController extends Controller
         $invoice->save();
 
         $action = "Paid";
-        $changes = "Billing Paid " ."Reference code: " .$request->reference_code;
+        $changes = "Billing Paid " . "Reference code: " . $request->reference_code;
 
         invoiceLog($id, $action, $changes);
 
@@ -81,39 +81,55 @@ class InvoiceController extends Controller
 
     public function updateInvoiceOverview(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
-    
+        $invoice = CustomerInvoice::with('workOrder')->where('work_order_id', $id)->first();
+
+        if (!$invoice) {
+            return back()->withErrors(['Invoice not found.']);
+        }
+
+        $job = $invoice->job ?? optional($invoice->workOrder)->priority;
+        $date = $invoice->date;
+        $pO = $invoice->p_o ?? optional($invoice->workOrder)->p_o;
+        $term = $invoice->terms ?? optional($invoice->workOrder->customer)->billing_term;
+
         $invoice->job = $request->job;
         $invoice->date = $request->date;
         $invoice->p_o = $request->p_o;
         $invoice->terms = $request->terms;
-    
         $invoice->save();
-  
+
         $action = "Edit";
-        $changes = "Manual entry" . 
-                   " Job: " ."P" . ($request->job ?? '') . 
-                   " Date: " . ($request->date ?? '') . 
-                   " Purchase order: " . ($request->p_o ?? '') . 
-                   " Term: " . ($request->terms ?? '');
+        $changes = sprintf(
+            "Manual entry: Job: P%s, Date: %s, PO: %s, Term: %s | Previous: P%s, %s, %s, %s",
+            $request->job ?? '',
+            $request->date ?? '',
+            $request->p_o ?? '',
+            $request->terms ?? '',
+            $job ?? '',
+            $date ?? '',
+            $pO ?? '',
+            $term ?? ''
+        );
 
         invoiceLog($id, $action, $changes);
 
-        $notify[] = ['success', 'Invoice Updated Successfully'];
-        return back()->withNotify($notify);
+        return back()->withNotify([['success', 'Invoice Updated Successfully']]);
     }
-    
+
+
 
     public function updateWoReq(Request $request, $id)
     {
         $invoice = CustomerInvoice::where('work_order_id', $id)->first();
 
+        $woReq = $invoice->wo_req ?? optional($invoice->workOrder)->wo_requested;
+
         $invoice->wo_req = $request->wo_req;
 
         $invoice->save();
-        $action = "Edit";
-        $changes = "Manual edit work requested: " . "-" . $request->wo_req;
 
+        $action = "Edit";
+        $changes = sprintf("Manual entry: Work requested: %s | Previous: %s", $request->wo_req ?? '', $woReq ?? '');
         invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
@@ -122,13 +138,24 @@ class InvoiceController extends Controller
 
     public function updateWoPer(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
+        $invoice = CustomerInvoice::with('workOrder.notes')->where('work_order_id', $id)->first();
+
+        if ($invoice->wo_per) {
+            $woPer = $invoice->wo_per;
+        } else {
+            $woPerNote = $invoice->workOrder->notes->where('note_type', 'close_out_notes')->first();
+            $woPer = $woPerNote ? $woPerNote->note : '';
+        }
 
         $invoice->wo_per = $request->wo_per;
-
         $invoice->save();
+
         $action = "Edit";
-        $changes = "Manual edit work performed: " . "-" . $request->wo_per;
+        $changes = sprintf(
+            "Manual entry: Work performed: %s | Previous: %s",
+            $request->wo_per ?? '',
+            $woPer ?? ''
+        );
 
         invoiceLog($id, $action, $changes);
 
@@ -136,9 +163,14 @@ class InvoiceController extends Controller
         return back()->withNotify($notify);
     }
 
+
     public function updateInvoicePay(Request $request, $id)
     {
         $invoice = CustomerInvoice::where('work_order_id', $id)->first();
+
+        $tax = $invoice->tax ?? '';
+        $shipping = $invoice->shipping ?? '';
+        $credit = $invoice->credit ?? '';
 
         $invoice->tax = $request->tax;
         $invoice->shipping = $request->shipping;
@@ -147,7 +179,15 @@ class InvoiceController extends Controller
         $invoice->save();
 
         $action = "Edit";
-        $changes = "Manual entry" . " Sales tax " ."$" . ($request->tax ?? '') . " Shipping cost " ."$" . ($request->shipping ?? '') . " Credit " ."$" . ($request->credit ?? '');
+        $changes = sprintf(
+            "Manual entry: Tax: P%s, Shipping: %s, PO: %s, Credit: %s | Previous: P%s, %s, %s, %s",
+            $request->tax ?? '',
+            $request->shipping ?? '',
+            $request->credit ?? '',
+            $tax ?? '',
+            $shipping ?? '',
+            $credit ?? ''
+        );
 
         invoiceLog($id, $action, $changes);
 
@@ -157,14 +197,20 @@ class InvoiceController extends Controller
 
     public function updateSiteNumber(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id', $id)->first();
+        $invoice = CustomerInvoice::where('work_order_id.site', $id)->first();
+
+        $siteNum = $invoice->site_num ?? optional($invoice->workOrder->site)->site_id;
 
         $invoice->site_num = $request->site_num;
 
         $invoice->save();
 
         $action = "Edit";
-        $changes = "Manual edit customer site" . "-" . $request->site_num;
+        $changes = sprintf(
+            "Manual entry: Site number: %s | Previous: %s",
+            $request->site_num ?? '',
+            $siteNum ?? ''
+        );
 
         invoiceLog($id, $action, $changes);
 
@@ -174,9 +220,14 @@ class InvoiceController extends Controller
 
     public function updateFirstHourProduct(Request $request, $woId)
     {
-        $existInvoiceProduct = InvoiceProduct::where('wo_id', $woId)->where('is_primary', 1)->first();
+        $existInvoiceProduct = InvoiceProduct::with('workOrder.customer')->where('wo_id', $woId)->where('is_primary', 1)->first();
 
         if ($existInvoiceProduct) {
+
+            $desc = $existInvoiceProduct->desc ?? '';
+
+            $price = $existInvoiceProduct->price ?? optional($existInvoiceProduct->workOrder->customer)->s_rate_f;
+
             $existInvoiceProduct->wo_id = $woId;
             $existInvoiceProduct->qty = 1;
             $existInvoiceProduct->desc = $request->desc;
@@ -185,7 +236,13 @@ class InvoiceController extends Controller
 
             $existInvoiceProduct->save();
             $action = "Edit";
-            $changes = "Manual edit first hour" . " Description " . ($request->desc ?? '') . " Price: " ."$" . ($request->price ?? '');
+            $changes = sprintf(
+                "Manual entry: Description: %s, Price: %s | Previous: %s, %s",
+                $request->desc ?? '',
+                $request->price ?? '',
+                $desc ?? '',
+                $price ?? ''
+            );
 
             invoiceLog($woId, $action, $changes);
         } else {
@@ -199,7 +256,7 @@ class InvoiceController extends Controller
 
             $invoiceProduct->save();
             $action = "Created";
-            $changes = "Manual created first hour" . "-" . ($request->desc ?? '') . "Price: " ."$" . ($request->price ?? '');
+            $changes = "Manual created first hour" . "-" . ($request->desc ?? '') . "Price: " . "$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
         }
@@ -210,9 +267,13 @@ class InvoiceController extends Controller
 
     public function updateAdditionalHourProduct(Request $request, $woId)
     {
-        $existInvoiceProduct = InvoiceProduct::where('wo_id', $woId)->where('is_additional', 1)->first();
+        $existInvoiceProduct = InvoiceProduct::with('workOrder.customer')->where('wo_id', $woId)->where('is_additional', 1)->first();
 
         if ($existInvoiceProduct) {
+
+            $desc = $existInvoiceProduct->desc ?? '';
+            $price = $existInvoiceProduct->price ?? optional($existInvoiceProduct->workOrder->customer)->s_rate_a;
+
             $existInvoiceProduct->wo_id = $woId;
             $existInvoiceProduct->qty = $request->qty;
             $existInvoiceProduct->desc = $request->desc;
@@ -221,7 +282,15 @@ class InvoiceController extends Controller
 
             $existInvoiceProduct->save();
             $action = "Edit";
-            $changes = "Manual edit additional hour " . "Quantity" . $request->qty ?? '' . "Description" . $request->desc ?? '' . "Price: " ."$" . $request->price ?? '';
+            $changes = sprintf(
+                "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: %s, %s, %s",
+                $request->qty ?? '',
+                $request->desc ?? '',
+                $request->price ?? '',
+                $existInvoiceProduct->qty ?? '',
+                $desc ?? '',
+                $price ?? ''
+            );
 
             invoiceLog($woId, $action, $changes);
         } else {
@@ -234,8 +303,8 @@ class InvoiceController extends Controller
             $invoiceProduct->is_additional = 1;
 
             $invoiceProduct->save();
-            $action = "Edit";
-            $changes = "Manual created additional hour" . "Quantity" . $request->qty ?? ''  . "Description" . $request->desc ?? '' . "Price: " ."$" . $request->price ?? '';
+            $action = "Created";
+            $changes = "Manual created additional hour" . " Quantity " . ($request->qty ?? '')  . " Description " . ($request->desc ?? '') . " Price: " . "$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
         }
@@ -249,8 +318,8 @@ class InvoiceController extends Controller
         $pageTitle = "Invoice Logs";
         $logs = CustomerInvoiceLog::where('wo_id', $id)
             ->with('user')
-            ->latest()->paginate(8); 
+            ->latest()->paginate(8);
 
-        return view('admin.customers.invoices.logs', compact('pageTitle','logs'));
+        return view('admin.customers.invoices.logs', compact('pageTitle', 'logs'));
     }
 }
