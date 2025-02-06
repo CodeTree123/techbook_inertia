@@ -2528,6 +2528,10 @@ class UserController extends Controller
             $wo->status = Status::APPROVED;
             $wo->stage += 1;
 
+            $action = "Created";
+            $changes = "Billing Approved.";
+            invoiceLog($wo->id, $action, $changes);
+
             $preLog = WorkOrderTimeLog::where('column_name', 'stage')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'stage', $wo->id, $wo->updated_at, $preLog, 5, '', 'stage', "Work order stage updated: 'Closed' → 'Billing'", $id);
         } elseif ($wo->status == Status::ISSUE) {

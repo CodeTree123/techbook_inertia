@@ -370,10 +370,16 @@
     </style>
     @include('admin.customers.invoices.button')
     <div class="card">
+        <!-- Loader -->
+        <div id="loader" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="card-header d-flex justify-content-end">
-        <button class="btn btn-outline-secondary" id="viewLogDetailsBtn">
-    View Log Details
-</button>
+            <button class="btn btn-outline-secondary" id="viewLogDetailsBtn">
+                View Log
+            </button>
             @if ($invoice->status == 15)
             <button class="btn btn-success">Payment Complete</button>
             @else
@@ -657,7 +663,7 @@
                                     </td>
                                     <td>
                                         <input type="text" class="date p-2 my-input-disable-class bg-white"
-                                            value="{{ @$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                            value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
                                             style="border:none" disabled>
                                     </td>
                                     <td>
@@ -773,14 +779,14 @@
                             <textarea class="wo_close_out w-100 p-0 my-input-disable-class" style="border:none" name="wo_per">
 
                                     @if ($invoice->invoice->wo_per)
-{!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
-@else
-@foreach ($invoice->notes as $note)
-@if ($note->note_type == 'close_out_notes')
-<p>{{ $note->note }}</p>
-@endif
-@endforeach
-@endif
+                                    {!! $invoice->invoice->wo_per ? $invoice->invoice->wo_per : '' !!}
+                                    @else
+                                    @foreach ($invoice->notes as $note)
+                                    @if ($note->note_type == 'close_out_notes')
+                                    <p>{{ $note->note }}</p>
+                                    @endif
+                                    @endforeach
+                                    @endif
                                 </textarea>
                         </div>
                         <div id="inv_note" class="inv_note w-100 px-5 py-0 previewable-tw work-performed-preview">
