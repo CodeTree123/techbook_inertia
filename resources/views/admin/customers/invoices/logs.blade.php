@@ -1,4 +1,5 @@
 @extends('admin.layoutsNew.app')
+
 @section('content')
 <div class="content-wrapper" style="background-color: white; padding: 20px;">
 
@@ -37,6 +38,5 @@
             No logs available.
         </div>
     @endif
-
 </div>
 @endsection
