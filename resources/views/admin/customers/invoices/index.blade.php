@@ -366,46 +366,45 @@
                 padding: 0 !important;
                 margin-bottom: 0
             }
-        }
-    </style>
-    @include('admin.customers.invoices.button')
-    <div class="card">
-        <div class="card-header d-flex justify-content-end">
+        </style>
+        @include('admin.customers.invoices.button')
+        <div class="card">
+            <div class="card-header d-flex justify-content-end">
             <button class="btn btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#invoiceOffcanvas" aria-controls="invoiceOffcanvas">
                 View Log Details
             </button>
-            @if ($invoice->status == 15)
-            <button class="btn btn-success">Payment Complete</button>
-            @else
-            @if ($invoice->status == 13)
-            <a href="{{ route('admin.revert', $invoice->id) }}"
-                class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
-            @endif
-            @if ($invoice->status == 12)
-            <a href="{{ route('admin.closed.needs-approval', $invoice->id) }}"
-                class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
-            <a href="{{ route('admin.billing.invoiced', $invoice->id) }}"
-                class="btn btn-outline-secondary ml-2 no-print" id="invoiceButton"
-                data-invoice-url="{{ route('admin.billing.invoiced', $invoice->id) }}">
-                Invoice
-            </a>
-            @endif
-            @if ($invoice->status == 13)
-            <a href="{{ route('admin.billing.paid', $invoice->id) }}"
-                class="btn btn-outline-secondary ml-2 no-print" id="referCode">Paid</a>
-            @endif
-            @endif
-            <button class="btn btn-outline-secondary ml-2 no-print" onclick="window.print()">Convert to PDF</button>
-        </div>
-        <div class="card-body">
-            <div class="container-fluid">
-                <div class="row align-items-start top-print-nav">
-                    <div class="col-12 row justify-content-center">
-                        <img src="{{ asset('assetsNew/dist/img/invoicelogo.png') }}" alt="Company Logo"
-                            class="img-fluid" class="mx-1" style="width:140px">
-                    </div>
-                    <div class="col-md-3">
-                        <h4>INVOICE: {{ @$invoice->invoice->invoice_number }}</h4>
+                @if ($invoice->status == 15)
+                    <button class="btn btn-success">Payment Complete</button>
+                @else
+                    @if ($invoice->status == 13)
+                        <a href="{{ route('admin.revert', $invoice->id) }}"
+                            class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
+                    @endif
+                    @if ($invoice->status == 12)
+                        <a href="{{ route('admin.closed.needs-approval', $invoice->id) }}"
+                            class="btn btn-outline-secondary ml-2 no-print me-auto">Revert</a>
+                        <a href="{{ route('admin.billing.invoiced', $invoice->id) }}"
+                            class="btn btn-outline-secondary ml-2 no-print" id="invoiceButton"
+                            data-invoice-url="{{ route('admin.billing.invoiced', $invoice->id) }}">
+                            Invoice
+                        </a>
+                    @endif
+                    @if ($invoice->status == 13)
+                        <a href="{{ route('admin.billing.paid', $invoice->id) }}"
+                            class="btn btn-outline-secondary ml-2 no-print" id="referCode">Paid</a>
+                    @endif
+                @endif
+                <button class="btn btn-outline-secondary ml-2 no-print" onclick="window.print()">Convert to PDF</button>
+            </div>
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="row align-items-start top-print-nav">
+                        <div class="col-12 row justify-content-center">
+                            <img src="{{ asset('assetsNew/dist/img/invoicelogo.png') }}" alt="Company Logo"
+                                class="img-fluid" class="mx-1" style="width:140px">
+                        </div>
+                        <div class="col-md-3">
+                            <h4>INVOICE: {{ @$invoice->invoice->invoice_number }}</h4>
 
                     </div>
                     <div class="col-md-6 text-center">
@@ -709,10 +708,219 @@
                         </button>
                         <button type="button" class="btn btn-dark" style="z-index: 99">Page Break</button>
                     </div>
-                    @if ($invoice->status == 13 || $invoice->status == 15)
-                    <div class="d-flex">
-                        <div>
-                            <h6 class="fst-italic" style="white-space: nowrap;">Work Requested : </h6>
+                    <div>
+                        <table class="table mt-5 mb-0 price-table mr-0" style="width:100%; justify-content: center;">
+                            <thead>
+                                <tr class="bg-teal-table2"
+                                    style="background-color: rgba(61, 135, 188, 0.1); border-bottom: 0">
+                                    <th>Qty.</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                    <th class="addRowBtnCont">
+                                        <button onclick="document.getElementById('extraForm').submit()"
+                                            class="btn btn-success save-extra d-none">Save</button>
+                                        <button id="addRowBtn" class="btn btn-success plus-button float-end">Add</button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (@$firstHour->work_order_id == $invoice->id)
+                                    <form action="{{ route('admin.invoice.updateFirstHourProduct', $invoice->id) }}"
+                                        method="post">
+                                        @csrf
+                                        <tr class="calc-tr">
+                                            <td>
+                                                <input type="text"
+                                                    class="total-hours p-2 my-input-disable-class bg-white" value="1"
+                                                    data-rate="" style="border:none" disabled>
+                                            </td>
+                                            <td>
+                                                <textarea class="wo-per w-100 my-input-disable-class editable-three d-none"
+                                                    style="border:none; height: 32px !important" name="desc">{{ $firstHourProduct->desc ?? @$firstHour->description }}</textarea>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span
+                                                        class="previewable-three p-2">{{ $firstHourProduct->desc ?? @$firstHour->description }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="date p-2 my-input-disable-class bg-white"
+                                                    value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                                    style="border:none" disabled>
+                                            </td>
+                                            <td>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text"
+                                                        class="calculated-rate my-input-disable-class editable-three d-none"
+                                                        value="{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}"
+                                                        style="border:none" name="price">
+                                                    <span
+                                                        class="previewable-three">{{ $firstHourProduct->price ?? ($invoice->customer->s_rate_f ?? 0.0) }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text" class="amount my-input-disable-class bg-white"
+                                                        value="{{ @$firstHour->amount }}" style="border:none" readonly>
+                                                </div>
+                                            </td>
+                                            <td class="addRowBtnCont d-flex gap-3">
+                                                <button type="submit"
+                                                    class="btn btn-success save-btn-three d-none">Save</button>
+                                                <button type="button"
+                                                    class="btn btn-primary edit-btn-three">Edit</button>
+                                            </td>
+                                        </tr>
+                                    </form>
+                                @endif
+
+                                @if ($aRate > 1)
+                                    @foreach (@$wps as $wp)
+                                        <form
+                                            action="{{ route('admin.invoice.updateAdditionalHourProduct', $invoice->id) }}"
+                                            method="post">
+                                            @csrf
+                                            <tr class="calc-tr">
+                                                <td>
+                                                    <input type="text"
+                                                        class="total-hours p-2 my-input-disable-class bg-white editable-four d-none"
+                                                        value="{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}"
+                                                        data-rate="" style="border:none" name="qty">
+
+                                                    <div class="input-group d-flex align-items-center">
+                                                        <span
+                                                            class="previewable-four p-2">{{ $additionalHourProduct->qty ?? str_replace(':', '.', $aRate - 1) }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <textarea name="desc" class="wo-per w-100 my-input-disable-class bg-white editable-four d-none"
+                                                        style="border:none; height: 32px !important">{{ $additionalHourProduct->desc ?? @$wp->description }}</textarea>
+                                                    <div class="input-group d-flex align-items-center">
+                                                        <span
+                                                            class="previewable-four p-2">{{ $additionalHourProduct->desc ?? @$wp->description }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="date p-2 my-input-disable-class bg-white"
+                                                        value="{{ @$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                                        style="border:none" disabled>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group d-flex align-items-center">
+                                                        <span class="p-2">$</span>
+                                                        <input type="text"
+                                                            class="calculated-rate my-input-disable-class bg-white editable-four d-none"
+                                                            value="{{ $additionalHourProduct->price ?? (optional($wp->workOrder?->customer)->s_rate_a ?? '0.00') }}"
+                                                            style="border:none" name="price">
+                                                        <span
+                                                            class="previewable-four">{{ $additionalHourProduct->price ?? (optional($wp->workOrder?->customer)->s_rate_a ?? '0.00') }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="p-2">$</span>
+                                                        <input type="text"
+                                                            class="amount my-input-disable-class bg-white"
+                                                            value="{{ @$wp->amount }}" style="border:none" readonly>
+                                                    </div>
+                                                </td>
+                                                <td class="addRowBtnCont d-flex gap-3">
+                                                    <button type="submit"
+                                                        class="btn btn-success save-btn-four d-none">Save</button>
+                                                    <button type="button"
+                                                        class="btn btn-primary edit-btn-four">Edit</button>
+                                                    <button type="submit" class="btn btn-danger removeBtn"
+                                                        style=" border:none;">Delete</button>
+                                                </td> <!-- Hidden remove button -->
+                                            </tr>
+                                        </form>
+                                    @endforeach
+                                @endif
+
+                                @foreach ($extraHourProducts as $extraHourProduct)
+                                    <form action="{{ route('admin.invoice.updateExtraHour', $extraHourProduct->id) }}"
+                                        method="post">
+                                        @csrf
+                                        <tr class="calc-tr">
+                                            <td>
+                                                <input type="text"
+                                                    class="total-hours p-2 my-input-disable-class bg-white editable-five d-none"
+                                                    value="{{ $extraHourProduct->qty }}" data-rate=""
+                                                    style="border:none" name="qty">
+
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span class="previewable-five p-2">{{ $extraHourProduct->qty }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <textarea name="desc" class="wo-per w-100 my-input-disable-class bg-white editable-five d-none"
+                                                    style="border:none; height: 32px !important">{{ $extraHourProduct->desc }}</textarea>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span
+                                                        class="previewable-five p-2">{{ $extraHourProduct->desc }}</span>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <input type="text" class="date p-2 my-input-disable-class bg-white"
+                                                    value="{{ @$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}"
+                                                    style="border:none" disabled>
+                                            </td>
+                                            <td>
+                                                <div class="input-group d-flex align-items-center">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text"
+                                                        class="calculated-rate my-input-disable-class bg-white editable-five d-none"
+                                                        value="{{ $extraHourProduct->price ?? '0.00' }}"
+                                                        style="border:none" name="price">
+                                                    <span
+                                                        class="previewable-five">{{ $extraHourProduct->price ?? '0.00' }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="p-2">$</span>
+                                                    <input type="text" class="amount my-input-disable-class bg-white"
+                                                        value="{{ @$wp->amount }}" style="border:none" readonly>
+                                                </div>
+                                            </td>
+                                            <td class="addRowBtnCont d-flex gap-3">
+                                                <button type="submit"
+                                                    class="btn btn-success save-btn-five d-none">Save</button>
+                                                <button type="button" class="btn btn-primary edit-btn-five">Edit</button>
+                                                <button type="button" class="btn btn-danger removeBtn"
+                                                    style=" border:none;">Delete</button>
+                                            </td> <!-- Hidden remove button -->
+                                        </tr>
+                                    </form>
+                                @endforeach
+
+                            </tbody>
+                        </table>
+                        <form id="extraForm" action="{{ route('admin.invoice.extraHourProduct', $invoice->id) }}"
+                            method="post">
+                            @csrf
+                            <table class="table price-table mr-0 mt-0" style="width:100%; justify-content: center;">
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </form>
+                    </div>
+
+                    <form action="{{ route('admin.invoice.updateWoReq', $invoice->id) }}" method="post">
+                        @csrf
+                        <div class="page-container d-flex justify-content-end pb-2">
+                            <button type="submit"
+                                class="btn btn-success mr-3 save-btn-two d-none addRowBtnCont work-requested-save">
+                                Save
+                            </button>
+                            <button type="button"
+                                class="btn btn-primary mr-3 edit-btn-two addRowBtnCont work-requested-edit">
+                                Edit
+                            </button>
+                            <button type="button" class="btn btn-dark" style="z-index: 99">Page Break</button>
                         </div>
                         <div class="w-100 px-5 py-0 editable-two work-requested-editable d-none">
                             <textarea class="wo_close_out w-100 p-0 my-input-disable-class" name="wo_req" id="" style="border:none">
@@ -825,113 +1033,112 @@
                         </div>
                     </div>
 
-                    <!-- Right Side Table -->
-                    <form action="{{ route('admin.invoice.updateInvoicePay', $invoice->id) }}" method="post">
-                        @csrf
-                        <table class="price-box table table-hover" style="width: 500px;">
-                            <tbody>
-                                <tr class="addRowBtnCont">
-                                    <th></th>
-                                    <th class="addRowBtnCont">
-                                        <div class="d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-success mr-3 save-btn-three d-none">
-                                                Save
-                                            </button>
-                                            <button type="button" class="btn btn-primary edit-btn-three">
-                                                Edit
-                                            </button>
-                                        </div>
+                        <!-- Right Side Table -->
+                        <form action="{{ route('admin.invoice.updateInvoicePay', $invoice->id) }}" method="post">
+                            @csrf
+                            <table class="price-box table table-hover" style="width: 500px;">
+                                <tbody>
+                                    <tr class="addRowBtnCont">
+                                        <th></th>
+                                        <th class="addRowBtnCont">
+                                            <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-success mr-3 save-btn-pay d-none">
+                                                    Save
+                                                </button>
+                                                <button type="button" class="btn btn-primary edit-btn-pay">
+                                                    Edit
+                                                </button>
+                                            </div>
 
-                                    </th>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Sub-total</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto d-flex align-items-center">
-                                            <span class="p-2">$</span>
-                                            <input type="text"
-                                                class="subtotal decimal-input my-input-disable-class editable-three d-none"
-                                                value="{{ isset($totalPrice) ? $totalPrice : '0.00' }}"
-                                                placeholder="0.00" style="border:none">
-                                            <p class="subtotal-text decimal-input my-input-disable-class previewable-three mb-0"
-                                                style="width: 190px;">0.00
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Sales Tax</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto d-flex align-items-center">
-                                            <span class="p-2">$</span>
-                                            <input name="tax" type="text"
-                                                class="taxprice decimal-input my-input-disable-class editable-three d-none"
-                                                value="{{ $invoice->invoice->tax ?? 0.0 }}" placeholder="0.00"
-                                                style="border:none">
-                                            <span class="previewable-three"
-                                                style="width: 190px;">{{ $invoice->invoice->tax ?? '0.00' }}</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="shippingField">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Shipping &
-                                            Handling
-                                        </div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto d-flex align-items-center">
-                                            <span class="p-2">$</span>
-                                            <input name="shipping" type="text"
-                                                class="shipping decimal-input my-input-disable-class editable-three d-none"
-                                                placeholder="0.00" value="{{ $invoice->invoice->shipping ?? 0.0 }}"
-                                                style="border:none">
-                                            <span class="previewable-three"
-                                                style="width: 190px;">{{ $invoice->invoice->shipping ?? '0.00' }}
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Credit</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto d-flex align-items-center justify-content-end">
-                                            <span class="p-2">$</span>
-                                            <span class="text-danger credit-span" style="width: 190px !important;">
-                                                (<input name="credit" type="text"
-                                                    class="credit text-danger p-0 decimal-input my-input-disable-class editable-three d-none"
-                                                    value="{{ $invoice->invoice->credit ?? 0.0 }}"
-                                                    style="border:none; width: 3.4ch; outline: 0 !important"
-                                                    oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
-                                                    class="previewable-three">{{ $invoice->invoice->credit ?? '0.00' }}</span>)
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="tax">
-                                    <td>
-                                        <div class="d-flex align-items-center" style="height: 40px">Balance Due</div>
-                                    </td>
-                                    <td class="d-flex justify-content-end">
-                                        <div class="input-group w-auto d-flex align-items-center">
-                                            <span class="p-2">$</span>
-                                            <input type="text"
-                                                class="due decimal-input my-input-disable-class editable-three d-none"
-                                                style="border:none" placeholder="0.00">
-                                            <span class="previewable-three due-text" style="width: 190px;">0.00</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </form>
-
+                                        </th>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Sub-total</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input type="text"
+                                                    class="subtotal decimal-input my-input-disable-class editable-pay d-none"
+                                                    value="{{ isset($totalPrice) ? $totalPrice : '0.00' }}"
+                                                    placeholder="0.00" style="border:none">
+                                                <p class="subtotal-text decimal-input my-input-disable-class previewable-pay mb-0"
+                                                    style="width: 190px;">0.00
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Sales Tax</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input name="tax" type="text"
+                                                    class="taxprice decimal-input my-input-disable-class editable-pay d-none"
+                                                    value="{{ $invoice->invoice->tax ?? 0.0 }}" placeholder="0.00"
+                                                    style="border:none">
+                                                <span class="previewable-pay"
+                                                    style="width: 190px;">{{ $invoice->invoice->tax ?? '0.00' }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="shippingField">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Shipping &
+                                                Handling
+                                            </div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input name="shipping" type="text"
+                                                    class="shipping decimal-input my-input-disable-class editable-pay d-none"
+                                                    placeholder="0.00" value="{{ $invoice->invoice->shipping ?? 0.0 }}"
+                                                    style="border:none">
+                                                <span class="previewable-pay"
+                                                    style="width: 190px;">{{ $invoice->invoice->shipping ?? '0.00' }}
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Credit</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center justify-content-end">
+                                                <span class="p-2">$</span>
+                                                <span class="text-danger credit-span" style="width: 190px !important;">
+                                                    (<input name="credit" type="text"
+                                                        class="credit text-danger p-0 decimal-input my-input-disable-class editable-pay d-none"
+                                                        value="{{ $invoice->invoice->credit ?? 0.0 }}"
+                                                        style="border:none; width: 3.4ch; outline: 0 !important"
+                                                        oninput="this.style.width = ((this.value.length + 1) * 0.87) + 'ch';"><span
+                                                        class="previewable-pay">{{ $invoice->invoice->credit ?? '0.00' }}</span>)
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tax">
+                                        <td>
+                                            <div class="d-flex align-items-center" style="height: 40px">Balance Due</div>
+                                        </td>
+                                        <td class="d-flex justify-content-end">
+                                            <div class="input-group w-auto d-flex align-items-center">
+                                                <span class="p-2">$</span>
+                                                <input type="text"
+                                                    class="due decimal-input my-input-disable-class editable-pay d-none"
+                                                    style="border:none" placeholder="0.00">
+                                                <span class="previewable-pay due-text" style="width: 190px;">0.00</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
                 </div>
             </div>
         </div>
@@ -965,6 +1172,24 @@
     });
 </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function toggleSaveExtraVisibility() {
+                // Check if any element with the class 'extra-tr' exists
+                const extraTr = document.querySelector('.extra-tr');
+
+                // If the element exists, remove the 'd-none' class from '.save-extra'
+                if (extraTr) {
+                    const saveExtra = document.querySelector('.save-extra');
+                    if (saveExtra) {
+                        saveExtra.classList.remove('d-none');
+                    }
+                }
+            }
+
+            toggleSaveExtraVisibility();
+        });
+    </script>
 
 
 <script>
@@ -999,23 +1224,27 @@
     window.addEventListener('load', setupTextareaAutoResize);
     setupTextareaAutoResize();
 
-    document.getElementById('addRowBtn').addEventListener('click', function() {
-        const tableBody = document.getElementById('tableBody');
-        const newRow = document.createElement('tr');
-        newRow.classList.add('calc-tr'); // Add class to identify rows for subtotal calculation
-        newRow.innerHTML = `
-            <td><input type="text" class="total-hours p-2" value="" style="border:none"></td>
-            <td><textarea class="wo-per w-100" style="border:none;"></textarea></td>
-            <td><input type="text" class="p-2" value="" style="border:none"></td>
+        document.getElementById('addRowBtn').addEventListener('click', function() {
+            const tableBody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            newRow.classList.add('calc-tr');
+            newRow.classList.add('extra-tr');
+            newRow.innerHTML = `
+            <td><input type="text" name='qty[]' class="total-hours p-2 bg-white" value="" style="border:none"></td>
+            <td><textarea class="wo-per w-100 bg-white" name='desc[]' style="border:none;"></textarea></td>
+            <td><input type="text" class="p-2 bg-white" value="" style="border:none"></td>
             <td><div class="input-group">
                                         <span class="p-2">$</span>
-                                        <input type="text" class="calculated-rate" value="{{ @$wp->calculated_rate }}" style="border:none">
+                                        <input type="text" name='price[]' class="calculated-rate bg-white" value="{{ @$wp->calculated_rate }}" style="border:none">
                                     </div></td>
             <td><div class="input-group">
                 <span class="p-2">$</span>
-                <input type="text" class="amount" value="" style="border:none" readonly>
+                <input type="text" class="amount bg-white" value="" style="border:none" readonly>
             </div></td>
-            <td class="addRowBtnCont"><button class="btn btn-danger removeBtn" style="border:none;">✖</button></td>
+            <td class="addRowBtnCont d-flex gap-3">
+                <button class="btn bg-transparent text-white">Edit</button>
+                <button class="btn btn-danger removeBtn" style="border:none;">Delete</button>
+            </td>
         `;
 
         tableBody.appendChild(newRow);
@@ -1026,11 +1255,16 @@
         const calculatedRateInput = newRow.querySelector('.calculated-rate');
         const amountInput = newRow.querySelector('.amount');
 
-        function updateAmount() {
-            const totalHours = parseFloat(totalHoursInput.value.replace(',', '.')) || 0;
-            const calculatedRate = parseFloat(calculatedRateInput.value) || 0;
-            const amount = totalHours * calculatedRate;
-            amountInput.value = amount.toFixed(2);
+            const saveExtra = document.querySelector('.save-extra');
+            if (saveExtra) {
+                saveExtra.classList.remove('d-none');
+            }
+
+            function updateAmount() {
+                const totalHours = parseFloat(totalHoursInput.value.replace(',', '.')) || 0;
+                const calculatedRate = parseFloat(calculatedRateInput.value) || 0;
+                const amount = totalHours * calculatedRate;
+                amountInput.value = amount.toFixed(2);
 
             updateSubtotal();
         }
@@ -1064,20 +1298,31 @@
         updateSubtotal();
     });
 
-    document.querySelectorAll('.removeBtn').forEach(function(button) {
-        button.addEventListener('click', function() {
-            const row = this.closest('tr');
-            const tableBody = document.getElementById('tableBody');
-            tableBody.removeChild(row);
-            updateSubtotal(); // Update subtotal after removing the row
+        document.getElementById('tableBody').addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('removeBtn')) {
+                const extraTr = document.querySelectorAll('.extra-tr')
+                    .length; // Get the current number of extra-tr rows
+                console.log(extraTr); // Log the current count
+
+                if (extraTr === 0) { // If no extra rows are left, hide the 'save-extra' button
+                    const saveExtra = document.querySelector('.save-extra');
+                    if (saveExtra) {
+                        saveExtra.classList.add('d-none');
+                    }
+                }
+
+                const row = event.target.closest('tr');
+                const tableBody = document.getElementById('tableBody');
+                tableBody.removeChild(row);
+                updateSubtotal();
+            }
         });
     });
 </script>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     $(document).ready(function() {
@@ -1262,10 +1507,40 @@
                     element.classList.toggle("d-none");
                 });
 
-                // Toggle the visibility of the save button
-                document.querySelectorAll(".work-requested-save").forEach(button => {
-                    button.classList.toggle("d-none");
-                });
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButtonPay = document.querySelector(".edit-btn-pay");
+            const saveButtonPay = document.querySelector(".save-btn-pay");
+            const editableFieldsPay = document.querySelectorAll(".editable-pay");
+            const previewableFieldsPay = document.querySelectorAll(".previewable-pay");
+
+            editButtonPay.addEventListener("click", function() {
+                // Toggle visibility of input fields
+                editableFieldsPay.forEach(field => field.classList.toggle("d-none"));
+                previewableFieldsPay.forEach(field => field.classList.toggle("d-none"));
+                // Toggle Save button visibility
+                saveButtonPay.classList.toggle("d-none");
+
+                // Toggle text and button color
+                if (editButtonPay.textContent.trim() === "Edit") {
+                    editButtonPay.textContent = "Cancel";
+                    editButtonPay.classList.remove("btn-primary");
+                    editButtonPay.classList.add("btn-danger");
+                } else {
+                    editButtonPay.textContent = "Edit";
+                    editButtonPay.classList.remove("btn-danger");
+                    editButtonPay.classList.add("btn-primary");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButton = document.querySelector(".edit-btn-four");
+            const saveButton = document.querySelector(".save-btn-four");
+            const editableFields = document.querySelectorAll(".editable-four");
+            const previewableFields = document.querySelectorAll(".previewable-four");
 
                 // Toggle button text and styling
                 if (document.querySelector(".work-requested-editable.d-none")) {
@@ -1279,6 +1554,61 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select all edit buttons (for each row)
+            const editButtons = document.querySelectorAll(".edit-btn-five");
+
+            editButtons.forEach((editButton) => {
+                editButton.addEventListener("click", function() {
+                    // Get the parent row (tr) for this button
+                    const row = this.closest("tr");
+
+                    // Select the editable and previewable fields in this row
+                    const editableFields = row.querySelectorAll(".editable-five");
+                    const previewableFields = row.querySelectorAll(".previewable-five");
+
+                    // Select the Save button for this row
+                    const saveButton = row.querySelector(".save-btn-five");
+
+                    // Toggle visibility of input fields
+                    editableFields.forEach(field => field.classList.toggle("d-none"));
+                    previewableFields.forEach(field => field.classList.toggle("d-none"));
+
+                    // Toggle Save button visibility
+                    saveButton.classList.toggle("d-none");
+
+                    // Toggle the text and button color of the edit button
+                    if (editButton.textContent.trim() === "Edit") {
+                        editButton.textContent = "Cancel";
+                        editButton.classList.remove("btn-primary");
+                        editButton.classList.add("btn-danger");
+                    } else {
+                        editButton.textContent = "Edit";
+                        editButton.classList.remove("btn-danger");
+                        editButton.classList.add("btn-primary");
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButton = document.querySelector(".edit-site");
+            const saveButton = document.querySelector(".save-site");
+            const editIcon = editButton.querySelector("i"); // Select the <i> tag inside the button
+            const sitePreview = document.querySelector(".site-preview");
+            const siteInput = document.querySelector(".site-input");
+
+            if (editButton && editIcon && sitePreview && siteInput) {
+                editButton.addEventListener("click", function() {
+                    editButton.classList.toggle("d-none");
+                    saveButton.classList.add("d-flex");
+                    sitePreview.classList.toggle("d-none");
+                    siteInput.classList.toggle("d-none");
 
         // Handle "Work Performed" edit button
         document.querySelectorAll(".work-performed-edit").forEach(button => {
