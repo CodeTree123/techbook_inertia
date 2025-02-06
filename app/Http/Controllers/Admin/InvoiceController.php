@@ -346,6 +346,11 @@ class InvoiceController extends Controller
                 $invoiceProduct->price = $product['price'];
 
                 $invoiceProduct->save();
+
+                $action = "Created";
+                $changes = "Manual created extra hour. Quantity: " . $product['qty'] . ", Description: " . $product['desc'] . ", Price: $" . $product['price'];
+    
+                invoiceLog($woId, $action, $changes);
             }
         }
 
@@ -358,11 +363,28 @@ class InvoiceController extends Controller
 
         $invoiceProduct = InvoiceProduct::find($id);
 
+        $qty = $invoiceProduct->qty ?? '';
+        $desc = $invoiceProduct->desc ?? '';
+        $price = $invoiceProduct->price ?? '';
+
         $invoiceProduct->qty = $request->qty;
         $invoiceProduct->desc = $request->desc;
         $invoiceProduct->price = $request->price;
 
         $invoiceProduct->save();
+
+        $action = "Edit";
+        $changes = sprintf(
+            "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: %s, %s, %s",
+            $request->qty ?? '',
+            $request->desc ?? '',
+            $request->price ?? '',
+            $qty ?? '',
+            $desc ?? '',
+            $price ?? ''
+        );
+
+        invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
         return back()->withNotify($notify);

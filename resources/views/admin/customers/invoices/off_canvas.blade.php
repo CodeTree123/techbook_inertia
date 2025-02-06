@@ -1,3 +1,9 @@
+<style>
+    #loader {
+    text-align: center;
+    margin-top: 20px;
+}
+</style>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="invoiceOffcanvas" aria-labelledby="invoiceOffcanvasLabel">
     <div class="offcanvas-header">
         <h5 id="invoiceOffcanvasLabel">Log Details</h5>
@@ -10,62 +16,63 @@
 
 <script>
 $(document).ready(function() {
-    // When the button is clicked, fetch logs and open the offcanvas
     $('#viewLogDetailsBtn').on('click', function() {
-        var woId = @json($wId); // Pass the Work Order ID from Blade into JavaScript
-        console.log("Work Order ID: ", woId); // Debugging line
+        var woId = @json($wId);
+        console.log("Work Order ID: ", woId);
 
-        // Build the URL for the AJAX request
+        $('#loader').show();
+
         var url = '{{ route('admin.logs.paginate', ['id' => ':id', 'page' => ':page']) }}';
-        url = url.replace(':id', woId); // Replace with the actual work order ID
-        url = url.replace(':page', 1); // Start with page 1
+        url = url.replace(':id', woId);
+        url = url.replace(':page', 1);
 
-        // Make the AJAX request
         $.ajax({
             url: url,
             type: 'GET',
             success: function(response) {
-                console.log("Logs successfully fetched:", response); // Debugging line
-                $('.offcanvas-body').html(response); // Update the content in the offcanvas
+                console.log("Logs successfully fetched:", response);
+                $('.offcanvas-body').html(response);
 
-                // Manually show the offcanvas after content is loaded
                 var offcanvas = new bootstrap.Offcanvas(document.getElementById('invoiceOffcanvas'));
                 offcanvas.show(); 
+
+                $('#loader').hide();
             },
             error: function(xhr, status, error) {
-                console.log('Error fetching logs:', error); // Debugging line
+                console.log('Error fetching logs:', error);
+                
+                $('#loader').hide();
             }
         });
     });
 
-    // Listen for clicks on pagination links inside the offcanvas
     $(document).on('click', '.pagination a', function(e) {
-        e.preventDefault(); // Prevent default page reload
+        e.preventDefault();
 
-        // Get the page number from the href attribute
         var page = $(this).attr('href').split('page=')[1];
-        var woId = @json($wId); // Work Order ID from Blade
+        var woId = @json($wId);
 
-        // Build the URL for the AJAX request
+        $('#loader').show();
+
         var url = '{{ route('admin.logs.paginate', ['id' => ':id', 'page' => ':page']) }}';
-        url = url.replace(':id', woId); // Replace with the actual work order ID
-        url = url.replace(':page', page); // Replace with the current page number
+        url = url.replace(':id', woId);
+        url = url.replace(':page', page);
 
-        console.log("Fetching logs from URL:", url); // Debugging line
+        console.log("Fetching logs from URL:", url);
 
-        // Make the AJAX request
         $.ajax({
             url: url,
             type: 'GET',
             success: function(response) {
-                console.log("Logs successfully fetched:", response); // Debugging line
-                $('.offcanvas-body').html(response); // Update the content in the offcanvas
+                console.log("Logs successfully fetched:", response);
+                $('.offcanvas-body').html(response);
+                $('#loader').hide();
             },
             error: function(xhr, status, error) {
-                console.log('Error fetching logs:', error); // Debugging line
+                console.log('Error fetching logs:', error);
+                $('#loader').hide();
             }
         });
     });
 });
-
 </script>
