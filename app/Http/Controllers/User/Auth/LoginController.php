@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Models\UserLogin;
 use Illuminate\Http\Request;
 use App\Constants\Status;
+use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -48,7 +49,11 @@ class LoginController extends Controller
     }
     public function showLoginForm(){
         $pageTitle = "User Login";
-        return view('user.auth.login', compact('pageTitle'));
+        // return view('user.auth.login', compact('pageTitle'));
+
+        return Inertia::render('user/auth/Login', [
+
+        ]);
     }
 
     public function login(Request $request)

@@ -47,8 +47,11 @@ Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(
     Route::get('download/{ticket}', 'ticketDownload')->name('download');
 });
 
+// Route::get('/test-home', function () {
+//     return view('welcome');
+// })->name('home');
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('user/Home/Home');
 })->name('home');
 
 Route::controller('SiteController')->group(function () {
