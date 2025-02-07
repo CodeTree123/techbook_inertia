@@ -268,8 +268,11 @@ Route::middleware('admin')->group(function () {
 
         Route::post('update-invoice-primaryProduct/{id}', 'updateFirstHourProduct')->name('invoice.updateFirstHourProduct');
         Route::post('update-invoice-additionalProduct/{id}', 'updateAdditionalHourProduct')->name('invoice.updateAdditionalHourProduct');
+        Route::post('soft-delete-invoice-additionalProduct/{id?}/{wo_id}', 'deleteAdditionalHourProduct')->name('invoice.deleteAdditionalHourProduct');
+
         Route::post('create-invoice-extraProduct/{id}', 'extraHourProduct')->name('invoice.extraHourProduct');
         Route::post('update-invoice-extraProduct/{id}', 'updateExtraHour')->name('invoice.updateExtraHour');
+        Route::delete('delete-invoice-extraProduct/{id}', 'deleteExtraHour')->name('invoice.deleteExtraHour');
 
         //offcanvas ajax
         Route::get('/logs/page/{id}/{page}', 'getLogs')->name('logs.paginate');

@@ -197,7 +197,7 @@ class InvoiceController extends Controller
 
     public function updateSiteNumber(Request $request, $id)
     {
-        $invoice = CustomerInvoice::where('work_order_id.site', $id)->first();
+        $invoice = CustomerInvoice::where('work_order_id', $id)->with('workOrder.site')->first();
 
         $siteNum = $invoice->site_num ?? optional($invoice->workOrder->site)->site_id;
 
@@ -313,6 +313,29 @@ class InvoiceController extends Controller
         return back()->withNotify($notify);
     }
 
+    public function deleteAdditionalHourProduct($invProId = null, $wo_id)
+    {
+        // dd($invProId , $wo_id);
+        if($invProId)
+        {
+            $invProduct = InvoiceProduct::find($invProId);
+
+            $invProduct->soft_delete = 1;
+
+            $invProduct->save();
+        }else{
+            $newInvProduct = new InvoiceProduct();
+
+            $newInvProduct->wo_id = $wo_id;
+            $newInvProduct->soft_delete = 1;
+            $newInvProduct->is_additional = 1;
+
+            $newInvProduct->save();
+        }
+        $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
+
     public function getLogs($id,$page)
     {
         $logs = CustomerInvoiceLog::where('wo_id', $id)->with('user')
@@ -387,6 +410,17 @@ class InvoiceController extends Controller
         invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
+        return back()->withNotify($notify);
+    }
+
+    public function deleteExtraHour($id)
+    {
+
+        $invoiceProduct = InvoiceProduct::find($id);
+
+        $invoiceProduct->delete();
+
+        $notify[] = ['success', 'Invoice Deleted Successfully'];
         return back()->withNotify($notify);
     }
 }

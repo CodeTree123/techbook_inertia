@@ -37,7 +37,7 @@ $general = gs();
         <header class="header_section">
             <div class="container">
                 <nav class="navbar navbar-expand-lg custom_nav-container ">
-                    <a class="navbar-brand" href="index.html">
+                    <a class="navbar-brand" href="/">
                         <span>
                             {{$general->site_name}}
                         </span>

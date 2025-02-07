@@ -123,8 +123,7 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
                                     </>
                                 ) : (
                                     <>
-                                        <li><Link to="/user/login">Login</Link></li>
-                                        <li><Link to="/user/register">Register</Link></li>
+                                        {/* <li><Link to="/user/login">Login</Link></li> */}
                                     </>
                                 )}
                             </ul>
