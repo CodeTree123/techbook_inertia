@@ -16,6 +16,8 @@ use App\Models\Withdrawal;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Tighten\Ziggy\Ziggy;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Session;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -134,5 +136,14 @@ class AppServiceProvider extends ServiceProvider
 
         $non_converted_techs = Technician::whereRaw("ST_X(co_ordinates) IS NULL OR ST_Y(co_ordinates) IS NULL")->count();
         view()->share('non_converted_techs', $non_converted_techs);
+
+        Inertia::share([
+            'flash' => function () {
+                return [
+                    'verifyError' => Session::get('verifyError'),
+                    'success' => Session::get('success'),
+                ];
+            },
+        ]);
     }
 }

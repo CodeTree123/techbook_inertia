@@ -3139,6 +3139,7 @@ class UserController extends Controller
         $checkInOut = CheckInOut::where('work_order_id', $id)->where('tech_id', $techId)
             ->orderBy('id', 'desc')
             ->first();
+
         $wo = WorkOrder::find($id);
 
         if (!$wo) {
@@ -3146,8 +3147,8 @@ class UserController extends Controller
             return back()->withNotify($notify);
         }
 
-        // $wo->status = 9;
-        // $wo->save();
+        $wo->status = 9;
+        $wo->save();
 
         if (!$checkInOut) {
             $notify[] = ['error', 'Technician is not checked in yet'];

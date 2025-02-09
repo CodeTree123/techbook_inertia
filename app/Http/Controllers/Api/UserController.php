@@ -297,7 +297,18 @@ class UserController extends Controller
 
         $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
             ->when($search, function ($query, $search) {
-                $query->where('site_id', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")->orWhere('address_1', 'like', "%{$search}%")->orWhere('city', 'like', "%{$search}%")->orWhere('state', 'like', "%{$search}%")->orWhere('zipcode', 'like', "%{$search}%");
+                $query->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $q->where(function ($subQuery) use ($keyword) {
+                            $subQuery->where('site_id', 'like', "%{$keyword}%")
+                                ->orWhere('location', 'like', "%{$keyword}%")
+                                ->orWhere('address_1', 'like', "%{$keyword}%")
+                                ->orWhere('city', 'like', "%{$keyword}%")
+                                ->orWhere('state', 'like', "%{$keyword}%")
+                                ->orWhere('zipcode', 'like', "%{$keyword}%");
+                        });
+                    }
+                });
             })
             ->orderBy('site_id', 'asc')
             ->paginate(10); // Limit results to avoid overloading data
@@ -316,13 +327,17 @@ class UserController extends Controller
         $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
             ->where('customer_id', $id)
             ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('site_id', 'like', "%{$search}%")
-                        ->orWhere('location', 'like', "%{$search}%")
-                        ->orWhere('address_1', 'like', "%{$search}%")
-                        ->orWhere('city', 'like', "%{$search}%")
-                        ->orWhere('state', 'like', "%{$search}%")
-                        ->orWhere('zipcode', 'like', "%{$search}%");
+                $query->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $q->where(function ($subQuery) use ($keyword) {
+                            $subQuery->where('site_id', 'like', "%{$keyword}%")
+                                ->orWhere('location', 'like', "%{$keyword}%")
+                                ->orWhere('address_1', 'like', "%{$keyword}%")
+                                ->orWhere('city', 'like', "%{$keyword}%")
+                                ->orWhere('state', 'like', "%{$keyword}%")
+                                ->orWhere('zipcode', 'like', "%{$keyword}%");
+                        });
+                    }
                 });
             })
             ->orderBy('site_id', 'asc')
