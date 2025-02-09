@@ -25,6 +25,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
@@ -809,15 +810,33 @@ class CustomerController extends Controller
         ->with('user')
         ->latest()->paginate(3);
         $invoice = WorkOrder::with('invoice', 'customer', 'site', 'notes', 'invoiceProducts')->find($id);
+
+        if (!empty($invoice->invoice->invoice_date)) {
+            $pastDue = Carbon::parse($invoice->invoice->invoice_date);
+            
+            $billingTerm = $invoice->customer->billing_term;
+            $days = (int) Str::replace('NET', '', $billingTerm);
+            
+            $dueDate = $pastDue->addDays($days);
+            
+            $today = Carbon::now('America/Chicago');
+            
+            $diffInDays = $dueDate->diffInDays($today, false);
+        
+            if ($diffInDays < 0) {
+                echo "Invoice is overdue by " . abs($diffInDays) . " days.";
+            } else {
+                app(\App\Http\Controllers\Admin\InvoiceController::class)->stageStatusBillingPastDue($id);
+            }
+        }
         
         $attend = CheckInOut::where('work_order_id', $id)->with('technician');
         $firstHour = $attend->first();
-        //dd($firstHour->work_order_id);
+
         $wps= $attend->get();
         $aRate = CheckInOut::with('workOrder.customer')->where('work_order_id', $id)->sum('total_hours');
         $aRate = round($aRate * 2) / 2;
 
-        // Initialize total price variable
         $totalPrice = 0;
 
         $invoice->invoice->toArray();
