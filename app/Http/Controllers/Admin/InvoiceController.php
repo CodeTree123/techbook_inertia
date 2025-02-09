@@ -9,9 +9,25 @@ use App\Models\CustomerInvoice;
 use App\Constants\Status;
 use App\Models\InvoiceProduct;
 use App\Models\CustomerInvoiceLog;
-
+use Carbon\Carbon;
 class InvoiceController extends Controller
 {
+    
+    public function stageStatusBillingPastDue($id)
+    {
+        $invoice = WorkOrder::find($id);
+        $invoice->stage = Status::STAGE_BILLING;
+        $invoice->status = Status::PAST_DUE;
+        $invoice->save();
+
+        $action = "Invoice status Past due";
+        $changes = "Changes to Billing Past Due | Previous: Billing Invoiced";
+
+        invoiceLog($id, $action, $changes);
+
+        $notify[] = ['success', 'Invoice updated successfully'];
+        return to_route('customer.invoice.history')->withNotify($notify);
+    }
     public function stageStatusClosedNeedsApproval($id)
     {
         $invoice = WorkOrder::find($id);
@@ -19,8 +35,8 @@ class InvoiceController extends Controller
         $invoice->status = Status::NEEDS_APPROVAL;
         $invoice->save();
 
-        $action = "Closed";
-        $changes = "Closed Needs Approval";
+        $action = "Invoice status Revert";
+        $changes = "Changes to Closed Needs Approval | Previous: Billing Approved";
 
         invoiceLog($id, $action, $changes);
 
@@ -35,8 +51,12 @@ class InvoiceController extends Controller
         $invoice->status = Status::INVOICED;
         $invoice->save();
 
-        $action = "Invoice";
-        $changes = "Billing Invoice";
+        $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
+        $invoiceDate->invoice_date = now();
+        $invoiceDate->save();
+
+        $action = "Status change to billing invoiced";
+        $changes = "Changes to Billing Invoiced | Previous: Billing Approved";
 
         invoiceLog($id, $action, $changes);
         $notify[] = ['success', 'Invoice updated successfully'];
@@ -54,8 +74,8 @@ class InvoiceController extends Controller
         $invoice->status = Status::PAID;
         $invoice->save();
 
-        $action = "Paid";
-        $changes = "Billing Paid " . "Reference code: " . $request->reference_code;
+        $action = "Status change to billing paid";
+        $changes = "Changes to Billing Paid | Previous: Billing Invoiced " . "Reference code: " . $request->reference_code;
 
         invoiceLog($id, $action, $changes);
 
@@ -70,8 +90,8 @@ class InvoiceController extends Controller
         $invoice->status = Status::APPROVED;
         $invoice->save();
 
-        $action = "Revert";
-        $changes = "Billing Approved";
+        $action = "Invoice status Revert";
+        $changes = "Changes to Billing Approved | Previous: Billing Invoiced";
 
         invoiceLog($id, $action, $changes);
 
@@ -98,11 +118,11 @@ class InvoiceController extends Controller
         $invoice->terms = $request->terms;
         $invoice->save();
 
-        $action = "Edit";
+        $action = "Updated overview";
         $changes = sprintf(
-            "Manual entry: Job: P%s, Date: %s, PO: %s, Term: %s | Previous: P%s, %s, %s, %s",
+            "Manual entry: Job: P%s, Date: %s, PO: %s, Term: %s | Previous: Job: P%s, Date: %s, PO: %s, Term: %s",
             $request->job ?? '',
-            $request->date ?? '',
+            Carbon::parse($request->date)->setTimezone('America/Chicago')->format('m/d/Y') ?? '',
             $request->p_o ?? '',
             $request->terms ?? '',
             $job ?? '',
@@ -128,8 +148,8 @@ class InvoiceController extends Controller
 
         $invoice->save();
 
-        $action = "Edit";
-        $changes = sprintf("Manual entry: Work requested: %s | Previous: %s", $request->wo_req ?? '', $woReq ?? '');
+        $action = "Updated work requested";
+        $changes = sprintf("Manual entry: Work requested: %s | Previous: Work requested: %s", $request->wo_req ?? '', $woReq ?? '');
         invoiceLog($id, $action, $changes);
 
         $notify[] = ['success', 'Invoice Updated Successfully'];
@@ -150,9 +170,9 @@ class InvoiceController extends Controller
         $invoice->wo_per = $request->wo_per;
         $invoice->save();
 
-        $action = "Edit";
+        $action = "Updated work performed";
         $changes = sprintf(
-            "Manual entry: Work performed: %s | Previous: %s",
+            "Manual entry: Work performed: %s | Previous: Work performed: %s",
             $request->wo_per ?? '',
             $woPer ?? ''
         );
@@ -178,9 +198,9 @@ class InvoiceController extends Controller
 
         $invoice->save();
 
-        $action = "Edit";
+        $action = "Updated pay sheet";
         $changes = sprintf(
-            "Manual entry: Tax: P%s, Shipping: %s, PO: %s, Credit: %s | Previous: P%s, %s, %s, %s",
+            "Manual entry: Tax: %s, Shipping: %s, Credit: %s | Previous: Tax: %s, Shipping: %s, Credit: %s",
             $request->tax ?? '',
             $request->shipping ?? '',
             $request->credit ?? '',
@@ -205,9 +225,9 @@ class InvoiceController extends Controller
 
         $invoice->save();
 
-        $action = "Edit";
+        $action = "Updated site number";
         $changes = sprintf(
-            "Manual entry: Site number: %s | Previous: %s",
+            "Manual entry: Site number: %s | Previous: Site number: %s",
             $request->site_num ?? '',
             $siteNum ?? ''
         );
@@ -235,9 +255,9 @@ class InvoiceController extends Controller
             $existInvoiceProduct->is_primary = 1;
 
             $existInvoiceProduct->save();
-            $action = "Edit";
+            $action = "Updated first hour rate";
             $changes = sprintf(
-                "Manual entry: Description: %s, Price: %s | Previous: %s, %s",
+                "Manual entry: Description: %s, Price: %s | Previous: Description: %s, Price: %s",
                 $request->desc ?? '',
                 $request->price ?? '',
                 $desc ?? '',
@@ -255,7 +275,7 @@ class InvoiceController extends Controller
             $invoiceProduct->is_primary = 1;
 
             $invoiceProduct->save();
-            $action = "Created";
+            $action = "Created first hour rate";
             $changes = "Manual created first hour" . "-" . ($request->desc ?? '') . "Price: " . "$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
@@ -281,9 +301,9 @@ class InvoiceController extends Controller
             $existInvoiceProduct->is_additional = 1;
 
             $existInvoiceProduct->save();
-            $action = "Edit";
+            $action = "Updated additional hour rate";
             $changes = sprintf(
-                "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: %s, %s, %s",
+                "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: Qty: %s, Description: %s, Price: %s",
                 $request->qty ?? '',
                 $request->desc ?? '',
                 $request->price ?? '',
@@ -303,7 +323,7 @@ class InvoiceController extends Controller
             $invoiceProduct->is_additional = 1;
 
             $invoiceProduct->save();
-            $action = "Created";
+            $action = "Created additional hour rate";
             $changes = "Manual created additional hour" . " Quantity " . ($request->qty ?? '')  . " Description " . ($request->desc ?? '') . " Price: " . "$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
@@ -316,14 +336,13 @@ class InvoiceController extends Controller
     public function deleteAdditionalHourProduct($invProId = null, $wo_id)
     {
         // dd($invProId , $wo_id);
-        if($invProId)
-        {
+        if ($invProId) {
             $invProduct = InvoiceProduct::find($invProId);
 
             $invProduct->soft_delete = 1;
 
             $invProduct->save();
-        }else{
+        } else {
             $newInvProduct = new InvoiceProduct();
 
             $newInvProduct->wo_id = $wo_id;
@@ -336,10 +355,10 @@ class InvoiceController extends Controller
         return back()->withNotify($notify);
     }
 
-    public function getLogs($id,$page)
+    public function getLogs($id, $page)
     {
         $logs = CustomerInvoiceLog::where('wo_id', $id)->with('user')
-        ->latest()->paginate(5, ['*'], 'page', $page);
+            ->latest()->paginate(10, ['*'], 'page', $page);
         return view('admin.customers.invoices.logs', compact('logs'))->render();
     }
 
@@ -370,9 +389,9 @@ class InvoiceController extends Controller
 
                 $invoiceProduct->save();
 
-                $action = "Created";
+                $action = "Created extra hour";
                 $changes = "Manual created extra hour. Quantity: " . $product['qty'] . ", Description: " . $product['desc'] . ", Price: $" . $product['price'];
-    
+
                 invoiceLog($woId, $action, $changes);
             }
         }
@@ -396,9 +415,9 @@ class InvoiceController extends Controller
 
         $invoiceProduct->save();
 
-        $action = "Edit";
+        $action = "Updated extra hour";
         $changes = sprintf(
-            "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: %s, %s, %s",
+            "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: Qty: %s, Description: %s, Price: %s",
             $request->qty ?? '',
             $request->desc ?? '',
             $request->price ?? '',
@@ -423,4 +442,5 @@ class InvoiceController extends Controller
         $notify[] = ['success', 'Invoice Deleted Successfully'];
         return back()->withNotify($notify);
     }
+
 }
