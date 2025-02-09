@@ -17,27 +17,31 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
     return (
         <header className="fixed-top">
             <div className="p-1 d-flex justify-content-end" style={{ background: "#AFE1AF", position: "relative" }}>
-                <Dropdown>
-                    <Dropdown.Toggle variant="outline-light" id="dropdown-basic" className='shadow-circle text-dark'>
-                        <i className="fas fa-user-circle text-success" style={{ marginRight: "10px" }}></i>
-                        {/** Authenticated User Fullname */}
-                        {user ? user.firstname + ' ' + user.lastname : "User"}
-                    </Dropdown.Toggle>
+                {
+                    user &&
+                    <Dropdown>
+                        <Dropdown.Toggle variant="outline-light" id="dropdown-basic" className='shadow-circle text-dark'>
+                            <i className="fas fa-user-circle text-success" style={{ marginRight: "10px" }}></i>
+                            {/** Authenticated User Fullname */}
+                            {user ? user.firstname + ' ' + user.lastname : "User"}
+                        </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                        <Dropdown.Item className='mb-3 p-0'>
-                            <Link href="/user/profile-setting" className='text-dark px-3 py-2'>Profile Setting</Link>
-                        </Dropdown.Item>
-                        <Dropdown.Item className='mb-3 p-0'>
-                            <Link href="/user/change-password" className='text-dark px-3 py-2'>Change Password</Link>
-                        </Dropdown.Item>
-                        <hr />
-                        <Dropdown.Item href="/user/logout" className='text-danger mt-3 px-3' onClick={(e) => {
-                            e.preventDefault();
-                            document.getElementById('logout-form').submit();
-                        }}>Logout</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
+                        <Dropdown.Menu>
+                            <Dropdown.Item className='mb-3 p-0'>
+                                <Link href="/user/profile-setting" className='text-dark px-3 py-2'>Profile Setting</Link>
+                            </Dropdown.Item>
+                            <Dropdown.Item className='mb-3 p-0'>
+                                <Link href="/user/change-password" className='text-dark px-3 py-2'>Change Password</Link>
+                            </Dropdown.Item>
+                            <hr />
+                            <Dropdown.Item href="/user/logout" className='text-danger mt-3 px-3' onClick={(e) => {
+                                e.preventDefault();
+                                document.getElementById('logout-form').submit();
+                            }}>Logout</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                }
+
                 <form id="logout-form" action="/user/logout" method="get" className="d-none">
                     {/* CSRF Token */}
                     <input type="hidden" name="_token" value={window.CSRFToken} />
@@ -58,6 +62,9 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
                             <ul>
                                 {user ? (
                                     <>
+                                        <li>
+                                            <a href="#">Manage</a>
+                                        </li>
                                         <li>
                                             <a href="#">Work Order</a>
                                             <ul>
@@ -119,6 +126,9 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
                                                 <li><a href="#">New Quotes</a></li>
                                                 <li><a href="#">Search Quotes</a></li>
                                             </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#">Reports</a>
                                         </li>
                                     </>
                                 ) : (

@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import TaskModal from './TaskModal';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { DateTime } from 'luxon';
+import CloseoutNote from './CloseoutNote';
 
 const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
@@ -579,10 +580,7 @@ const Task = ({ id, details, onSuccessMessage, onErrorMessage, is_cancelled, is_
                                         {
                                             details?.notes?.map((note) => (
                                                 note.note_type == 'close_out_notes' &&
-                                                <div className='px-4 py-3 mt-3' style={{ backgroundColor: 'rgb(227, 242, 253)' }}>
-                                                    <h6>Closeout Note:</h6>
-                                                    {note.note}
-                                                </div>
+                                                <CloseoutNote note={note} is_cancelled={is_cancelled} is_billing={is_billing} onSuccessMessage={onSuccessMessage}/>
                                             ))
                                         }
                                     </div>

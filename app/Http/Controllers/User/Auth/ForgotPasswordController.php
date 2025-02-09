@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordResets;
+use Inertia\Inertia;
 
 class ForgotPasswordController extends Controller
 {
@@ -34,14 +35,13 @@ class ForgotPasswordController extends Controller
 
     public function showLinkRequestForm()
     {
-        $pageTitle = "Account Recovery";
-        return view('user.auth.passwords.email', compact('pageTitle'));
+        return Inertia::render('user/forgotPassword/ForgotPassword',[]);
     }
 
     public function sendResetCodeEmail(Request $request)
     {
         $request->validate([
-            'value'=>'required'
+            'value'=>'required|exists:users,username'
         ]);
 
         if(!verifyCaptcha()){
@@ -80,13 +80,16 @@ class ForgotPasswordController extends Controller
     }
 
     public function codeVerify($email){
-        $pageTitle = 'Verify Email';
+        // $pageTitle = 'Verify Email';
         // $email = session()->get('pass_res_mail');
         // if (!$email) {
         //     $notify[] = ['error','Oops! session expired'];
         //     return to_route('user.password.request')->withNotify($notify);
         // }
-        return view('user.auth.passwords.code_verify',compact('pageTitle','email'));
+        // return view('user.auth.passwords.code_verify',compact('pageTitle','email'));
+        return Inertia::render('user/verifyEmail/VerifyEmail',[
+            'email' => $email
+        ]);
     }
 
     public function verifyCode(Request $request)
@@ -98,12 +101,11 @@ class ForgotPasswordController extends Controller
         $code =  str_replace(' ', '', $request->code);
 
         if (PasswordReset::where('token', $code)->where('email', $request->email)->count() != 1) {
-            $notify[] = ['error', 'Verification code doesn\'t match'];
-            return to_route('user.password.request')->withNotify($notify);
+            return to_route('user.password.request')->with('verifyError', 'Verification code doesn\'t match');
         }
-        $notify[] = ['success', 'You can change your password.'];
+        // $notify[] = ['success', 'You can change your password.'];
         session()->flash('fpass_email', $request->email);
-        return to_route('user.password.reset', $code)->withNotify($notify);
+        return to_route('user.password.reset', $code)->with('success', 'You can change your password.');
     }
 
 }

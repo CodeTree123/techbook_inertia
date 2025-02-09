@@ -1,6 +1,6 @@
 import React from 'react'
 import MainLayout from '../layout/MainLayout'
-import { Head, useForm } from '@inertiajs/react'
+import { Head, Link, useForm } from '@inertiajs/react'
 
 const Login = () => {
 
@@ -57,7 +57,7 @@ const Login = () => {
                                 <button className='btn w-100 fw-semibold' style={{ backgroundColor: 'rgb(175, 225, 175)' }} onClick={(e) => submit(e)}>Login</button>
                             </div>
                             <hr className='my-3'/>
-                            <a href="/user/password/reset" className='mb-3 text-center fw-bold' style={{color: 'rgb(9, 89, 9)'}}>Forgot Password</a>
+                            <Link href="/user/password/reset" className='mb-3 text-center fw-bold' style={{color: 'rgb(9, 89, 9)'}}>Forgot Password</Link>
                         </div>
                     </div>
                 </div>

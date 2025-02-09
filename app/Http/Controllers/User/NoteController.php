@@ -89,4 +89,19 @@ class NoteController extends Controller
 
         $this->createWorkOrderTimeLog('notes', 'new', $note->wo_id, $note->updated_at, '', $note->note, '', 'nrml_text', $techId ? 'Close Out Note Added For '.$eng->name : 'Close Out Note Added', $note->id);
     }
+
+    public function updateCloseout(Request $request, $id)
+    {
+
+        $note = Note::find($id);
+
+        $note->note = $request->note;
+
+        $note->save();
+
+        $eng = Engineer::find($note->tech_id);
+
+        $preLog = WorkOrderTimeLog::where('column_name', 'close-out-note-'.$note->id)->orderBy('id', 'desc')->first();
+        $this->createWorkOrderTimeLog('notes', 'close-out-note-'.$note->id, $note->wo_id, $note->updated_at, $preLog, $note->note, '', 'nrml_text', $eng ? 'Close Out Note Updated For '.$eng->name : 'Close Out Note Updated', $note->id);
+    }
 }

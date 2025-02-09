@@ -245,6 +245,8 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('note/create/{id}', 'store')->name('note.store');
                 Route::post('sub-note/create/{id}', 'storeSubNote')->name('subnote.store');
                 Route::post('close-out-note/create/{id}/{techId?}', 'storeCloseout')->name('closeoutnote.store');
+                
+                Route::post('close-out-note/update/{id}', 'updateCloseout')->name('wo.updateCloseout');
             });
             //Profile setting
             Route::controller('ProfileController')->group(function () {

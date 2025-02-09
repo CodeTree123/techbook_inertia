@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class ResetPasswordController extends Controller
 {
@@ -41,9 +42,14 @@ class ResetPasswordController extends Controller
             $notify[] = ['error', 'Invalid token'];
             return to_route('user.password.request')->withNotify($notify);
         }
-        return view('user.auth.passwords.reset')->with(
-            ['token' => $token, 'email' => $email, 'pageTitle' => 'Reset Password']
-        );
+        // return view('user.auth.passwords.reset')->with(
+        //     ['token' => $token, 'email' => $email, 'pageTitle' => 'Reset Password']
+        // );
+
+        return Inertia::render('user/resetPassword/ResetPassword',[
+            'token' => $token,
+            'email' => $email
+        ]);
     }
 
     public function reset(Request $request)
@@ -94,7 +100,17 @@ class ResetPasswordController extends Controller
         return [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => ['required','confirmed',$passwordValidation],
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*?&]/',
+                'confirmed',
+                $passwordValidation
+            ],
         ];
     }
 
