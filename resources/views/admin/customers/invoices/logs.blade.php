@@ -1,25 +1,82 @@
+
 @if($logs->count() > 0)
-    @foreach($logs as $log)
-        <div class="card" style="border-radius:15px;">
-            <div class="card-header" style="background-color: rgb(163, 209, 139);">
-                <h5>Action: {{ ucfirst($log->action) }}</h5>
-            </div>
-            <div class="card-body" style="height: 200px; overflow-y: auto;">
+<div class="accordion accordion-flush" id="logsAccordion">
+
+@foreach($logs as $log)
+    @php
+        $logId = 'logCollapse' . $log->id;
+        $updatedId = 'logUpdated' . $log->id;
+        $previousId = 'logPrevious' . $log->id;
+        $headingId = 'logHeading' . $log->id;
+        $headingIdUpdated = 'logHeadingUpdated' . $log->id;
+        $headingIdPrevious = 'logHeadingPrevious' . $log->id;
+    @endphp
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="{{ $headingId }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $logId }}" aria-expanded="false" aria-controls="{{ $logId }}">
+                {{ ucfirst($log->action) }}
+            </button>
+        </h2>
+        <div id="{{ $logId }}" class="accordion-collapse collapse" aria-labelledby="{{ $headingId }}">
+            <div class="accordion-body">
                 <p><strong>User:</strong> {{ $log->user ? $log->user->name : 'System' }}</p>
-                <p><strong>Changes:</strong> {!! $log->changes !!}</p>
-                <p><strong>Timestamp:</strong> {{ $log->created_at->format('Y-m-d H:i:s') }}</p>
-            </div>
-            <div class="card-footer">
-                <p><small>Logged on: {{ $log->created_at->diffForHumans() }}</small></p>
+
+                @php
+                    $parts = explode('|', $log->changes);
+                    $updatedData = trim($parts[0]); // Current data
+                    $previousData = isset($parts[1]) ? trim($parts[1]) : null;
+                @endphp
+
+                @if($previousData)
+                <!-- Unique Previous Data Accordion -->
+                <div class="accordion accordion-flush" id="previousData{{ $log->id }}">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="{{ $headingIdPrevious }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $previousId }}" aria-expanded="false" aria-controls="{{ $previousId }}">
+                                Previous
+                            </button>
+                        </h2>
+                        <div id="{{ $previousId }}" class="accordion-collapse collapse" aria-labelledby="{{ $headingIdPrevious }}">
+                            <div class="accordion-body">
+                                <p>{!! $previousData !!}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Unique Updated Data Accordion -->
+                <div class="accordion accordion-flush" id="updatedData{{ $log->id }}">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="{{ $headingIdUpdated }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $updatedId }}" aria-expanded="false" aria-controls="{{ $updatedId }}">
+                                Updated
+                            </button>
+                        </h2>
+                        <div id="{{ $updatedId }}" class="accordion-collapse collapse" aria-labelledby="{{ $headingIdUpdated }}">
+                            <div class="accordion-body">
+                                <p>{!! $updatedData !!}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p><strong>Updated at:</strong> {{ \Carbon\Carbon::parse($log->created_at)->setTimezone('America/Chicago')->format('m/d/Y h:i:s A') }}
+                    <br>({{ $log->created_at->diffForHumans() }})
+                </p>
             </div>
         </div>
-    @endforeach
-    <div class="d-flex justify-content-center mt-3">
-        {{ $logs->links('pagination::bootstrap-4') }} <!-- Bootstrap pagination links -->
     </div>
-@else
-    <div class="alert alert-info text-center" role="alert">
-        No logs available.
-    </div>
-@endif
+@endforeach
 
+</div>
+
+<div class="d-flex justify-content-center mt-3">
+    {{ $logs->links('pagination::bootstrap-4') }} <!-- Bootstrap pagination links -->
+</div>
+@else
+<div class="alert alert-info text-center" role="alert">
+    No logs available.
+</div>
+@endif
