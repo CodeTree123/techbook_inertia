@@ -813,10 +813,12 @@ class CustomerController extends Controller
 
         if (!empty($invoice->invoice->invoice_date)) {
             $pastDue = Carbon::parse($invoice->invoice->invoice_date);
-            
-            $billingTerm = $invoice->customer->billing_term;
+            $manualTerm = CustomerInvoice::where('work_order_id', $id)->first(); 
+            $term = $manualTerm->terms;           
+            $billingTerm = $invoice->customer->billing_term ?? $term;
+
             $days = (int) Str::replace('NET', '', $billingTerm);
-            
+
             $dueDate = $pastDue->addDays($days);
             
             $today = Carbon::now('America/Chicago');
@@ -824,7 +826,7 @@ class CustomerController extends Controller
             $diffInDays = $dueDate->diffInDays($today, false);
         
             if ($diffInDays < 0) {
-                echo "Invoice is overdue by " . abs($diffInDays) . " days.";
+                app(\App\Http\Controllers\Admin\InvoiceController::class)->stageStatusBillingInvoiced($id);
             } else {
                 app(\App\Http\Controllers\Admin\InvoiceController::class)->stageStatusBillingPastDue($id);
             }
