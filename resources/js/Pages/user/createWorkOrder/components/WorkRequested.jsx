@@ -7,14 +7,20 @@ const WorkRequested = ({ data, setData, errors, woReqRef }) => {
     const config = useMemo(() => ({
         readonly: false,
         placeholder: 'Start typing...'
-      }), []);
-      
+    }), []);
+
     return (
         <div ref={woReqRef} className="card action-cards bg-white border mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
                 <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Work Requested</h3>
             </div>
             <div className="card-body bg-white">
+
+                <h6 style={{ fontWeight: 600 }}>
+                    Work Order Title :
+                </h6>
+                <input className="mb-0 border p-2 rounded mb-3 w-100" name="order_title" type="text" defaultValue={data.order_title} onChange={(e) => setData({ ...data, order_title: e.target.value })} />
+                
                 <div
                     id="wo_requested"
                     className='mb-3'
@@ -46,6 +52,11 @@ const WorkRequested = ({ data, setData, errors, woReqRef }) => {
                     <option value='phone' selected={data.request_type == 'phone'}>Phone
                     </option>
                 </select>
+
+                <h6 style={{ fontWeight: 600 }}>
+                    Source :
+                </h6>
+                <input className="mb-0 border p-2 rounded mb-3 w-100" name="source" type="text" defaultValue={data.source} onChange={(e) => setData({ ...data, source: e.target.value })} />
             </div>
         </div>
     )

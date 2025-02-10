@@ -19,6 +19,7 @@ const CreateWorkOrder = ({ type }) => {
 
     const [techDocFiles, setTechDocFiles] = useState([]);
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+        'order_title': '',
         'cus_id': '',
         'priority': '',
         'requested_by': '',
@@ -43,6 +44,7 @@ const CreateWorkOrder = ({ type }) => {
         'tasks': [],
         'techDocs': [],
         'taskFiles': [],
+        'source': ''
     });
     
 

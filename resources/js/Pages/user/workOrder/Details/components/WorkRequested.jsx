@@ -10,6 +10,8 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled, is_billing
         'wo_requested': details.wo_requested,
         'requested_date': '',
         'request_type': '',
+        'order_title': '',
+        'source': '',
     });
 
     const config = useMemo(() => ({
@@ -68,13 +70,20 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled, is_billing
                 {
                     editable &&
                     <>
+                        <label htmlFor className='mt-3'>Work Order Title</label>
+                        <input type="text" defaultValue={details.order_title} className='border-bottom w-100' onChange={(e) => setData({ ...data, order_title: e.target.value })} />
+
                         <label htmlFor className='mt-3'>Requesting Date</label>
                         <input type="date" defaultValue={details.requested_date} className='border-bottom w-100' onChange={(e) => setData({ ...data, requested_date: e.target.value })} />
+
                         <label htmlFor className='mt-3'>Requesting Method</label>
                         <select className='border-bottom w-100' onChange={(e) => setData({ ...data, request_type: e.target.value })}>
                             <option value="Email" selected={details.request_type == 'Email'}>Email</option>
                             <option value="Phone" selected={details.request_type == 'Phone'}>Phone</option>
                         </select>
+
+                        <label htmlFor className='mt-3'>Source</label>
+                        <input type="text" defaultValue={details.source} className='border-bottom w-100' onChange={(e) => setData({ ...data, source: e.target.value })} />
                     </>
 
                 }
@@ -82,7 +91,7 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled, is_billing
                     editable &&
                     <div
                         id="scopeForm"
-
+                        className='mt-3'
                     >
                         <JoditEditor
                             ref={editor}
@@ -95,6 +104,12 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled, is_billing
 
                 {!editable && (
                     <p className="mb-0">
+                        <span className=''>Work Order Title: </span> {details?.order_title}
+                    </p>
+                )}
+
+                {!editable && (
+                    <p className="mb-0">
                         <span className=''>Requesting Date: </span> {details?.requested_date
                             ? DateTime.fromISO(details.requested_date).toFormat('MM-dd-yy')
                             : null}
@@ -102,13 +117,19 @@ const WorkRequested = ({ id, details, onSuccessMessage, is_cancelled, is_billing
                 )}
 
                 {!editable && (
-                    <p className="mb-4">
+                    <p className="mb-0">
                         <span className=''>Requesting Method: </span> {details?.request_type}
                     </p>
                 )}
 
                 {!editable && (
-                    <div className="mb-0"><div dangerouslySetInnerHTML={{ __html: details.wo_requested }}/></div>
+                    <p className="mb-4">
+                        <span className=''>Source: </span> {details?.source}
+                    </p>
+                )}
+
+                {!editable && (
+                    <div className="mb-0"><div dangerouslySetInnerHTML={{ __html: details.wo_requested }} /></div>
                 )}
 
             </div>

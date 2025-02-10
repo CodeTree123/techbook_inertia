@@ -41,7 +41,9 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                     <WorkRequested id={id} details={{
                         wo_requested: details?.wo_requested,
                         requested_date: details?.requested_date,
-                        request_type: details?.request_type
+                        request_type: details?.request_type,
+                        order_title: details?.order_title,
+                        source: details?.source,
                     }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} is_billing={details.status >= 12} />
                     <ScopeOfWork id={id} details={{ scope_work: details?.scope_work }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} is_billing={details.status >= 12} />
                     <ToolRequired id={id} details={{ r_tools: details?.r_tools, }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} is_billing={details.status >= 12} />

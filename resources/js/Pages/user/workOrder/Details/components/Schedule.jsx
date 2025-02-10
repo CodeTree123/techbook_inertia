@@ -5,15 +5,18 @@ import { Dropdown } from 'react-bootstrap';
 import { DateTime } from 'luxon';
 
 const Schedule = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) => {
-    
+
     const [addSchedule, setAddSchedule] = useState(false);
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
         'on_site_by': '',
+        'end_date': '',
         'scheduled_time': '',
+        'end_time': '',
         'h_operation': '',
         'estimated_time': '',
         'schedule_type': '',
+        'type': 'hard_time'
     });
 
     const submit = (e) => {
@@ -76,18 +79,38 @@ const Schedule = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
             </div>
             <div className="card-body bg-white">
                 <h6 className='mb-3'>Current Site Time: {DateTime.now().setZone(selectedTimezone).toLocaleString(DateTime.TIME_SIMPLE)} ({selectedTimezone})</h6>
-                <ScheduleTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing}/>
+                <ScheduleTable details={details} onSuccessMessage={onSuccessMessage} is_cancelled={is_cancelled} is_billing={is_billing} />
                 {
                     addSchedule ?
                         <form onSubmit={(e) => submit(e)} className="py-3 border-bottom">
                             <div>
                                 <div>
-                                    <label htmlFor>Schedule Date</label>
+                                    <label htmlFor>Schedule Category</label>
+                                    <select name="type" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, type: e.target.value })} style={{ fontWeight: 600 }} >
+                                        <option value="hard_time" selected>Arrive at a specific date and time</option>
+                                        <option value="between_hours">Complete work between specific hours</option>
+                                        <option value="date_range">Arrive at a anytime over a date range</option>
+                                    </select>
+
+                                    <label htmlFor>{data?.type == 'date_range' ? 'Start Date' : 'Schedule Date'}</label>
                                     <input type="date" name="on_site_by" placeholder="Enter Date" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, on_site_by: e.target.value })} style={{ fontWeight: 600 }} />
 
-                                    <label htmlFor>Schedule Time</label>
-                                    
+                                    {data?.type == 'date_range' && <>
+                                        <label htmlFor>To Date</label>
+                                        <input type="date" name="end_date" placeholder="Enter Date" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, end_date: e.target.value })} style={{ fontWeight: 600 }} />
+                                    </>}
+
+                                    <label htmlFor>{data?.type == 'between_hours' ? 'Starting Hours' : 'Schedule Time'}</label>
                                     <input type="time" name="scheduled_time" placeholder="Enter Name" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} style={{ fontWeight: 600 }} />
+
+                                    {
+                                        data?.type == 'between_hours' &&
+                                        <>
+                                            <label htmlFor>Ending Hour</label>
+                                            <input type="time" name="end_time" placeholder="Enter Name" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, end_time: e.target.value })} style={{ fontWeight: 600 }} />
+                                        </>
+                                    }
+
 
                                     <label htmlFor>Hours Of Operation</label>
                                     <input type="text" name="h_operation" placeholder="Enter Hours Of Operation" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, h_operation: e.target.value })} style={{ fontWeight: 600 }} />

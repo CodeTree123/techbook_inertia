@@ -295,23 +295,23 @@ class UserController extends Controller
     {
         $search = $request->query('search', '');
 
+        $keywords = !empty($search) ? explode(' ', $search) : []; // Define before query
+
         $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
-            ->when($search, function ($query, $search) {
+            ->when(!empty($keywords), function ($query) use ($keywords) {
                 $query->where(function ($q) use ($keywords) {
                     foreach ($keywords as $keyword) {
-                        $q->where(function ($subQuery) use ($keyword) {
-                            $subQuery->where('site_id', 'like', "%{$keyword}%")
-                                ->orWhere('location', 'like', "%{$keyword}%")
-                                ->orWhere('address_1', 'like', "%{$keyword}%")
-                                ->orWhere('city', 'like', "%{$keyword}%")
-                                ->orWhere('state', 'like', "%{$keyword}%")
-                                ->orWhere('zipcode', 'like', "%{$keyword}%");
-                        });
+                        $q->orWhere('site_id', 'like', "%{$keyword}%")
+                        ->orWhere('location', 'like', "%{$keyword}%")
+                        ->orWhere('address_1', 'like', "%{$keyword}%")
+                        ->orWhere('city', 'like', "%{$keyword}%")
+                        ->orWhere('state', 'like', "%{$keyword}%")
+                        ->orWhere('zipcode', 'like', "%{$keyword}%");
                     }
                 });
             })
             ->orderBy('site_id', 'asc')
-            ->paginate(10); // Limit results to avoid overloading data
+            ->paginate(10);
 
         return response()->json([
             'success' => true,
@@ -324,19 +324,19 @@ class UserController extends Controller
     {
         $search = $request->query('search', '');
 
+        $keywords = !empty($search) ? explode(' ', $search) : []; // Define before query
+
         $sites = CustomerSite::select('id', 'site_id', 'location', 'customer_id', 'address_1', 'city', 'state', 'zipcode')
             ->where('customer_id', $id)
-            ->when($search, function ($query, $search) {
+            ->when(!empty($keywords), function ($query) use ($keywords) {
                 $query->where(function ($q) use ($keywords) {
                     foreach ($keywords as $keyword) {
-                        $q->where(function ($subQuery) use ($keyword) {
-                            $subQuery->where('site_id', 'like', "%{$keyword}%")
-                                ->orWhere('location', 'like', "%{$keyword}%")
-                                ->orWhere('address_1', 'like', "%{$keyword}%")
-                                ->orWhere('city', 'like', "%{$keyword}%")
-                                ->orWhere('state', 'like', "%{$keyword}%")
-                                ->orWhere('zipcode', 'like', "%{$keyword}%");
-                        });
+                        $q->orWhere('site_id', 'like', "%{$keyword}%")
+                        ->orWhere('location', 'like', "%{$keyword}%")
+                        ->orWhere('address_1', 'like', "%{$keyword}%")
+                        ->orWhere('city', 'like', "%{$keyword}%")
+                        ->orWhere('state', 'like', "%{$keyword}%")
+                        ->orWhere('zipcode', 'like', "%{$keyword}%");
                     }
                 });
             })
