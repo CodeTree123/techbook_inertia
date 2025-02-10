@@ -385,9 +385,9 @@
                 View Log
             </button>
             @if ($invoice->status == 15)
-            <button class="btn btn-success">Payment Complete</button>
+            <button class="btn btn-success mx-2">Payment Complete</button>
             @elseif($invoice->status == 14)
-            <button class="btn btn-warning">Payment Past Due</button>
+            <button class="btn btn-warning mx-2">Payment Past Due</button>
             @else
             @if ($invoice->status == 13)
             <a href="{{ route('admin.revert', $invoice->id) }}"
