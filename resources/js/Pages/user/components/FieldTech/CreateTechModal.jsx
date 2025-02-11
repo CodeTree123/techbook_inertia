@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import Shade from "@/Pages/user/components/Shade";
 import React, { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
 
@@ -142,14 +143,56 @@ const CreateTechModal = ({ onSuccessMessage }) => {
                             {errors.company_name && <p className='text-danger'>{errors.company_name}</p>}
                         </div>
                         <div className="form-group col-4">
+                            <label>C Work Order Count</label>
+                            <input type="number" className="form-control" placeholder="Enter value" name="c_wo_ct" style={{ height: '36px' }} onChange={(e) => setData({ ...data, c_wo_ct: e.target.value })} />
+                            {errors.c_wo_ct && <p className='text-danger'>{errors.c_wo_ct}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label htmlFor="status">Select Status</label>
+                            <select name="status" style={{ height: '36px' }} className="form-control" onChange={(e) => setData({ ...data, status: e.target.value })}>
+                                <option value>Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                            {errors.status && <p className='text-danger'>{errors.status}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label>Terms</label>
+                            <select name="terms" style={{ height: '36px' }} className="form-control" onChange={(e) => setData({ ...data, terms: e.target.value })}>
+                                <option value>Select Terms</option>
+                                <option value={30}>30</option>
+                                <option value={45}>45</option>
+                                <option value={60}>60</option>
+                                <option value={90}>90</option>
+                            </select>
+                            {errors.terms && <p className='text-danger'>{errors.terms}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label>Preferred?</label>
+                            <select name="preference" style={{ height: '36px' }} className="form-control" onChange={(e) => setData({ ...data, preference: e.target.value })}>
+                                <option value="Yes">Yes</option>
+                                <option selected value="No">No</option>
+                            </select>
+                            {errors.preference && <p className='text-danger'>{errors.preference}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label>Source</label>
+                            <input type="text" style={{ height: '36px' }} className="form-control" placeholder="Enter Sourcee" name="source" onChange={(e) => setData({ ...data, source: e.target.value })} />
+                            {errors.source && <p className='text-danger'>{errors.source}</p>}
+                        </div>
+                        <div className="form-group col-4">
+                            <label>Notes</label>
+                            <textarea className="form-control" style={{ height: '36px' }} name="notes" placeholder="Enter notes here" defaultValue={""} onChange={(e) => setData({ ...data, notes: e.target.value })} />
+                            {errors.notes && <p className='text-danger'>{errors.notes}</p>}
+                        </div>
+
+                        <Shade title="Address" />
+
+                        <div className="form-group col-4">
                             <label>Address</label>
                             <input type="text" className="form-control" placeholder="Enter address" name="address" style={{ height: '36px' }} onChange={(e) => setData({ ...data, address: e.target.value })} />
                             {errors.address && <p className='text-danger'>{errors.address}</p>}
-                        </div>
-                        <div className="form-group col-4">
-                            <label>Country</label>
-                            <input type="text" className="form-control" placeholder="Enter country" name="country" defaultValue="United States" style={{ height: '36px' }} onChange={(e) => setData({ ...data, country: e.target.value })} />
-                            {errors.country && <p className='text-danger'>{errors.country}</p>}
                         </div>
                         <div className="form-group col-4">
                             <label>City</label>
@@ -166,6 +209,14 @@ const CreateTechModal = ({ onSuccessMessage }) => {
                             <input type="text" className="form-control" placeholder="Enter zipcode" name="zip_code" style={{ height: '36px' }} onChange={(e) => setData({ ...data, zip_code: e.target.value })} />
                             {errors.zip_code && <p className='text-danger'>{errors.zip_code}</p>}
                         </div>
+                        <div className="form-group col-4">
+                            <label>Country</label>
+                            <input type="text" className="form-control" placeholder="Enter country" name="country" defaultValue="United States" style={{ height: '36px' }} onChange={(e) => setData({ ...data, country: e.target.value })} />
+                            {errors.country && <p className='text-danger'>{errors.country}</p>}
+                        </div>
+
+                        <Shade title="Contacts" />
+
                         <div className="form-group col-4">
                             <label>Email</label>
                             <input type="text" className="form-control" placeholder="Enter email" name="email" style={{ height: '36px' }} onChange={(e) => setData({ ...data, email: e.target.value })} />
@@ -196,6 +247,9 @@ const CreateTechModal = ({ onSuccessMessage }) => {
                             <input type="text" className="form-control" placeholder="Enter cell phone" name="cell_phone" style={{ height: '36px' }} onChange={(e) => setData({ ...data, cell_phone: e.target.value })} />
                             {errors.cell_phone && <p className='text-danger'>{errors.cell_phone}</p>}
                         </div>
+
+                        <Shade title="Rates" />
+
                         <div className="form-group col-4">
                             <label>Standard Rate</label>
                             <input type="numeric" className="form-control" placeholder="Enter rate" name="std_rate" style={{ height: '36px' }} onChange={(e) => setData({ ...data, std_rate: e.target.value })} />
@@ -226,21 +280,9 @@ const CreateTechModal = ({ onSuccessMessage }) => {
                             <input type="numeric" className="form-control" placeholder="Enter travel fee" name="travel_fee" style={{ height: '36px' }} onChange={(e) => setData({ ...data, travel_fee: e.target.value })} />
                             {errors.travel_fee && <p className='text-danger'>{errors.travel_fee}</p>}
                         </div>
-                        <div className="form-group col-4">
-                            <label>C Work Order Count</label>
-                            <input type="number" className="form-control" placeholder="Enter value" name="c_wo_ct" style={{ height: '36px' }} onChange={(e) => setData({ ...data, c_wo_ct: e.target.value })} />
-                            {errors.c_wo_ct && <p className='text-danger'>{errors.c_wo_ct}</p>}
-                        </div>
-                        <div className="form-group col-4">
-                            <label htmlFor="status">Select Status</label>
-                            <select name="status" style={{ height: '36px' }} className="form-control" onChange={(e) => setData({ ...data, status: e.target.value })}>
-                                <option value>Select Status</option>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                                <option value="Pending">Pending</option>
-                            </select>
-                            {errors.status && <p className='text-danger'>{errors.status}</p>}
-                        </div>
+
+                        <Shade title="Attachments" />
+
                         <div className="form-group col-4">
                             <label>COI Expiration Date</label>
                             <input type="date" style={{ height: '36px' }} className="form-control" id="tech_modal_coi_expire_date" placeholder="COI expiration date" autoComplete="off" name="coi_expire_date" onChange={(e) => setData({ ...data, coi_expire_date: e.target.value })} />
@@ -275,35 +317,9 @@ const CreateTechModal = ({ onSuccessMessage }) => {
                             <input type="file" style={{ height: '36px' }} className="form-control" placeholder="NDA attachment" name="nda_file" onChange={(e) => setData({ ...data, nda_file: e.target.files[0] })} />
                             {errors.nda_file && <p className='text-danger'>{errors.nda_file}</p>}
                         </div>
-                        <div className="form-group col-4">
-                            <label>Terms</label>
-                            <select name="terms" style={{ height: '36px' }} className="form-control" onChange={(e) => setData({ ...data, terms: e.target.value })}>
-                                <option value>Select Terms</option>
-                                <option value={30}>30</option>
-                                <option value={45}>45</option>
-                                <option value={60}>60</option>
-                                <option value={90}>90</option>
-                            </select>
-                            {errors.terms && <p className='text-danger'>{errors.terms}</p>}
-                        </div>
-                        <div className="form-group col-4">
-                            <label>Preferred?</label>
-                            <select name="preference" style={{ height: '36px' }} className="form-control" onChange={(e) => setData({ ...data, preference: e.target.value })}>
-                                <option value="Yes">Yes</option>
-                                <option selected value="No">No</option>
-                            </select>
-                            {errors.preference && <p className='text-danger'>{errors.preference}</p>}
-                        </div>
-                        <div className="form-group col-4">
-                            <label>Source</label>
-                            <input type="text" style={{ height: '36px' }} className="form-control" placeholder="Enter Sourcee" name="source" onChange={(e) => setData({ ...data, source: e.target.value })} />
-                            {errors.source && <p className='text-danger'>{errors.source}</p>}
-                        </div>
-                        <div className="form-group col-4">
-                            <label>Notes</label>
-                            <textarea className="form-control" style={{ height: '36px' }} name="notes" placeholder="Enter notes here" defaultValue={""} onChange={(e) => setData({ ...data, notes: e.target.value })} />
-                            {errors.notes && <p className='text-danger'>{errors.notes}</p>}
-                        </div>
+                        
+                        <Shade title="Skill sets" />
+
                         <div style={{ marginTop: 20 }}>
                             <label>Skill Sets</label>
                         </div>

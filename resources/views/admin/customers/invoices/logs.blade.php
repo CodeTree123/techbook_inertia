@@ -15,7 +15,7 @@
     <div class="accordion-item">
         <h2 class="accordion-header" id="{{ $headingId }}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $logId }}" aria-expanded="false" aria-controls="{{ $logId }}">
-                {{ ucfirst($log->action) }}
+                {{ ucfirst($log->action) }}-{{ \Carbon\Carbon::parse($log->created_at)->setTimezone('America/Chicago')->format('(m/d) (h:i:s A)') }}
             </button>
         </h2>
         <div id="{{ $logId }}" class="accordion-collapse collapse" aria-labelledby="{{ $headingId }}">
