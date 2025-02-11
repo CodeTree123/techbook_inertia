@@ -36,7 +36,7 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
         'h_operation': '',
         'estimated_time': '',
     });
-    
+
 
     const submit = (e, id) => {
         e.preventDefault();
@@ -77,7 +77,12 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                 details?.schedule_type === 'single' ? (
                     // Render a single schedule if there's exactly one schedule
                     <form onSubmit={(e) => submit(e, details?.schedules[0]?.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
-                        <p>Start at a specific date and time</p>
+                        <p>{details?.schedules[0]?.type === 'hard_time'
+                            ? 'Start at a specific date and time'
+                            : details?.schedules[0]?.type === 'between_hours'
+                                ? 'Complete work between specific hours'
+                                : 'Arrive at anytime over a date range'}
+                        </p>
                         <b>
                             {new Date(details?.schedules[0]?.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
                         </b>
@@ -111,9 +116,9 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                             }
                             <br />
                             {
-                                    editableRow !== 0 &&
-                                    <b className="nrml-txt mb-2">Approximate hours to complete: {details?.schedules[0]?.estimated_time} hour(s)</b>
-                                }
+                                editableRow !== 0 &&
+                                <b className="nrml-txt mb-2">Approximate hours to complete: {details?.schedules[0]?.estimated_time} hour(s)</b>
+                            }
                             {
                                 editableRow === 0 &&
                                 <input type="text" name="h_operation" placeholder='Estimated hours' className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.estimated_time} onChange={(e) => setData({ ...data, estimated_time: e.target.value })} />

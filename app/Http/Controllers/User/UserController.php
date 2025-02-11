@@ -2213,6 +2213,7 @@ class UserController extends Controller
             $wo->order_id = "I1" . $id . $f;
         }
 
+        $wo->order_title = $request->order_title;
         $wo->slug = $request->cus_id;
         $wo->em_id = $request->wo_manager;
         $wo->priority = $request->priority;
@@ -2231,6 +2232,7 @@ class UserController extends Controller
         $wo->request_type = $request->request_type;
         $wo->schedule_type = $request->schedule_type ?? 'single';
         $wo->travel_cost = $request->travel_cost ?? 0;
+        $wo->source = $request->source;
         $wo->save();
 
         $invoice = new CustomerInvoice();
@@ -2780,6 +2782,8 @@ class UserController extends Controller
         $wo->wo_requested = $request['wo_requested'] ?? $wo->wo_requested;
         $wo->request_type = $request['request_type'] ?? $wo->request_type;
         $wo->requested_date = $request['requested_date'] ?? $wo->requested_date;
+        $wo->order_title = $request['order_title'] ?? $wo->order_title;
+        $wo->source = $request['source'] ?? $wo->source;
 
         $wo->save();
 
@@ -2796,6 +2800,11 @@ class UserController extends Controller
         if ($request->requested_date) {
             $preLog = WorkOrderTimeLog::where('column_name', 'requested_date')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'requested_date', $wo->id, $wo->updated_at, $preLog, $wo->requested_date, '', 'html_text', 'Requesting Date Updated', $id);
+        }
+
+        if ($request->order_title) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'order_title')->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_orders', 'order_title', $wo->id, $wo->updated_at, $preLog, $wo->order_title, '', 'html_text', 'Order Title Updated', $id);
         }
     }
 
@@ -2861,8 +2870,11 @@ class UserController extends Controller
         $schdule = new WorkOrderSchedule();
 
         $schdule->wo_id = $id;
+        $schdule->type = $request->type;
         $schdule->on_site_by = $request->on_site_by;
+        $schdule->end_date = $request->end_date;
         $schdule->scheduled_time = $request->scheduled_time;
+        $schdule->end_time = $request->end_time;
         $schdule->h_operation = $request->h_operation;
         $schdule->estimated_time = $request->estimated_time;
 
