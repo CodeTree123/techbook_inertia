@@ -2748,6 +2748,7 @@ class UserController extends Controller
         $wo->p_o = $request['p_o'] ?? $wo->p_o;
         $wo->requested_by = $request['requested_by'] ?? $wo->requested_by;
         $wo->em_id = $request['wo_manager'] ?? $wo->em_id;
+        $wo->source = $request['source'] ?? $wo->source;
 
         $wo->save();
 
@@ -2783,7 +2784,6 @@ class UserController extends Controller
         $wo->request_type = $request['request_type'] ?? $wo->request_type;
         $wo->requested_date = $request['requested_date'] ?? $wo->requested_date;
         $wo->order_title = $request['order_title'] ?? $wo->order_title;
-        $wo->source = $request['source'] ?? $wo->source;
 
         $wo->save();
 

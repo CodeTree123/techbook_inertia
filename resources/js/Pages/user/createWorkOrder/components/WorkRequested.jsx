@@ -53,10 +53,7 @@ const WorkRequested = ({ data, setData, errors, woReqRef }) => {
                     </option>
                 </select>
 
-                <h6 style={{ fontWeight: 600 }}>
-                    Source :
-                </h6>
-                <input className="mb-0 border p-2 rounded mb-3 w-100" name="source" type="text" defaultValue={data.source} onChange={(e) => setData({ ...data, source: e.target.value })} />
+                
             </div>
         </div>
     )

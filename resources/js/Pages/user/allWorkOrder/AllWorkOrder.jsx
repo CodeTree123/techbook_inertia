@@ -73,6 +73,25 @@ const AllWorkOrder = ({ w_orders }) => {
 
   };
 
+  const [sortOrder, setSortOrder] = useState('desc');
+  const handleSortToggle = () => {
+    setSortOrder((prevOrder) => (prevOrder === 'desc' ? 'asc' : 'desc')); // Toggle between asc and desc
+  };
+
+  const sortedWorkOrders = [...workOrders].sort((a, b) => {
+    const dateA = a.schedules?.[0]?.on_site_by ? new Date(a.schedules[0].on_site_by) : null;
+    const dateB = b.schedules?.[0]?.on_site_by ? new Date(b.schedules[0].on_site_by) : null;
+
+    if (dateA && dateB) {
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB; // Toggle sorting order
+    } else if (dateA) {
+      return sortOrder === 'desc' ? -1 : 1;
+    } else if (dateB) {
+      return sortOrder === 'desc' ? 1 : -1;
+    }
+    return 0;
+  });
+
 
   return (
     <>
@@ -108,11 +127,14 @@ const AllWorkOrder = ({ w_orders }) => {
               <thead className='border-0'>
                 <tr>
                   <th className='text-start border-0'>ID</th>
-                  <th className='text-start border-0'>Schedule</th>
+                  <th className='text-start border-0'>Schedule <button onClick={handleSortToggle} className='p-0 border-0 bg-transparent'>
+                    {sortOrder === 'desc' ?
+                      <i class="fa-solid fa-arrow-up-wide-short"></i> : <i class="fa-solid fa-arrow-up-short-wide"></i>}
+                  </button></th>
                   <th className='text-start border-0'>Customer</th>
                   <th className='text-start border-0'>Technician</th>
                   <th className='text-start border-0'>Site</th>
-                  <th className='text-start border-0'>Status</th>
+                  <th className='text-start border-0'>Stage/Status</th>
                   <th className='text-start border-0'>Created At</th>
                 </tr>
               </thead>
@@ -121,10 +143,10 @@ const AllWorkOrder = ({ w_orders }) => {
                   <div>Loading...</div> // Show loading text while fetching
                 ) : (
 
-                  workOrders?.map((wo) => (
+                  sortedWorkOrders?.map((wo) => (
                     <tr className='rounded-3'>
                       <td className='border-0 fw-bold' style={{ borderRadius: '10px 0 0 10px' }}><Link href={`/user/work/order/view/layout/user/dashboard/inertia/${wo.id}`}>{wo.order_id}</Link></td>
-                      <td className='border-0'>
+                      <td className='border-0 fw-bold'>
                         {
                           wo?.schedules[0]?.on_site_by ?
                             DateTime.fromISO(wo?.schedules[0]?.on_site_by).toFormat('MM-dd-yy') : 'N/A'
@@ -142,7 +164,7 @@ const AllWorkOrder = ({ w_orders }) => {
                       </td>
 
                       <td className='border-0 fw-bold'>
-                       {wo?.site?.site_id ?? <i class="fa-regular fa-clock text-success"></i>}
+                        {wo?.site?.site_id ?? <i class="fa-regular fa-clock text-success"></i>}
                       </td>
                       <td className='border-0 fw-bold'>{getStatus(wo)}-{wo.status == 1 ? <span className='text-info-emphasis'>Pending</span> : wo.status == 2 ? <span className='text-warning-emphasis'>Contacted</span> : wo.status == 3 ? <span className='text-success'>Confirm</span> : wo.status == 4 ? <span className='text-danger'>At Risk</span> : wo.status == 5 ? <span className='text-primary'>Delayed</span> : wo.status == 6 ? <span className='text-primary'>On hold</span> : wo.status == 7 ? <span className='text-primary'>En route</span> : wo.status == 8 ? <span className='text-primary'>Checked in</span> : wo.status == 9 ? <span className='text-primary'>Checked out</span> : wo.status == 10 ? <span className='text-primary'>Needs Approval</span> : wo.status == 11 ? <span className='text-primary'>Issue</span> : wo.status == 12 ? <span className='text-primary'>Approved</span> : wo.status == 13 ? <span className='text-primary'>Invoiced</span> : wo.status == 14 ? <span className='text-primary'>Past due</span> : wo.status == 15 ? <span className='text-primary'>Paid</span> : 'N/A'}</td>
                       <td className='border-0 fw-bold'>{DateTime.fromISO(wo.created_at).toRelative()}</td>

@@ -60,14 +60,14 @@ const WoLog = ({ id, details }) => {
                                 <tr className='rounded-3'>
                                     <td className='border-0 fw-bold' style={{ borderRadius: '10px 0 0 10px' }}>
                                         <div className='d-flex justify-content-start align-items-center'>
-                                            <p style={{ cursor: 'pointer' }} className='mb-0' onClick={()=>handleShow(log)}>
+                                            <p style={{ cursor: 'pointer' }} className='mb-0' onClick={() => handleShow(log)}>
                                                 <img src={sidebarIcon} className='me-2' alt="" style={{ width: '20px' }} />
                                             </p>
                                             {log.event_title}
                                         </div>
                                     </td>
                                     <td className='border-0 fw-bold'>
-                                        {DateTime.fromSQL(log.recorded_at)
+                                        {DateTime.fromSQL(log.recorded_at, { zone: 'Asia/Dhaka' })
                                             .setZone('America/Chicago')
                                             .toFormat('MM/dd/yy hh:mm a')}
                                     </td>
