@@ -111,7 +111,7 @@ const AllWorkOrder = ({ w_orders }) => {
                   <th className='text-start border-0'>Schedule</th>
                   <th className='text-start border-0'>Customer</th>
                   <th className='text-start border-0'>Technician</th>
-                  <th className='text-start border-0'>Stage</th>
+                  <th className='text-start border-0'>Site</th>
                   <th className='text-start border-0'>Status</th>
                   <th className='text-start border-0'>Created At</th>
                 </tr>
@@ -142,9 +142,9 @@ const AllWorkOrder = ({ w_orders }) => {
                       </td>
 
                       <td className='border-0 fw-bold'>
-                        {getStatus(wo)}
+                       {wo?.site?.site_id ?? <i class="fa-regular fa-clock text-success"></i>}
                       </td>
-                      <td className='border-0 fw-bold'>{wo.status == 1 ? <span className='text-info-emphasis'>Pending</span> : wo.status == 2 ? <span className='text-warning-emphasis'>Contacted</span> : wo.status == 3 ? <span className='text-success'>Confirm</span> : wo.status == 4 ? <span className='text-danger'>At Risk</span> : wo.status == 5 ? <span className='text-primary'>Delayed</span> : wo.status == 6 ? <span className='text-primary'>On hold</span> : wo.status == 7 ? <span className='text-primary'>En route</span> : wo.status == 8 ? <span className='text-primary'>Checked in</span> : wo.status == 9 ? <span className='text-primary'>Checked out</span> : wo.status == 10 ? <span className='text-primary'>Needs Approval</span> : wo.status == 11 ? <span className='text-warning'>Needs Review</span> : wo.status == 12 ? <span className='text-primary'>Approved</span> : wo.status == 13 ? <span className='text-primary'>Invoiced</span> : wo.status == 14 ? <span className='text-primary'>Past due</span> : wo.status == 15 ? <span className='text-primary'>Paid</span> : 'N/A'}</td>
+                      <td className='border-0 fw-bold'>{getStatus(wo)}-{wo.status == 1 ? <span className='text-info-emphasis'>Pending</span> : wo.status == 2 ? <span className='text-warning-emphasis'>Contacted</span> : wo.status == 3 ? <span className='text-success'>Confirm</span> : wo.status == 4 ? <span className='text-danger'>At Risk</span> : wo.status == 5 ? <span className='text-primary'>Delayed</span> : wo.status == 6 ? <span className='text-primary'>On hold</span> : wo.status == 7 ? <span className='text-primary'>En route</span> : wo.status == 8 ? <span className='text-primary'>Checked in</span> : wo.status == 9 ? <span className='text-primary'>Checked out</span> : wo.status == 10 ? <span className='text-primary'>Needs Approval</span> : wo.status == 11 ? <span className='text-primary'>Issue</span> : wo.status == 12 ? <span className='text-primary'>Approved</span> : wo.status == 13 ? <span className='text-primary'>Invoiced</span> : wo.status == 14 ? <span className='text-primary'>Past due</span> : wo.status == 15 ? <span className='text-primary'>Paid</span> : 'N/A'}</td>
                       <td className='border-0 fw-bold'>{DateTime.fromISO(wo.created_at).toRelative()}</td>
 
                     </tr>

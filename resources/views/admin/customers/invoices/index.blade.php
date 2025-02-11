@@ -399,7 +399,7 @@
             <a href="{{ route('admin.billing.invoiced', $invoice->id) }}"
                 class="btn btn-outline-secondary ml-2 no-print" id="invoiceButton"
                 data-invoice-url="{{ route('admin.billing.invoiced', $invoice->id) }}">
-                Invoice
+                Invoiced
             </a>
             @endif
             @if ($invoice->status == 13)

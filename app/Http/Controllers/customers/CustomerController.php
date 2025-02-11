@@ -813,10 +813,12 @@ class CustomerController extends Controller
 
         if (!empty($invoice->invoice->invoice_date)) {
             $pastDue = Carbon::parse($invoice->invoice->invoice_date);
-            
-            $billingTerm = $invoice->customer->billing_term;
+            $manualTerm = CustomerInvoice::where('work_order_id', $id)->first(); 
+            $term = $manualTerm->terms;           
+            $billingTerm = $invoice->customer->billing_term ?? $term;
+
             $days = (int) Str::replace('NET', '', $billingTerm);
-            
+
             $dueDate = $pastDue->addDays($days);
             
             $today = Carbon::now('America/Chicago');
@@ -845,32 +847,17 @@ class CustomerController extends Controller
 
         // Loop through each work process (wp) and calculate the rate
         foreach ($wps as $wp) {
-            // Parse the check-in time
-            $checkIn = Carbon::parse($wp->updated_at);
-            $dayOfWeek = $checkIn->dayOfWeek;
-
-            // Define working hours (9 AM - 6 PM)
-            $startStdTime = Carbon::create($checkIn->year, $checkIn->month, $checkIn->day, 9, 0, 0); // 9 AM
-            $endStdTime = Carbon::create($checkIn->year, $checkIn->month, $checkIn->day, 18, 0, 0); // 6 PM
-
             list($hours, $minutes) = array_pad(explode(':', @$wp->total_hours), 2, 0);
 
-            // Ensure both $hours and $minutes are numeric
             $hours = is_numeric($hours) ? (float)$hours : 0;
             $minutes = is_numeric($minutes) ? (float)$minutes : 0;
 
-            // Convert minutes to a fraction of an hour
             $totalHoursDecimal = $hours + ($minutes / 60);
-
             $rate = WorkOrder::where('id', $wp->work_order_id)->first();
-
             $additionalRate = $rate->customer->s_rate_a;
-            // Calculate amount for the work process
             $wp->amount = $additionalRate * $totalHoursDecimal;
-            // Add to total price
             $totalPrice += $wp->amount;
         }
-
         $firstHourProduct = $invoice->invoiceProducts->where('is_primary', 1)->first();
         $additionalHourProduct = $invoice->invoiceProducts->where('is_additional', 1)->first();
         $extraHourProducts = $invoice->invoiceProducts->where('is_additional', 0)->where('is_primary', 0);

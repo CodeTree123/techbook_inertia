@@ -131,12 +131,13 @@ class SiteController extends Controller
 
         $pageTitle = "Download Work Order";
         $views = WorkOrder::with('site', 'customer', 'employee','schedules')->find($id);
+        $woId = $views->order_id;
         $scheduled = $views->schedules()->latest()->first();
         $imageFileNames = $views->pictures ? json_decode($views->pictures) : [];
         $pdf = PDF::loadView('user.pdf.work_order', compact('pageTitle', 'views', 'imageFileNames', 'scheduled'))->setOptions(['defaultFont' => 'sans-serif']);
         $pdf->setPaper('A4', 'portrait');
-        $customerCompanyName = @$views->customer->company_name;
-        $fileName = $customerCompanyName . '_Work_Order.pdf';
+        $customerCompanyId = @$views->customer->customer_id;
+        $fileName = $customerCompanyId ."-".$woId . '_WorkOrder.pdf';
 
         return $pdf->download($fileName);
     }

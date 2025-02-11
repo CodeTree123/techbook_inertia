@@ -46,21 +46,27 @@ class InvoiceController extends Controller
 
     public function stageStatusBillingInvoiced($id)
     {
-        $invoice = WorkOrder::find($id);
-        $invoice->stage = Status::STAGE_BILLING;
-        $invoice->status = Status::INVOICED;
-        $invoice->save();
-
-        $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
-        $invoiceDate->invoice_date = now();
-        $invoiceDate->save();
-
-        $action = "Status change to billing invoiced";
-        $changes = "Changes to Billing Invoiced | Previous: Billing Approved";
-
-        invoiceLog($id, $action, $changes);
-        $notify[] = ['success', 'Invoice updated successfully'];
-        return back()->withNotify($notify);
+        $invoice = WorkOrder::with('customer')->find($id);
+        $term = $invoice->customer->billing_term;
+        if(!empty($term)){
+            $invoice->stage = Status::STAGE_BILLING;
+            $invoice->status = Status::INVOICED;
+            $invoice->save();
+    
+            $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
+            $invoiceDate->invoice_date = now();
+            $invoiceDate->save();
+    
+            $action = "Status change to billing invoiced";
+            $changes = "Changes to Billing Invoiced | Previous: Billing Approved";
+    
+            invoiceLog($id, $action, $changes);
+            $notify[] = ['success', 'Invoice updated successfully'];
+            return back()->withNotify($notify);
+        }else{
+            $notify[] = ['error', 'Please update billing term first!'];
+            return back()->withNotify($notify);
+        }
     }
 
     public function stageStatusBillingPaid(Request $request, $id)
@@ -355,6 +361,7 @@ class InvoiceController extends Controller
         return back()->withNotify($notify);
     }
 
+    //invoice logs dynamic data
     public function getLogs($id, $page)
     {
         $logs = CustomerInvoiceLog::where('wo_id', $id)->with('user')
