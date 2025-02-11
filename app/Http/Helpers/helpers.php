@@ -333,7 +333,8 @@ function verifyG2fa($user, $code, $secret = null)
 
 function invoiceLog($wId,$action,$changes)
 {
-    $aId = auth('admin')->user()->id;
+    $uId = 0;
+    $aId = auth('admin')->user()->id ?? $uId;
     $logs = new CustomerInvoiceLog();
     $logs->wo_id = $wId;
     $logs->admin_id = $aId;
