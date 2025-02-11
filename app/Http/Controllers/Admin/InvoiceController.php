@@ -361,6 +361,7 @@ class InvoiceController extends Controller
         return back()->withNotify($notify);
     }
 
+    //invoice logs dynamic data
     public function getLogs($id, $page)
     {
         $logs = CustomerInvoiceLog::where('wo_id', $id)->with('user')
