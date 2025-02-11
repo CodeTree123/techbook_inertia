@@ -826,7 +826,7 @@ class CustomerController extends Controller
             $diffInDays = $dueDate->diffInDays($today, false);
         
             if ($diffInDays < 0) {
-                echo "Invoice is overdue by " . abs($diffInDays) . " days.";
+                // echo "Invoice is overdue by " . abs($diffInDays) . " days.";
             } else {
                 app(\App\Http\Controllers\Admin\InvoiceController::class)->stageStatusBillingPastDue($id);
             }

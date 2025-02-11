@@ -61,6 +61,9 @@ const Schedule = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
 
     const selectedTimezone = timezoneMap[details?.site?.time_zone];
 
+    console.log(data);
+    
+
     return (
         <div className="card bg-white shadow border-0 mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
@@ -92,7 +95,7 @@ const Schedule = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                                         <option value="date_range">Arrive at a anytime over a date range</option>
                                     </select>
 
-                                    <label htmlFor>{data?.type == 'date_range' ? 'Start Date' : 'Schedule Date'}</label>
+                                    <label htmlFor>{data?.type == 'date_range' ? 'From Date' : 'Schedule Date'}</label>
                                     <input type="date" name="on_site_by" placeholder="Enter Date" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, on_site_by: e.target.value })} style={{ fontWeight: 600 }} />
 
                                     {data?.type == 'date_range' && <>

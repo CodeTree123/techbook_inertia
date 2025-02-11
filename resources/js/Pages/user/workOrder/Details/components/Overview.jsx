@@ -48,7 +48,8 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
         'p_o': '',
         'priority': '',
         'requested_by': '',
-        'wo_manager': ''
+        'wo_manager': '',
+        'source': '',
     });
 
     const handlePriorityChange = (e) => {
@@ -95,11 +96,11 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                 <div>
                     <table>
                         <tbody><tr>
-                            <td style={{ fontWeight: 600 }}>Customer Name : </td>
+                            <td className='fw-bold'>Customer Name : </td>
                             <td>
                                 {
                                     !editable ?
-                                        <p className="mb-0 fw-bold">
+                                        <p className="mb-0">
                                             {details?.company_name}
                                         </p>
                                         :
@@ -114,28 +115,28 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                             </td>
                         </tr>
                             <tr>
-                                <td style={{ fontWeight: 600 }}>Purchase order : </td>
+                                <td className='fw-bold'>Purchase order : </td>
                                 <td>
                                     {
                                         !editable ?
-                                            <p className="mb-0 fw-bold">{details.p_o}</p> :
-                                            <input className="mb-0 fw-bold p-0" name="p_o" type="text" defaultValue={details.p_o} onChange={(e) => setData({ ...data, p_o: e.target.value })} />
+                                            <p className="mb-0">{details.p_o}</p> :
+                                            <input className="mb-0 p-0" name="p_o" type="text" defaultValue={details.p_o} onChange={(e) => setData({ ...data, p_o: e.target.value })} />
                                     }
                                 </td>
                             </tr>
                             <tr>
-                                <td style={{ fontWeight: 600 }}>Priority : </td>
+                                <td className='fw-bold'>Priority : </td>
                                 <td>
                                     {
                                         !editable ?
-                                            <p className="mb-0 fw-bold">{
+                                            <p className="mb-0">{
                                                 details.priority == 1 ? 'P1' :
                                                     details.priority == 2 ? 'P2' :
                                                         details.priority == 3 ? 'P3' :
                                                             details.priority == 4 ? 'P4' :
                                                                 details.priority == 5 ? 'P5' : ''
                                             }</p> :
-                                            <select className="mb-0 fw-bold w-100 p-0" name="priority" onChange={handlePriorityChange}>
+                                            <select className="mb-0 w-100 p-0" name="priority" onChange={handlePriorityChange}>
                                                 <option value={1} selected={details.priority == 1}>P1
                                                 </option>
                                                 <option value={2} selected={details.priority == 2}>P2
@@ -151,33 +152,33 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                                 </td>
                             </tr>
                             <tr>
-                                <td style={{ fontWeight: 600 }}>Requested By : </td>
+                                <td className='fw-bold'>Requested By : </td>
                                 <td>
                                     {
                                         !editable ?
-                                            <p className="mb-0 fw-bold">{details.requested_by}</p> :
-                                            <input className="mb-0 fw-bold p-0" name="requested_by" type="text" defaultValue={details.requested_by} onChange={(e) => setData({ ...data, requested_by: e.target.value })} />
+                                            <p className="mb-0">{details.requested_by}</p> :
+                                            <input className="mb-0 p-0" name="requested_by" type="text" defaultValue={details.requested_by} onChange={(e) => setData({ ...data, requested_by: e.target.value })} />
                                     }
 
 
                                 </td>
                             </tr>
                             <tr>
-                                <td style={{ fontWeight: 600 }}>Team : </td>
+                                <td className='fw-bold'>Team : </td>
                                 <td>
                                     {
                                         !editable ?
-                                            <p className="mb-0 fw-bold"></p> :
-                                            <input className="mb-0 fw-bold p-0" type="text" defaultValue={''} name="team" />
+                                            <p className="mb-0"></p> :
+                                            <input className="mb-0 p-0" type="text" defaultValue={''} name="team" />
                                     }
 
                                 </td>
                             </tr>
                             <tr>
-                                <td style={{ fontWeight: 600 }}>WO Manager : </td>
+                                <td className='fw-bold'>WO Manager : </td>
                                 <td>
                                     {
-                                        !editable ? <p className="mb-0 fw-bold">{details?.employee_name}</p> :
+                                        !editable ? <p className="mb-0">{details?.employee_name}</p> :
                                             <AsyncSelect
                                                 cacheOptions
                                                 loadOptions={loadEmployeeOptions}
@@ -187,6 +188,16 @@ const Overview = ({ id, details, onSuccessMessage, is_cancelled, is_billing }) =
                                             />
                                     }
 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td className='fw-bold'>Source : </td>
+                                <td>
+                                    {
+                                        !editable ? <p className="mb-0">{details?.source}</p>
+                                            :
+                                            <input type="text" defaultValue={details.source} className='border-bottom w-100' onChange={(e) => setData({ ...data, source: e.target.value })} />
+                                    }
                                 </td>
                             </tr>
                         </tbody>

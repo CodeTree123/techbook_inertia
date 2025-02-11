@@ -64,6 +64,10 @@ const Header = ({ onSuccessMessage, onErrorMessage }) => {
                                     <>
                                         <li>
                                             <a href="#">Manage</a>
+                                            <ul>
+                                                <li><a href="#">Projects</a></li>
+                                                <li><a href="#">Templates</a></li>
+                                            </ul>
                                         </li>
                                         <li>
                                             <a href="#">Work Order</a>
