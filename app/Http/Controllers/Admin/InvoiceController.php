@@ -257,6 +257,7 @@ class InvoiceController extends Controller
             $existInvoiceProduct->wo_id = $woId;
             $existInvoiceProduct->qty = 1;
             $existInvoiceProduct->desc = $request->desc;
+            $existInvoiceProduct->date = $request->date;
             $existInvoiceProduct->price = $request->price;
             $existInvoiceProduct->is_primary = 1;
 
@@ -277,6 +278,7 @@ class InvoiceController extends Controller
             $invoiceProduct->wo_id = $woId;
             $invoiceProduct->qty = 1;
             $invoiceProduct->desc = $request->desc;
+            $invoiceProduct->date = $request->date;
             $invoiceProduct->price = $request->price;
             $invoiceProduct->is_primary = 1;
 
@@ -303,15 +305,17 @@ class InvoiceController extends Controller
             $existInvoiceProduct->wo_id = $woId;
             $existInvoiceProduct->qty = $request->qty;
             $existInvoiceProduct->desc = $request->desc;
+            $existInvoiceProduct->date = $request->date;
             $existInvoiceProduct->price = $request->price;
             $existInvoiceProduct->is_additional = 1;
 
             $existInvoiceProduct->save();
             $action = "Updated additional hour rate";
             $changes = sprintf(
-                "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: Qty: %s, Description: %s, Price: %s",
+                "Manual entry: Qty: %s, Description: %s, Date: %s, Price: %s | Previous: Qty: %s, Description: %s, Price: %s",
                 $request->qty ?? '',
                 $request->desc ?? '',
+                $request->date ?? '',
                 $request->price ?? '',
                 $existInvoiceProduct->qty ?? '',
                 $desc ?? '',
@@ -325,12 +329,13 @@ class InvoiceController extends Controller
             $invoiceProduct->wo_id = $woId;
             $invoiceProduct->qty = $request->qty;
             $invoiceProduct->desc = $request->desc;
+            $invoiceProduct->date = $request->date;
             $invoiceProduct->price = $request->price;
             $invoiceProduct->is_additional = 1;
 
             $invoiceProduct->save();
             $action = "Created additional hour rate";
-            $changes = "Manual created additional hour" . " Quantity " . ($request->qty ?? '')  . " Description " . ($request->desc ?? '') . " Price: " . "$" . ($request->price ?? '');
+            $changes = "Manual created additional hour" . " Quantity " . ($request->qty ?? '') . " Date " . ($request->date ?? '')  . " Description " . ($request->desc ?? '') . " Price: " . "$" . ($request->price ?? '');
 
             invoiceLog($woId, $action, $changes);
         }
@@ -374,6 +379,7 @@ class InvoiceController extends Controller
     {
         $qty = $request->input('qty');
         $desc = $request->input('desc');
+        $date = $request->input('date');
         $price = $request->input('price');
 
         $productsArray = [];
@@ -381,6 +387,7 @@ class InvoiceController extends Controller
             $productsArray[] = [
                 'qty' => $quantity,
                 'desc' => $desc[$index],
+                'date' => $date[$index],
                 'price' => $price[$index],
             ];
         }
@@ -392,12 +399,13 @@ class InvoiceController extends Controller
                 $invoiceProduct->wo_id = $woId;
                 $invoiceProduct->qty = $product['qty'];
                 $invoiceProduct->desc = $product['desc'];
+                $invoiceProduct->date = $product['date'];
                 $invoiceProduct->price = $product['price'];
 
                 $invoiceProduct->save();
 
                 $action = "Created extra hour";
-                $changes = "Manual created extra hour. Quantity: " . $product['qty'] . ", Description: " . $product['desc'] . ", Price: $" . $product['price'];
+                $changes = "Manual created extra hour. Quantity: " . $product['qty'] . ", Description: " . $product['desc'] . $product['date'] . ", Price: $" . $product['price'];
 
                 invoiceLog($woId, $action, $changes);
             }
