@@ -19,7 +19,7 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::PAST_DUE;
         $invoice->save();
-
+        invoiceStatusDate($id, Status::PAST_DUE);
         $action = "Invoice status Past due";
         $changes = "Changes to Billing Past Due | Previous: Billing Invoiced";
 
@@ -52,7 +52,7 @@ class InvoiceController extends Controller
             $invoice->stage = Status::STAGE_BILLING;
             $invoice->status = Status::INVOICED;
             $invoice->save();
-    
+            invoiceStatusDate($id, Status::INVOICED);
             $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
             $invoiceDate->invoice_date = now();
             $invoiceDate->save();
@@ -79,7 +79,7 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::PAID;
         $invoice->save();
-
+        invoiceStatusDate($id, Status::PAID);
         $action = "Status change to billing paid";
         $changes = "Changes to Billing Paid | Previous: Billing Invoiced " . "Reference code: " . $request->reference_code;
 
@@ -95,7 +95,7 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::APPROVED;
         $invoice->save();
-
+        invoiceStatusDate($id, Status::APPROVED);
         $action = "Invoice status Revert";
         $changes = "Changes to Billing Approved | Previous: Billing Invoiced";
 
