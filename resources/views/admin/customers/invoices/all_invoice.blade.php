@@ -17,6 +17,7 @@
                                                 <th>Invoice Number</th>
                                                 <th>Work Order</th>
                                                 <th>Customer</th>
+                                                <th>Site</th>
                                                 <th>Status</th>
                                                 <th>Date</th>
                                             </tr>
@@ -37,8 +38,11 @@
                                                 <td><a href="{{ url('customer/invoice') }}/{{ $invoice->id }}"><span
                                                             class="badge badge-light text-primary fs-6">{{ @$invoice->customer->company_name }}</span></a>
                                                 </td>
+                                                <td><a href="{{ url('customer/invoice') }}/{{ $invoice->id }}"><span
+                                                            class="badge badge-light text-primary fs-6">{{ @$invoice->site->state }},{{@$invoice->site->zipcode}}({{ @$invoice->site->site_id }})</span></a>
+                                                </td>
                                                 <td>
-                                                    <span>
+                                                    <span class="badge-secondary rounded">
                                                         {{ $invoice->status == 12 ? 'Approved' : ($invoice->status == 13 ? 'Invoiced' : ($invoice->status == 15 ? 'Paid' : ($invoice->status == 14 ? 'Pst Due' : $invoice->status))) }}
                                                     </span>
                                                 </td>
