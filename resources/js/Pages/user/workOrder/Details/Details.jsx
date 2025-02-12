@@ -109,8 +109,9 @@ const Details = ({ id, details, onSuccessMessage, onErrorMessage }) => {
                         tech_provided_parts: details?.tech_provided_parts,
                         other_expenses: details?.other_expenses,
                         travel_cost: details?.travel_cost,
+                        paysheet: details?.paysheet
                     }} onSuccessMessage={onSuccessMessage} is_cancelled={details.stage == 7} is_billing={details.status >= 12} />
-                    <ProfitSheet />
+                    <ProfitSheet/>
                     <TimeLog details={{
                         check_in_out: details?.check_in_out,
                         site: {

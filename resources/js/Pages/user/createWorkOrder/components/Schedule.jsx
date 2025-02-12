@@ -17,8 +17,11 @@ const Schedule = ({ data, setData, scheduleRef }) => {
     const submit = (e) => {
         e.preventDefault();
         const newSchedule = {
+            type: data.type || 'hard_time',
             on_site_by: data.on_site_by || '',
+            end_date: data.end_date || '',
             scheduled_time: data.scheduled_time || '',
+            end_time: data.end_time || '',
             h_operation: data.h_operation || '',
             estimated_time: data.estimated_time || '',
         };
@@ -26,14 +29,26 @@ const Schedule = ({ data, setData, scheduleRef }) => {
         setData({
             ...data,
             schedules: [...data?.schedules, newSchedule],
+            type: 'hard_time',
             on_site_by: '',
+            end_date: '',
             scheduled_time: '',
+            end_time: '',
             h_operation: '',
             estimated_time: '',
         });
 
         setAddSchedule(false);
     };
+
+    const deleteSchedule = (index) => {
+        console.log(index);
+        
+        setData((prevData) => ({
+            ...prevData,
+            schedules: prevData.schedules.filter((_, i) => i != index),
+        }));
+    }
 
     const selectedTimezone = timezoneMap[data?.site?.time_zone];
 
@@ -67,29 +82,35 @@ const Schedule = ({ data, setData, scheduleRef }) => {
 
     const handleUpdate = (e, scheduleindex) => {
         e.preventDefault();
-        
+
         const updatedSchedule = data.schedules.map((schedule, index) =>
             index === scheduleindex
                 ? {
-                      ...schedule,
-                      on_site_by: data.on_site_by || schedule.on_site_by,
-                      scheduled_time: data.scheduled_time || schedule.scheduled_time,
-                      h_operation: data.h_operation || schedule.h_operation,
-                      estimated_time: data.estimated_time || schedule.estimated_time,
-                  }
+                    ...schedule,
+                    type: data.type || schedule.type,
+                    on_site_by: data.on_site_by || schedule.on_site_by,
+                    end_date: data.end_date || schedule.end_date,
+                    scheduled_time: data.scheduled_time || schedule.scheduled_time,
+                    end_time: data.end_time || schedule.end_time,
+                    h_operation: data.h_operation || schedule.h_operation,
+                    estimated_time: data.estimated_time || schedule.estimated_time,
+                }
                 : schedule
         );
-    
+
         // Update the state
         setData({
             ...data,
             schedules: updatedSchedule,
+            type: 'hard_time',
             on_site_by: '',
+            end_date: '',
             scheduled_time: '',
+            end_time: '',
             h_operation: '',
             estimated_time: '',
         });
-    
+
         // Exit edit mode
         setEditableRow(null);
     };
@@ -116,27 +137,98 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                     data?.schedule_type === 'single' ? (
                         // Render a single schedule if there's exactly one schedule
                         <form onSubmit={(e) => handleUpdate(e, 0)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
-                            <p>Start at a specific date and time</p>
+                            <p>{data?.schedules[0]?.type === 'hard_time'
+                                ? 'Start at a specific date and time'
+                                : data?.schedules[0]?.type === 'between_hours'
+                                    ? 'Complete work between specific hours'
+                                    : 'Arrive at anytime over a date range'}
+                            </p>
                             <b>
-                                {new Date(data?.schedules[0]?.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
+                                {data?.schedules[0]?.type != 'date_range' && new Date(data?.schedules[0]?.on_site_by).toLocaleDateString('en-US', { weekday: 'long' }) + ','}
                             </b>
                             <div>
                                 <b>
+                                    {/* Hard Start */}
                                     {
-                                        editableRow !== 0 &&
+                                        data?.schedules[0]?.type === 'hard_time' && editableRow !== 0 &&
                                         <span className="nrml-txt">
                                             {DateTime.fromISO(data?.schedules[0]?.on_site_by).toFormat("MM-dd-yy")}
                                             <span className='mx-1'>at</span>
                                             {formatTime(data?.schedules[0]?.scheduled_time)}
+                                            ({data?.site?.time_zone})
                                         </span>
                                     }
                                     {
-                                        editableRow === 0 &&
+                                        data?.schedules[0]?.type === 'hard_time' && editableRow === 0 &&
                                         <span>
                                             <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={data?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
                                             at
                                             <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={data?.schedules[0]?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
                                         </span>
+                                    }
+
+                                    {/* Between Hours */}
+                                    {
+                                        data?.schedules[0]?.type === 'between_hours' && editableRow !== 0 &&
+                                        <>
+                                            <span className="nrml-txt">
+                                                {DateTime.fromISO(data?.schedules[0]?.on_site_by).toFormat("MM-dd-yy")}
+                                            </span>
+                                            <br />
+                                            <span className='me-1'>From: </span>
+                                            {formatTime(data?.schedules[0]?.scheduled_time)}
+                                            ({data?.site?.time_zone})
+                                            <span className='mx-1'>To: </span>
+                                            {formatTime(data?.schedules[0]?.end_time)}
+                                            ({data?.site?.time_zone})
+                                        </>
+
+                                    }
+                                    {
+                                        data?.schedules[0]?.type === 'between_hours' && editableRow === 0 &&
+                                        <>
+                                            <span>
+                                                <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={data?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                            </span>
+                                            <br />
+                                            <span>
+                                                From: <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold me-2" defaultValue={data?.schedules[0]?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
+                                                To: <input type="time" name="end_time" className="mb-2 border-bottom fw-bold" defaultValue={data?.schedules[0]?.end_time} onChange={(e) => setData({ ...data, end_time: e.target.value })} />
+                                            </span>
+                                        </>
+                                    }
+
+                                    {/* Date Range */}
+
+                                    {
+                                        data?.schedules[0]?.type === 'date_range' && editableRow !== 0 &&
+                                        <>
+                                            <span className="nrml-txt">
+                                                From: {DateTime.fromISO(data?.schedules[0]?.on_site_by).toFormat("MM-dd-yy")}
+                                            </span>
+                                            <span className="nrml-txt ms-2">
+                                                To: {DateTime.fromISO(data?.schedules[0]?.end_date).toFormat("MM-dd-yy")}
+                                            </span>
+                                            <br />
+                                            <span className='me-1'>At </span>
+                                            {formatTime(data?.schedules[0]?.scheduled_time)}
+                                            ({data?.site?.time_zone})
+                                        </>
+
+                                    }
+                                    {
+                                        data?.schedules[0]?.type === 'date_range' && editableRow === 0 &&
+                                        <>
+                                            <span>
+                                                From: <input type="date" name="on_site_by" className="mb-2 me-2 border-bottom fw-bold" defaultValue={data?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                                To: <input type="date" name="end_date" className="mb-2 border-bottom fw-bold" defaultValue={data?.schedules[0]?.end_date} onChange={(e) => setData({ ...data, end_date: e.target.value })} />
+                                            </span>
+                                            <br />
+                                            <span>
+                                                At <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold me-2" defaultValue={data?.schedules[0]?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
+
+                                            </span>
+                                        </>
                                     }
                                 </b><br />
                                 {
@@ -167,7 +259,7 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                                 }
                                 {
                                     editableRow !== 0 &&
-                                    <button onClick={(e) => deleteSchedule(e, data?.schedules[0]?.id)} type="button" className="btn" style={{ height: "max-content;" }}>
+                                    <button onClick={() => deleteSchedule(0)} type="button" className="btn" style={{ height: "max-content;" }}>
                                         <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
                                     </button>
                                 }
@@ -189,29 +281,99 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                         // Render all schedules if it's not a single schedule or there are multiple schedules
                         data?.schedules?.map((schedule, index) => (
                             <form onSubmit={(e) => handleUpdate(e, index)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }} key={schedule.id}>
-                                <p>Start at a specific date and time</p>
+                                <p>{schedule?.type === 'hard_time'
+                                    ? 'Start at a specific date and time'
+                                    : schedule?.type === 'between_hours'
+                                        ? 'Complete work between specific hours'
+                                        : 'Arrive at anytime over a date range'}
+                                </p>
                                 <b>
-                                    {new Date(schedule.on_site_by).toLocaleDateString('en-US', { weekday: 'long' })},
+                                    {schedule.type != 'date_range' && new Date(schedule.on_site_by).toLocaleDateString('en-US', { weekday: 'long' }) + ','}
                                 </b>
                                 <div>
                                     <b>
+                                        {/* Hard Start */}
                                         {
-                                            editableRow !== index &&
+                                            schedule.type === 'hard_time' && editableRow !== index &&
                                             <span className="nrml-txt">
-                                                {formatDate(schedule.on_site_by)}
+                                                {DateTime.fromISO(schedule?.on_site_by).toFormat("MM-dd-yy")}
                                                 <span className='mx-1'>at</span>
-                                                {formatTime(schedule.scheduled_time)}
+                                                {formatTime(schedule?.scheduled_time)}
+                                                ({data?.site?.time_zone})
                                             </span>
                                         }
                                         {
-                                            editableRow === index &&
+                                            schedule?.type === 'hard_time' && editableRow === index &&
                                             <span>
-                                                <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={schedule.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                                <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={schedule?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
                                                 at
-                                                <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={schedule.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
+                                                <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold" defaultValue={schedule?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
                                             </span>
                                         }
-                                    </b>
+
+                                        {/* Between Hours */}
+                                        {
+                                            schedule?.type === 'between_hours' && editableRow !== index &&
+                                            <>
+                                                <span className="nrml-txt">
+                                                    {DateTime.fromISO(schedule?.on_site_by).toFormat("MM-dd-yy")}
+                                                </span>
+                                                <br />
+                                                <span className='me-1'>From: </span>
+                                                {formatTime(schedule?.scheduled_time)}
+                                                ({data?.site?.time_zone})
+                                                <span className='mx-1'>To: </span>
+                                                {formatTime(schedule?.end_time)}
+                                                ({data?.site?.time_zone})
+                                            </>
+
+                                        }
+                                        {
+                                            schedule?.type === 'between_hours' && editableRow === index &&
+                                            <>
+                                                <span>
+                                                    <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={schedule?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                                </span>
+                                                <br />
+                                                <span>
+                                                    From: <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold me-2" defaultValue={schedule?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
+                                                    To: <input type="time" name="end_time" className="mb-2 border-bottom fw-bold" defaultValue={schedule?.end_time} onChange={(e) => setData({ ...data, end_time: e.target.value })} />
+                                                </span>
+                                            </>
+                                        }
+
+                                        {/* Date Range */}
+                                        {
+                                            schedule?.type === 'date_range' && editableRow !== index &&
+                                            <>
+                                                <span className="nrml-txt">
+                                                    From: {DateTime.fromISO(schedule?.on_site_by).toFormat("MM-dd-yy")}
+                                                </span>
+                                                <span className="nrml-txt ms-2">
+                                                    To: {DateTime.fromISO(schedule?.end_date).toFormat("MM-dd-yy")}
+                                                </span>
+                                                <br />
+                                                <span className='me-1'>At </span>
+                                                {formatTime(schedule?.scheduled_time)}
+                                                ({data?.site?.time_zone})
+                                            </>
+
+                                        }
+                                        {
+                                            schedule?.type === 'date_range' && editableRow === index &&
+                                            <>
+                                                <span>
+                                                    From: <input type="date" name="on_site_by" className="mb-2 me-2 border-bottom fw-bold" defaultValue={schedule?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
+                                                    To: <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={schedule?.end_date} onChange={(e) => setData({ ...data, end_date: e.target.value })} />
+                                                </span>
+                                                <br />
+                                                <span>
+                                                    At <input type="time" name="scheduled_time" className="mb-2 border-bottom fw-bold me-2" defaultValue={schedule?.scheduled_time} onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} />
+
+                                                </span>
+                                            </>
+                                        }
+                                    </b><br />
                                     {
                                         editableRow !== index &&
                                         <b className="nrml-txt">Hours of operation: {schedule.h_operation}</b>
@@ -240,7 +402,7 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                                     }
                                     {
                                         editableRow !== index &&
-                                        <button onClick={(e) => deleteSchedule(e, schedule.id)} type="button" className="btn" style={{ height: "max-content;" }}>
+                                        <button onClick={() => deleteSchedule(index)} type="button" className="btn" style={{ height: "max-content;" }}>
                                             <i className="fa-solid fa-trash text-danger" aria-hidden="true"></i>
                                         </button>
                                     }
@@ -268,11 +430,30 @@ const Schedule = ({ data, setData, scheduleRef }) => {
                             <div>
                                 <div>
                                     <label htmlFor>Schedule Date</label>
+                                    <select name="type" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, type: e.target.value })} style={{ fontWeight: 600 }} >
+                                        <option value="hard_time" selected>Arrive at a specific date and time</option>
+                                        <option value="between_hours">Complete work between specific hours</option>
+                                        <option value="date_range">Arrive at a anytime over a date range</option>
+                                    </select>
+
+                                    <label htmlFor>{data?.type == 'date_range' ? 'From Date' : 'Schedule Date'}</label>
                                     <input type="date" name="on_site_by" placeholder="Enter Date" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, on_site_by: e.target.value })} style={{ fontWeight: 600 }} />
 
-                                    <label htmlFor>Schedule Time</label>
+                                    {data?.type == 'date_range' && <>
+                                        <label htmlFor>To Date</label>
+                                        <input type="date" name="end_date" placeholder="Enter Date" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, end_date: e.target.value })} style={{ fontWeight: 600 }} />
+                                    </>}
 
+                                    <label htmlFor>{data?.type == 'between_hours' ? 'Starting Hours' : 'Schedule Time'}</label>
                                     <input type="time" name="scheduled_time" placeholder="Enter Name" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, scheduled_time: e.target.value })} style={{ fontWeight: 600 }} />
+
+                                    {
+                                        data?.type == 'between_hours' &&
+                                        <>
+                                            <label htmlFor>Ending Hour</label>
+                                            <input type="time" name="end_time" placeholder="Enter Name" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, end_time: e.target.value })} style={{ fontWeight: 600 }} />
+                                        </>
+                                    }
 
                                     <label htmlFor>Hours Of Operation</label>
                                     <input type="text" name="h_operation" placeholder="Enter Hours Of Operation" className="mb-2 border-bottom w-100" onChange={(e) => setData({ ...data, h_operation: e.target.value })} style={{ fontWeight: 600 }} />

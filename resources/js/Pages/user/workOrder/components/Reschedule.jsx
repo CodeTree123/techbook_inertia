@@ -6,7 +6,9 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
         'on_site_by': scheduleData?.on_site_by,
+        'end_date': scheduleData?.end_date,
         'scheduled_time': scheduleData?.scheduled_time,
+        'end_time': scheduleData?.end_time,
         'h_operation': scheduleData?.h_operation,
         'estimated_time': scheduleData?.estimated_time,
     });
@@ -14,9 +16,9 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
     const submit = (e) => {
         e.preventDefault();
 
-        if(!is_ftech){
+        if (!is_ftech) {
             onErrorMessage('Assign Technician First');
-        }else{
+        } else {
             post(route('user.wo.reSchedule', id), {
                 onSuccess: () => {
                     onSuccessMessage('Schedule Updated Successfully');
@@ -56,26 +58,43 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                     <Modal.Body>
                         <div className="mb-3">
                             <label className="form-label">
-                                Schedule Date ({scheduleData?.on_site_by})
+                                {scheduleData?.type == 'date_range' ? 'From Date' : 'Schedule Date'} ({scheduleData?.on_site_by})
                             </label>
                             <input
                                 type="date"
                                 defaultValue={scheduleData?.on_site_by}
                                 name="on_site_by"
                                 className="form-control"
-                                onChange={(e)=>setData({...data,on_site_by: e.target.value})}
+                                onChange={(e) => setData({ ...data, on_site_by: e.target.value })}
                             />
                         </div>
+                        {scheduleData?.type == 'date_range' && <>
+                            <div className='mb-3'>
+                                <label htmlFor className="form-label">To Date</label>
+                                <input type="date" name="end_date" defaultValue={scheduleData?.end_date} placeholder="Enter Date" className="form-control" onChange={(e) => setData({ ...data, end_date: e.target.value })} style={{ fontWeight: 600 }} />
+                            </div>
+
+                        </>}
+
                         <div className="mb-3">
-                            <label className="form-label">Schedule Time</label>
+                            <label className="form-label">{scheduleData?.type == 'between_hours' ? 'Starting Hours' : 'Schedule Time'}</label>
                             <input
                                 type="time"
                                 defaultValue={scheduleData?.scheduled_time}
                                 name="scheduled_time"
                                 className="form-control"
-                                onChange={(e)=>setData({...data,scheduled_time: e.target.value})}
+                                onChange={(e) => setData({ ...data, scheduled_time: e.target.value })}
                             />
                         </div>
+                        {
+                            scheduleData?.type == 'between_hours' &&
+                            <>
+                                <div className='mb-3'>
+                                    <label htmlFor className="form-label">Ending Hour</label>
+                                    <input type="time" name="end_time" defaultValue={scheduleData?.end_time} placeholder="Enter Name" className="form-control" onChange={(e) => setData({ ...data, end_time: e.target.value })} style={{ fontWeight: 600 }} />
+                                </div>
+                            </>
+                        }
                         <div className="mb-3">
                             <label className="form-label">Approximate Hours to Complete</label>
                             <input
@@ -83,7 +102,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                                 defaultValue={scheduleData?.h_operation}
                                 name="h_operation"
                                 className="form-control"
-                                onChange={(e)=>setData({...data,h_operation: e.target.value})}
+                                onChange={(e) => setData({ ...data, h_operation: e.target.value })}
                             />
                         </div>
                         <div className="mb-3">
@@ -93,7 +112,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                                 defaultValue={scheduleData?.estimated_time}
                                 name="estimated_time"
                                 className="form-control"
-                                onChange={(e)=>setData({...data,estimated_time: e.target.value})}
+                                onChange={(e) => setData({ ...data, estimated_time: e.target.value })}
                             />
                         </div>
                     </Modal.Body>
@@ -101,7 +120,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                         <Button variant="secondary" onClick={handleClose}>
                             Close
                         </Button>
-                        <Button variant="warning" onClick={(e)=>submit(e)}>Save</Button>
+                        <Button variant="warning" onClick={(e) => submit(e)}>Save</Button>
                     </Modal.Footer>
                 </Modal>
             </div>

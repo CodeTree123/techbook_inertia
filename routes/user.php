@@ -191,6 +191,9 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('checkout/{id}/{tech_id?}', 'makeCheckout')->name('wo.checkout');
 
                 Route::post('updatePaysheet/{id}', 'updatePaySheet')->name('wo.updatePaySheet');
+                Route::post('updatePaySheetType/{id}/{type}', 'updatePaySheetType')->name('wo.updatePaySheetType');
+                Route::post('updateFixedAmount/{id}', 'updateFixedAmount')->name('wo.updateFixedAmount');
+                Route::post('updateRate/{id}', 'updateRate')->name('wo.updateRate');
 
                 Route::post('log-checkin/{id}', 'logCheckin')->name('wo.logCheckin');
                 Route::post('log-checkout/{id}', 'logCheckout')->name('wo.logCheckout');

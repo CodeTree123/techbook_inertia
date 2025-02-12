@@ -29,7 +29,7 @@ const BackStatus = ({ id, onSuccessMessage, status, is_cancelled, is_billing }) 
         post(route('user.wo.makeReview', id), {
             onSuccess: () => {
                 onSuccessMessage('Status Updated Successfully');
-                handleCloseHold
+                setShowHold(false)
             }
         });
     };

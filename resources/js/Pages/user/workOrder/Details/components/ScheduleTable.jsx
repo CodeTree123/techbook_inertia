@@ -163,7 +163,7 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                                     <>
                                         <span>
                                             From: <input type="date" name="on_site_by" className="mb-2 me-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
-                                            To: <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.end_date} onChange={(e) => setData({ ...data, end_date: e.target.value })} />
+                                            To: <input type="date" name="end_date" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.end_date} onChange={(e) => setData({ ...data, end_date: e.target.value })} />
                                         </span>
                                         <br />
                                         <span>
