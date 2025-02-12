@@ -773,7 +773,7 @@ class CustomerController extends Controller
     public function allInvoice()
     {
         $pageTitle = "Invoice History";
-        $invoices = WorkOrder::with('invoice', 'customer')
+        $invoices = WorkOrder::with('invoice', 'customer','invoiceDate')
             ->where('stage', Status::STAGE_BILLING)
             ->whereIn('status', [
                 Status::APPROVED,
@@ -785,7 +785,7 @@ class CustomerController extends Controller
             ->dateFilter()
             ->orderBy('id', 'desc')
             ->paginate(getPaginate());
-            
+
         return view('admin.customers.invoices.all_invoice', compact('pageTitle', 'invoices'));
     }
     

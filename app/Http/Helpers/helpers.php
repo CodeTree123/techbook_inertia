@@ -6,6 +6,7 @@ use App\Models\Extension;
 use App\Models\Frontend;
 use App\Models\GeneralSetting;
 use App\Models\CustomerInvoiceLog;
+use App\Models\InvoiceStatusDate;
 use Carbon\Carbon;
 use App\Lib\Captcha;
 use App\Lib\ClientInfo;
@@ -331,14 +332,28 @@ function verifyG2fa($user, $code, $secret = null)
     }
 }
 
-function invoiceLog($wId,$action,$changes)
+function invoiceLog($wId, $action, $changes)
 {
-    $uId = 0;
-    $aId = auth('admin')->user()->id ?? $uId;
+    $aId = auth('admin')->user()->id ?? 0;
     $logs = new CustomerInvoiceLog();
     $logs->wo_id = $wId;
     $logs->admin_id = $aId;
     $logs->action = $action;
     $logs->changes = $changes;
     $logs->save();
+}
+
+function invoiceStatusDate($id, $status)
+{
+    $data = InvoiceStatusDate::where('status', $status)
+    ->where('wo_id', $id)->first();
+    if($data){
+        $data->updated_at = now();
+        $data->save();
+    }else{
+        $date = new InvoiceStatusDate();
+        $date->wo_id = $id;
+        $date->status = $status;
+        $date->save();
+    }
 }
