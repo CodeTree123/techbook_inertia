@@ -19,7 +19,6 @@
     body {
         font-family: 'Nunito', sans-serif;
     }
-    
 </style>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -28,7 +27,9 @@
         @include('admin.includeNew.topbar')
         <div class="m-2">@include('admin.partials.breadcrumb')</div>
         @include('partials.notify')
+        @if(Route::currentRouteName() !== 'customer.invoice')
         @include('admin.includeNew.conversionAlert')
+        @endif
         @include('admin.includeNew.sidebar')
         @yield('content')
         @include('admin.includeNew.footer')
