@@ -589,7 +589,7 @@
                                     </td>
 
                                     <td><input type="date" class="my-input-disable-class editable d-none"
-                                            value="{{ $invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '' }}"
+                                            value="{{ $invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('Y-m-d') : '' }}"
                                             style="border:none" name="date">
                                         <span
                                             class="previewable">{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '' }}</span>
@@ -902,7 +902,7 @@
                                                     <div class="input-group d-flex align-items-center">
                                                         <span
 
-                                                            class="previewable-five py-2">{{ $extraHourProduct->date ?? (@$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->format('m/d/Y') : '' )}}</span>
+                                                            class="previewable-five py-2">{{ \Carbon\Carbon::parse($extraHourProduct->date)->format('m/d/Y') ?? (@$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->format('m/d/Y') : '' )}}</span>
 
                                                     </div>
                                             </td>
