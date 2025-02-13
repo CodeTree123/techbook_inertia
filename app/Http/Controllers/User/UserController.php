@@ -2888,6 +2888,7 @@ class UserController extends Controller
     {
         $schdule = WorkOrderSchedule::find($id);
 
+        $schdule->type = $request->type ?? $schdule->type;
         $schdule->on_site_by = $request->on_site_by ?? $schdule->on_site_by;
         $schdule->end_date = $request->end_date ?? $schdule->end_date;
         $schdule->scheduled_time = $request->scheduled_time ?? $schdule->scheduled_time;
@@ -3247,6 +3248,7 @@ class UserController extends Controller
         try {
             $schdule = WorkOrderSchedule::find($id);
 
+            $schdule->type = $request['type'] ?? $schdule->type;
             $schdule->on_site_by = $request['on_site_by'] ?? $schdule->on_site_by;
             $schdule->end_date = $request['end_date'] ?? $schdule->end_date;
             $schdule->scheduled_time = $request['scheduled_time'] ?? $schdule->scheduled_time;

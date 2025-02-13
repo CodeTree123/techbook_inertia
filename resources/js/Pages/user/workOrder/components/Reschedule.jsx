@@ -1,10 +1,11 @@
 import { useForm } from '@inertiajs/react';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 
 const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessage, is_cancelled, is_billing }) => {
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
+        'type': scheduleData?.type,
         'on_site_by': scheduleData?.on_site_by,
         'end_date': scheduleData?.end_date,
         'scheduled_time': scheduleData?.scheduled_time,
@@ -38,6 +39,18 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
         setFormData({ ...formData, [name]: value });
     };
 
+    useEffect(()=>(
+        setData({
+            'type': scheduleData?.type,
+        'on_site_by': scheduleData?.on_site_by,
+        'end_date': scheduleData?.end_date,
+        'scheduled_time': scheduleData?.scheduled_time,
+        'end_time': scheduleData?.end_time,
+        'h_operation': scheduleData?.h_operation,
+        'estimated_time': scheduleData?.estimated_time,
+        })
+    ),[setData, scheduleData])
+
     return (
         <div className="col-12">
             <div className="border px-4 py-3 rounded shadow mb-0" role="alert">
@@ -58,7 +71,20 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                     <Modal.Body>
                         <div className="mb-3">
                             <label className="form-label">
-                                {scheduleData?.type == 'date_range' ? 'From Date' : 'Schedule Date'} ({scheduleData?.on_site_by})
+                                Schedule Category
+                            </label>
+                            <select
+                                name="type"
+                                className="form-control"
+                                onChange={(e) => setData({ ...data, type: e.target.value })}>
+                                    <option value="hard_time" selected={scheduleData?.type === 'hard_time'}>Start at a specific date and time</option>
+                                    <option value="between_hours" selected={scheduleData?.type === 'between_hours'}>Complete work between specific hours</option>
+                                    <option value="date_range" selected={scheduleData?.type === 'date_range'}>Arrive at anytime over a date range</option>
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">
+                                {data?.type == 'date_range' ? 'From Date' : 'Schedule Date'} ({scheduleData?.on_site_by})
                             </label>
                             <input
                                 type="date"
@@ -68,7 +94,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                                 onChange={(e) => setData({ ...data, on_site_by: e.target.value })}
                             />
                         </div>
-                        {scheduleData?.type == 'date_range' && <>
+                        {data?.type == 'date_range' && <>
                             <div className='mb-3'>
                                 <label htmlFor className="form-label">To Date</label>
                                 <input type="date" name="end_date" defaultValue={scheduleData?.end_date} placeholder="Enter Date" className="form-control" onChange={(e) => setData({ ...data, end_date: e.target.value })} style={{ fontWeight: 600 }} />
@@ -77,7 +103,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                         </>}
 
                         <div className="mb-3">
-                            <label className="form-label">{scheduleData?.type == 'between_hours' ? 'Starting Hours' : 'Schedule Time'}</label>
+                            <label className="form-label">{data?.type == 'between_hours' ? 'Starting Hours' : 'Schedule Time'}</label>
                             <input
                                 type="time"
                                 defaultValue={scheduleData?.scheduled_time}
@@ -87,7 +113,7 @@ const Reschedule = ({ id, is_ftech, scheduleData, onSuccessMessage, onErrorMessa
                             />
                         </div>
                         {
-                            scheduleData?.type == 'between_hours' &&
+                            data?.type == 'between_hours' &&
                             <>
                                 <div className='mb-3'>
                                     <label htmlFor className="form-label">Ending Hour</label>

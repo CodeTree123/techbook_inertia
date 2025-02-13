@@ -31,6 +31,7 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
     }
 
     const { data, setData, post, delete: deleteItem, errors, processing, recentlySuccessful } = useForm({
+        'type': details?.schedules[0]?.type,
         'on_site_by': '',
         'end_date': '',
         'scheduled_time': '',
@@ -48,7 +49,6 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
             onSuccess: () => {
                 onSuccessMessage('Schedule time is Updated Successfully');
                 setEditableRow(null);
-                setData(null)
             },
             onError: (error) => {
                 console.error('Error updating part:', error);
@@ -64,13 +64,22 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
             onSuccess: () => {
                 onSuccessMessage('Schedule time is Deleted Successfully');
                 setEditableRow(null);
-                setData(null)
+                setData({
+                    'type': details?.schedules[0]?.type,
+                    'on_site_by': '',
+                    'end_date': '',
+                    'scheduled_time': '',
+                    'end_time': '',
+                    'h_operation': '',
+                    'estimated_time': '',
+                })
             },
             onError: (error) => {
                 console.error('Error updating part:', error);
             }
         });
     };
+    
 
     return (
         <>
@@ -79,12 +88,21 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                 details?.schedule_type === 'single' ? (
                     // Render a single schedule if there's exactly one schedule
                     <form onSubmit={(e) => submit(e, details?.schedules[0]?.id)} className="position-relative p-3 mb-3" style={{ backgroundColor: '#E3F2FD' }}>
-                        <p>{details?.schedules[0]?.type === 'hard_time'
-                            ? 'Start at a specific date and time'
-                            : details?.schedules[0]?.type === 'between_hours'
-                                ? 'Complete work between specific hours'
-                                : 'Arrive at anytime over a date range'}
-                        </p>
+                        {
+                            editableRow != 0 ?
+                                <p>{details?.schedules[0]?.type === 'hard_time'
+                                    ? 'Start at a specific date and time'
+                                    : details?.schedules[0]?.type === 'between_hours'
+                                        ? 'Complete work between specific hours'
+                                        : 'Arrive at anytime over a date range'}
+                                </p> :
+                                <select className='mb-2 border-bottom fw-bold' onChange={(e)=>setData({...data, type: e.target.value})}>
+                                    <option value="hard_time" selected={details?.schedules[0]?.type === 'hard_time'}>Start at a specific date and time</option>
+                                    <option value="between_hours" selected={details?.schedules[0]?.type === 'between_hours'}>Complete work between specific hours</option>
+                                    <option value="date_range" selected={details?.schedules[0]?.type === 'date_range'}>Arrive at anytime over a date range</option>
+                                </select>
+                        } <br />
+
                         <b>
                             {details?.schedules[0]?.type != 'date_range' && new Date(details?.schedules[0]?.on_site_by).toLocaleDateString('en-US', { weekday: 'long' }) + ','}
                         </b>
@@ -101,7 +119,7 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
                                     </span>
                                 }
                                 {
-                                    details?.schedules[0]?.type === 'hard_time' && editableRow === 0 &&
+                                    data?.type === 'hard_time' && editableRow === 0 &&
                                     <span>
                                         <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
                                         at
@@ -127,7 +145,7 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
 
                                 }
                                 {
-                                    details?.schedules[0]?.type === 'between_hours' && editableRow === 0 &&
+                                    data?.type === 'between_hours' && editableRow === 0 &&
                                     <>
                                         <span>
                                             <input type="date" name="on_site_by" className="mb-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
@@ -159,7 +177,7 @@ const ScheduleTable = ({ details, onSuccessMessage, is_cancelled, is_billing }) 
 
                                 }
                                 {
-                                    details?.schedules[0]?.type === 'date_range' && editableRow === 0 &&
+                                    data?.type === 'date_range' && editableRow === 0 &&
                                     <>
                                         <span>
                                             From: <input type="date" name="on_site_by" className="mb-2 me-2 border-bottom fw-bold" defaultValue={details?.schedules[0]?.on_site_by} onChange={(e) => setData({ ...data, on_site_by: e.target.value })} />
