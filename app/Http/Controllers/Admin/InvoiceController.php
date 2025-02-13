@@ -429,10 +429,12 @@ class InvoiceController extends Controller
         $desc = $invoiceProduct->desc ?? '';
         $date = $invoiceProduct->date ?? '';
         $price = $invoiceProduct->price ?? '';
+        $date = $invoiceProduct->date ?? '';
 
         $invoiceProduct->qty = $request->qty;
         $invoiceProduct->desc = $request->desc;
         $invoiceProduct->price = $request->price;
+        $invoiceProduct->date = $request->date;
 
         $invoiceProduct->save();
 
@@ -443,6 +445,7 @@ class InvoiceController extends Controller
             $request->desc ?? '',
             $request->date ?? '',
             $request->price ?? '',
+            $request->date ?? '',
             $qty ?? '',
             $desc ?? '',
             $date ?? '',

@@ -52,7 +52,8 @@ export default function WoView({ wo }) {
         setLatestAtRiskScheduleId(schedule.id); // Store the latest schedule ID
 
         // Convert the schedule date and time to Luxon DateTime in the selected time zone
-        const scheduleDateTime = `${schedule.on_site_by}T${schedule.scheduled_time}`; // Format the date and time string
+        const scheduleDateTime = schedule.type == 'hard_time' ? `${schedule.on_site_by}T${schedule.scheduled_time}` : schedule.type == 'between_hours' ? `${schedule.on_site_by}T${schedule.end_time}` : `${schedule.end_date}T${schedule.scheduled_time}`;
+        
         const scheduleLuxonDateTime = DateTime.fromISO(scheduleDateTime, { zone: 'utc' }) // Parse as UTC
           .setZone(selectedTimezone, { keepLocalTime: true });
 

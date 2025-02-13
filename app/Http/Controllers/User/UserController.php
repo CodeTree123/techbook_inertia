@@ -2393,7 +2393,8 @@ class UserController extends Controller
             'otherExpenses',
             'notes.user:id,firstname,lastname',
             'notes.subNotes',
-            'contactedTechs.tech:id,technician_id,address_data,email,phone,tech_type'
+            'contactedTechs.tech:id,technician_id,address_data,email,phone,tech_type',
+            'paysheet'
         ])->find($id);
 
         if ($wo && $wo->technician) {
@@ -2605,7 +2606,7 @@ class UserController extends Controller
             $preLog = WorkOrderTimeLog::where('column_name', 'status')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, Status::APPROVED, '', 'status', "Work order status updated: 'Invoiced' → 'Approved'", $id);
         } elseif ($wo->status == Status::ISSUE) {
-            $wo->status = Status::NEEDS_APPROVAL;
+            $wo->status = null;
 
             $preLog = WorkOrderTimeLog::where('column_name', 'status')->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_orders', 'status', $wo->id, $wo->updated_at, $preLog, Status::NEEDS_APPROVAL, '', 'status', "Work order status updated: 'Needs Review' → 'Needs Approval'", $id);
@@ -2888,7 +2889,9 @@ class UserController extends Controller
         $schdule = WorkOrderSchedule::find($id);
 
         $schdule->on_site_by = $request->on_site_by ?? $schdule->on_site_by;
+        $schdule->end_date = $request->end_date ?? $schdule->end_date;
         $schdule->scheduled_time = $request->scheduled_time ?? $schdule->scheduled_time;
+        $schdule->end_time = $request->end_time ?? $schdule->end_time;
         $schdule->h_operation = $request->h_operation ?? $schdule->h_operation;
         $schdule->estimated_time = $request->estimated_time ?? $schdule->estimated_time;
 
@@ -2909,6 +2912,14 @@ class UserController extends Controller
         if ($request->estimated_time) {
             $preLog = WorkOrderTimeLog::where('column_name', 'schedule-estimated_time-' . $schdule->id)->orderBy('id', 'desc')->first();
             $this->createWorkOrderTimeLog('work_order_schedules', 'schedule-estimated_time-' . $schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->estimated_time, '', 'nrml_text', $preLog ? 'Schedule Estimated Hours Updated' : 'Schedule Estimated Hours Added', $id);
+        }
+        if ($request->end_date) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'schedule-end_date-' . $schdule->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_order_schedules', 'schedule-end_date-' . $schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->end_date, '', 'nrml_text', $preLog ? 'Schedule End Date Updated' : 'Schedule End Date Added', $id);
+        }
+        if ($request->end_time) {
+            $preLog = WorkOrderTimeLog::where('column_name', 'schedule-end_time-' . $schdule->id)->orderBy('id', 'desc')->first();
+            $this->createWorkOrderTimeLog('work_order_schedules', 'schedule-end_time-' . $schdule->id, $schdule->wo_id, $schdule->updated_at, $preLog, $schdule->end_time, '', 'nrml_text', $preLog ? 'Schedule End Hour Updated' : 'Schedule End Hour Added', $id);
         }
     }
 
@@ -3237,7 +3248,9 @@ class UserController extends Controller
             $schdule = WorkOrderSchedule::find($id);
 
             $schdule->on_site_by = $request['on_site_by'] ?? $schdule->on_site_by;
+            $schdule->end_date = $request['end_date'] ?? $schdule->end_date;
             $schdule->scheduled_time = $request['scheduled_time'] ?? $schdule->scheduled_time;
+            $schdule->end_time = $request['end_time'] ?? $schdule->end_time;
             $schdule->h_operation = $request['h_operation'] ?? $schdule->h_operation;
             $schdule->estimated_time = $request['estimated_time'] ?? $schdule->estimated_time;
             $schdule->save();
@@ -3273,6 +3286,51 @@ class UserController extends Controller
             $notify[] = ['success', 'Pay Sheet Added Successfully'];
         }
         return back()->withNotify($notify);
+    }
+
+    public function updatePaySheetType($id, $type)
+    {
+        $ps = PaySheet::where('wo_id', $id)->first();
+
+        if ($ps) {
+            $ps->type = $type;
+            $ps->save();
+        } else {
+            $ps = new PaySheet();
+            $ps->wo_id = $id;
+            $ps->type = $type;
+            $ps->save();
+        }
+    }
+
+    public function updateFixedAmount(Request $request, $id)
+    {
+        $ps = PaySheet::where('wo_id', $id)->first();
+
+        if ($ps) {
+            $ps->fixed_amount = $request->fixed_amount;
+            $ps->save();
+        } else {
+            $ps = new PaySheet();
+            $ps->wo_id = $id;
+            $ps->fixed_amount = $request->fixed_amount;
+            $ps->save();
+        }
+    }
+
+    public function updateRate(Request $request, $id)
+    {
+        $ps = PaySheet::where('wo_id', $id)->first();
+
+        if ($ps) {
+            $ps->tech_rate = $request->tech_rate;
+            $ps->save();
+        } else {
+            $ps = new PaySheet();
+            $ps->wo_id = $id;
+            $ps->tech_rate = $request->tech_rate;
+            $ps->save();
+        }
     }
 
     public function logCheckinout(Request $request, $id)

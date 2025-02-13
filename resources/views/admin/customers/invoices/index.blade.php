@@ -6,7 +6,7 @@
         <style>
             @font-face {
                 font-family: 'CustomFont';
-                src: url('public/assets/font/Cambria-Font-For-Windows.ttf') format('ttf');
+                src: url('/assets/font/Cambria-Font-For-Windows.ttf') format('ttf');
                 /* Fallback */
                 font-weight: normal;
                 font-style: normal;
@@ -34,7 +34,7 @@
             .col-md-3,
             .col-md-6 {
                 flex: 1;
-                /* Make the columns flexible */
+                font-family: 'CustomFont !important';
                 padding: 10px;
             }
 
@@ -622,9 +622,9 @@
                                     <th>Date</th>
                                     <th>Price</th>
                                     <th>Amount</th>
-                                    <th class="addRowBtnCont">
+                                    <th class="addRowBtnCont d-flex">
                                         <button onclick="document.getElementById('extraForm').submit()"
-                                            class="btn btn-success save-extra d-none">Save</button>
+                                            class="btn btn-success save-extra d-none me-3">Save</button>
                                         <button id="addRowBtn" class="btn btn-success plus-button float-end">Add</button>
                                     </th>
                                 </tr>
@@ -891,7 +891,9 @@
                                                     style="border:none">
                                                     <div class="input-group d-flex align-items-center">
                                                         <span
-                                                            class="previewable-five py-2">{{ @$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->format('m/d/Y') : '' }}</span>
+
+                                                            class="previewable-five py-2">{{ $extraHourProduct->date ?? (@$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->format('m/d/Y') : '' )}}</span>
+
                                                     </div>
                                             </td>
                                             <td>
@@ -1276,7 +1278,7 @@
             newRow.innerHTML = `
             <td><input type="text" name='qty[]' class="total-hours p-2 bg-white" value="" style="border:none"></td>
             <td><textarea class="wo-per w-100 bg-white" name='desc[]' style="border:none;"></textarea></td>
-            <td><input type="date" class="p-2 bg-white" name='date[] value="" style="border:none"></td>
+            <td><input type="date" class="p-2 bg-white" name='date[]' value="" style="border:none"></td>
            <td><div class="input-group">
                                         <span class="p-2">$</span>
                                         <input type="text" name='price[]' class="calculated-rate bg-white" value="{{ @$wp->calculated_rate }}" style="border:none">

@@ -11,6 +11,11 @@ class WorkOrder extends Model
 {
     use Searchable;
     use HasFactory;
+    
+    public function paySheet()
+    {
+        return $this->hasOne(Paysheet::class,'wo_id');
+    }
     public function invoiceDate()
     {
         return $this->hasOne(InvoiceStatusDate::class, 'wo_id', 'id');
