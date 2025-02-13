@@ -573,9 +573,19 @@
                                             <option value="3" @selected(($invoice->invoice->job ?? $invoice->priority) == 3)>P3</option>
                                             <option value="4" @selected(($invoice->invoice->job ?? $invoice->priority) == 4)>P4</option>
                                             <option value="5" @selected(($invoice->invoice->job ?? $invoice->priority) == 5)>P5</option>
+                                            <option value="6" @selected(($invoice->invoice->job ?? $invoice->priority) == 5)>Install</option>
+                                            <option value="7" @selected(($invoice->invoice->job ?? $invoice->priority) == 5)>Project</option>
                                         </select>
-                                        <span
-                                            class="previewable">{{ $invoice->invoice->job ?? $invoice->priority ? 'P' . ($invoice->invoice->job ?? $invoice->priority) : '' }}</span>
+                                        <span class="previewable">
+                                            @if(($invoice->invoice->job ?? $invoice->priority) == 6)
+                                                Install
+                                            @elseif(($invoice->invoice->job ?? $invoice->priority) == 7)
+                                                Project
+                                            @else
+                                                {{ 'P' . ($invoice->invoice->job ?? $invoice->priority) }}
+                                            @endif
+                                        </span>
+
                                     </td>
 
                                     <td><input type="date" class="my-input-disable-class editable d-none"

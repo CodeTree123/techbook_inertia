@@ -39,11 +39,11 @@
                                                             class="badge badge-light text-primary fs-6">{{ @$invoice->customer->company_name }}</span></a>
                                                 </td>
                                                 <td><a href="{{ url('customer/invoice') }}/{{ $invoice->id }}"><span
-                                                            class="badge badge-light text-primary fs-6">{{ @$invoice->site->state }},{{@$invoice->site->zipcode}}({{ @$invoice->site->site_id }})</span></a>
+                                                            class="badge badge-light text-primary fs-6">{{ @$invoice->site->state}},{{@$invoice->site->zipcode}}({{ @$invoice->site->site_id }})</span></a>
                                                 </td>
                                                 <td>
                                                     <span class="badge-secondary rounded">
-                                                        {{ $invoice->status == 12 ? 'Approved' : ($invoice->status == 13 ? 'Invoiced' : ($invoice->status == 15 ? 'Paid' : ($invoice->status == 14 ? 'Pst Due' : $invoice->status))) }}
+                                                        {{ $invoice->status == 12 ? 'Approved' : ($invoice->status == 13 ? 'Invoiced' : ($invoice->status == 15 ? 'Paid' : ($invoice->status == 14 ? 'Past Due' : $invoice->status))) }}
                                                     </span>
                                                 </td>
                                                 <td>
