@@ -16,6 +16,10 @@ class WorkOrder extends Model
     {
         return $this->hasOne(Paysheet::class,'wo_id');
     }
+    public function invoiceDate()
+    {
+        return $this->hasOne(InvoiceStatusDate::class, 'wo_id', 'id');
+    }
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'em_id', 'id');

@@ -579,10 +579,10 @@
                                     </td>
 
                                     <td><input type="date" class="my-input-disable-class editable d-none"
-                                            value="{{ $invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('Y-m-d') : '' }}"
+                                            value="{{ $invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '' }}"
                                             style="border:none" name="date">
                                         <span
-                                            class="previewable">{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->setTimezone('America/Chicago')->format('m/d/Y') : '' }}</span>
+                                            class="previewable">{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '' }}</span>
                                     </td>
                                     <td>
                                         <input type="text" class="my-input-disable-class editable d-none"
@@ -651,13 +651,22 @@
                                             <td>
                                                 <input type="date"
                                                     class="date py-2 my-input-disable-class bg-white editable-three d-none"
-                                                    value="{{ @$invoice->invoice->date ? \Carbon\Carbon::parse($invoice->invoice->date)->format('Y-m-d') : '' }}"
+                                                    value="($additionalHourProduct->date && strtotime($additionalHourProduct->date) 
+                                                    ? \Carbon\Carbon::parse($additionalHourProduct->date)->format('m/d/Y') 
+                                                    : '')
+                                                ?? ($invoice->invoice->date && strtotime($invoice->invoice->date) 
+                                                    ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') 
+                                                    : '')"
                                                     name="date"
                                                     style="border:none">
                                                 <div class="input-group d-flex align-items-center">
                                                     <span
-                                                        class="previewable-three py-2">{{ $firstHour->date ?? (@$invoice->invoice->date && strtotime(@$invoice->invoice->date) ? \Carbon\Carbon::parse(@$invoice->invoice->date)->format('m/d/Y') : '') }}
-                                                    </span>
+                                                        class="previewable-three py-2">{{ (@$firstHourProduct->date && strtotime($firstHourProduct->date) 
+                                                    ? \Carbon\Carbon::parse($firstHourProduct->date)->format('m/d/Y') 
+                                                    : '')
+                                                ?? ($invoice->invoice->date && strtotime($invoice->invoice->date) 
+                                                    ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') 
+                                                    : '') }}</span>
                                                 </div>
                                             </td>
                                             <td>
@@ -718,11 +727,21 @@
                                                         <input type="date"
                                                         name="date"
                                                             class="date py-2 my-input-disable-class bg-white editable-four d-none"
-                                                            value="{{ @$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('Y-m-d') : '' }}"
+                                                            value="{{ (@$additionalHourProduct->date && strtotime($additionalHourProduct->date) 
+                                                                ? \Carbon\Carbon::parse($additionalHourProduct->date)->format('m/d/Y') 
+                                                                : '')
+                                                            ?? ($invoice->invoice->date && strtotime($invoice->invoice->date) 
+                                                                ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') 
+                                                                : '')}}"
                                                             style="border:none">
                                                             <div class="input-group d-flex align-items-center">
                                                                 <span
-                                                                    class="previewable-four py-2">{{$additionalHourProduct->date ?? (@$invoice->invoice->date && strtotime($invoice->invoice->date) ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') : '') }}</span>
+                                                                    class="previewable-four py-2">{{(@$additionalHourProduct->date && strtotime($additionalHourProduct->date) 
+                                                                    ? \Carbon\Carbon::parse($additionalHourProduct->date)->format('m/d/Y') 
+                                                                    : '')
+                                                                ?? ($invoice->invoice->date && strtotime($invoice->invoice->date) 
+                                                                    ? \Carbon\Carbon::parse($invoice->invoice->date)->format('m/d/Y') 
+                                                                    : '')}}</span>
                                                             </div>
                                                     </td>
                                                     <td>
@@ -872,7 +891,9 @@
                                                     style="border:none">
                                                     <div class="input-group d-flex align-items-center">
                                                         <span
+
                                                             class="previewable-five py-2">{{ $extraHourProduct->date ?? (@$wp->date && strtotime($wp->date) ? \Carbon\Carbon::parse($wp->date)->format('m/d/Y') : '' )}}</span>
+
                                                     </div>
                                             </td>
                                             <td>

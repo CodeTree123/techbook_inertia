@@ -2530,7 +2530,7 @@ class UserController extends Controller
         } elseif ($wo->status == Status::NEEDS_APPROVAL) {
             $wo->status = Status::APPROVED;
             $wo->stage += 1;
-
+            invoiceStatusDate($id, Status::APPROVED);
             $action = "Created";
             $changes = "Billing Approved.";
             invoiceLog($wo->id, $action, $changes);

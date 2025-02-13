@@ -19,7 +19,7 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::PAST_DUE;
         $invoice->save();
-
+        invoiceStatusDate($id, Status::PAST_DUE);
         $action = "Invoice status Past due";
         $changes = "Changes to Billing Past Due | Previous: Billing Invoiced";
 
@@ -52,7 +52,7 @@ class InvoiceController extends Controller
             $invoice->stage = Status::STAGE_BILLING;
             $invoice->status = Status::INVOICED;
             $invoice->save();
-    
+            invoiceStatusDate($id, Status::INVOICED);
             $invoiceDate = CustomerInvoice::where('work_order_id', $id)->first();
             $invoiceDate->invoice_date = now();
             $invoiceDate->save();
@@ -79,7 +79,7 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::PAID;
         $invoice->save();
-
+        invoiceStatusDate($id, Status::PAID);
         $action = "Status change to billing paid";
         $changes = "Changes to Billing Paid | Previous: Billing Invoiced " . "Reference code: " . $request->reference_code;
 
@@ -95,7 +95,7 @@ class InvoiceController extends Controller
         $invoice->stage = Status::STAGE_BILLING;
         $invoice->status = Status::APPROVED;
         $invoice->save();
-
+        invoiceStatusDate($id, Status::APPROVED);
         $action = "Invoice status Revert";
         $changes = "Changes to Billing Approved | Previous: Billing Invoiced";
 
@@ -251,6 +251,7 @@ class InvoiceController extends Controller
         if ($existInvoiceProduct) {
 
             $desc = $existInvoiceProduct->desc ?? '';
+            $date = $existInvoiceProduct->date ?? '';
 
             $price = $existInvoiceProduct->price ?? optional($existInvoiceProduct->workOrder->customer)->s_rate_f;
 
@@ -264,10 +265,12 @@ class InvoiceController extends Controller
             $existInvoiceProduct->save();
             $action = "Updated first hour rate";
             $changes = sprintf(
-                "Manual entry: Description: %s, Price: %s | Previous: Description: %s, Price: %s",
+                "Manual entry: Description: %s, Date: %s, Price: %s | Previous: Description: %s, Date: %s, Price: %s",
                 $request->desc ?? '',
+                $request->date ?? '',
                 $request->price ?? '',
                 $desc ?? '',
+                $date ?? '',
                 $price ?? ''
             );
 
@@ -300,6 +303,7 @@ class InvoiceController extends Controller
         if ($existInvoiceProduct) {
 
             $desc = $existInvoiceProduct->desc ?? '';
+            $date = $existInvoiceProduct->date ?? '';
             $price = $existInvoiceProduct->price ?? optional($existInvoiceProduct->workOrder->customer)->s_rate_a;
 
             $existInvoiceProduct->wo_id = $woId;
@@ -312,13 +316,14 @@ class InvoiceController extends Controller
             $existInvoiceProduct->save();
             $action = "Updated additional hour rate";
             $changes = sprintf(
-                "Manual entry: Qty: %s, Description: %s, Date: %s, Price: %s | Previous: Qty: %s, Description: %s, Price: %s",
+                "Manual entry: Qty: %s, Description: %s, Date: %s, Price: %s | Previous: Qty: %s, Description: %s, Date: %s, Price: %s",
                 $request->qty ?? '',
                 $request->desc ?? '',
                 $request->date ?? '',
                 $request->price ?? '',
                 $existInvoiceProduct->qty ?? '',
                 $desc ?? '',
+                $date ?? '',
                 $price ?? ''
             );
 
@@ -422,6 +427,7 @@ class InvoiceController extends Controller
 
         $qty = $invoiceProduct->qty ?? '';
         $desc = $invoiceProduct->desc ?? '';
+        $date = $invoiceProduct->date ?? '';
         $price = $invoiceProduct->price ?? '';
         $date = $invoiceProduct->date ?? '';
 
@@ -434,13 +440,15 @@ class InvoiceController extends Controller
 
         $action = "Updated extra hour";
         $changes = sprintf(
-            "Manual entry: Qty: %s, Description: %s, Price: %s | Previous: Qty: %s, Description: %s, Price: %s",
+            "Manual entry: Qty: %s, Description: %s, Date: %s, Price: %s | Previous: Qty: %s, Description: %s, Date: %s, Price: %s",
             $request->qty ?? '',
             $request->desc ?? '',
+            $request->date ?? '',
             $request->price ?? '',
             $request->date ?? '',
             $qty ?? '',
             $desc ?? '',
+            $date ?? '',
             $price ?? ''
         );
 
